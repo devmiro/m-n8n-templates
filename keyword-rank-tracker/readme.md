@@ -32,7 +32,9 @@ This automation solves these problems by providing unlimited tracking capabiliti
 
 ### Initial Setup
 
-1. Set the date range in edit-nodes (marked with stickers)
+1. This template uses the BigQuery node and requires that you have enabled the Bulk Data Export. In case you did not do it before, then I would recommend to wacht [this tutorial](https://youtu.be/DlhXvS2Hsj4).
+
+2. Set the date range in edit-nodes (marked with stickers)
    - Default: Uses data from 7 days ago
    - Adjustable for more historical data
 

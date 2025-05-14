@@ -55,3 +55,6 @@ This template simplifies and automates the data-driven optimization of your arti
 - Provides actionable insights to improve your content.
 - Tracks historical performance for each article.
 - Saves significant time and effort, allowing you to focus on creating better content.
+
+## Important Information:
+This template uses the BigQuery node and works only if you have the Bulk Data Export enabled and also BigQuery in your Google Cloud Console configured. You can either watch [this video](https://youtu.be/DlhXvS2Hsj4) or replace the BigQuery logic with [this](../get-google-search-console-data\readme.md) workflow template.

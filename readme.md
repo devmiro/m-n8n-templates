@@ -32,7 +32,7 @@ Automatically analyze your SEO performance with interactive reports delivered st
 - **Comprehensive Tables**: Analyze keyword data in detailed, sortable table views
 - **Interactive Visualizations**: Track daily keyword performance through dynamic line charts
 
-> [View Demo Report](./tracked-keyword-performance-report-generator/n8n-keyword-rank-tracking-example-report.html) | [View Product]([./tracked-keyword-performance-report-generator/readme.md](https://marvomatic.com/products/n8n-keyword-rank-tracking-report-automation/))
+> [View Demo Report](./tracked-keyword-performance-report-generator/n8n-keyword-rank-tracking-example-report.html) | [View Product](https://marvomatic.com/products/n8n-keyword-rank-tracking-report-automation/)
 
 ### 2. Website Performance Analysis Workflow
 
@@ -45,7 +45,7 @@ Instantly uncover your website’s top-performing pages and keywords with automa
 - **Google Sheets Export**: All results are saved to a Google Spreadsheet for easy review and collaboration
 - **Low Costs**: Leverages free tiers of Google Search Console API and BigQuery
 
-> [Learn More](./traffic-performance-analysis/readme.md) | [View Product]([./tracked-keyword-performance-report-generator/readme.md](https://marvomatic.com/products/n8n-website-performance-analysis-workflow/))
+> [Learn More](./traffic-performance-analysis/readme.md) | [View Product](https://marvomatic.com/products/n8n-website-performance-analysis-workflow/)
 
 
 ## Free Templates
