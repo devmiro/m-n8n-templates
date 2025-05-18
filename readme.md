@@ -22,7 +22,20 @@ In addition to my free templates, I'm developing premium automation solutions de
 
 You can find all my products [here](https://marvomatic.com/products/). My shop includes free templates as well as premium templates. In case you have any question, feel free to contact me at [hello@marvomatic.com](mailto:hello@marvomatic.com). 
 
-### 1. Keyword Performance Report Generator
+### 1. SEO AI Agent Team – Content Optimization Workflow
+
+Automate your content optimization with an AI-powered SEO team, uncovering keyword opportunities, competitor insights, and actionable improvements.
+
+#### Key Features
+- **Multilingual AI Agents:** Optimize content for a global audience.
+- **Structured SEO Reports:** Receive clear, actionable SEO reports saved to Google Drive.
+- **SERP Analysis:** Analyze competitors on mobile and desktop.
+- **Advanced Performance Analytics:** Monitor keyword rankings and performance trends using BigQuery.
+- **Integrations:** Connect with BigQuery, OpenAI, Crawl4AI, Serper, and Google Drive.
+
+> [Learn More](./ai-powered-seo-team/readme.md) | [View Product](https://marvomatic.com/products/n8n-seo-ai-agent-team-content-optimization/)
+
+### 2. Keyword Performance Report Generator
 
 Automatically analyze your SEO performance with interactive reports delivered straight to your inbox.
 
@@ -34,7 +47,7 @@ Automatically analyze your SEO performance with interactive reports delivered st
 
 > [View Demo Report](./tracked-keyword-performance-report-generator/n8n-keyword-rank-tracking-example-report.html) | [View Product](https://marvomatic.com/products/n8n-keyword-rank-tracking-report-automation/)
 
-### 2. Website Performance Analysis Workflow
+### 3. Website Performance Analysis Workflow
 
 Instantly uncover your website’s top-performing pages and keywords with automated, actionable SEO insights—no technical skills required.
 
