@@ -60,6 +60,20 @@ Instantly uncover your website’s top-performing pages and keywords with automa
 
 > [Learn More](./traffic-performance-analysis/readme.md) | [View Product](https://marvomatic.com/products/n8n-website-performance-analysis-workflow/)
 
+### 4. Google Index Checker – Automated Deindexing Alerts
+
+Monitor your websites’ Google index status automatically and get alerted about deindexed pages to protect your organic traffic.
+
+#### Key Features
+- **Unlimited Domains & Sitemaps:** Check index status across all your sites without limits
+- **Automated Email Reports:** Receive regular alerts with actionable details on deindexed pages
+- **Comprehensive Data:** Track coverage state, last crawl time, canonical URLs, and more
+- **Google Sheets Integration:** Manage configurations and data storage seamlessly
+- **Free Google API Tier:** Uses Google Search Console’s free API to check up to 2,000 pages daily
+
+> [Learn More](./google-index-checker/readme.md) | [View Product](https://marvomatic.com/products/automated-google-index-checker/)
+
+---
 
 ## Free Templates
 
