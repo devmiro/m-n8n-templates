@@ -40,6 +40,12 @@ Schedule the workflow to run automatically every day, ensuring no changes in sit
 
 ![n8n-automated-google-index-checker-scheduler](./n8n-automated-google-index-checker-scheduler.png)
 
+**Automatically Submit Pages for Indexing:**
+Enable the auto-indexing feature to allow the workflow to submit deindexed or unknown URLs to Google.
+
+![n8n-automated-google-index-checker-automated-index-submission](./n8n-automated-google-index-checker-automated-index-submission.png)
+
+
 ### Key Benefits
 
 - **Early Detection of Deindexing:** Get regular alerts on deindexed pages for immediate action.
@@ -47,6 +53,7 @@ Schedule the workflow to run automatically every day, ensuring no changes in sit
 - **Improved Organic Traffic:** Enhance organic traffic by maintaining a healthy, fully indexed website.
 - **Cost-Effective Solution:** Leverages the free tier of the Google Search Console API, making it a cost-effective solution for monitoring index status across all your domains.
 - **Streamlined SEO Management:** Easily monitor the index status for multiple domains from a single n8n workflow.
+- **Automated Indexing**: Automatically submit deindexed pages for re-crawling through Google’s URL Inspection API to help restore their visibility in search results.
 
 ## Questions? Get in Touch Before You Buy!
 

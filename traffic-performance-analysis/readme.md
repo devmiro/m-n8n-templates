@@ -31,13 +31,21 @@ These n8n templates connect directly to Google Search Console and BigQuery, maki
     ![n8n website performance analysis automation (gsc)](./n8n-performance-analysis-of-pages-and-keywords-gsc.png)
 - **Website Performance Analysis Template (BigQuery):**  
   Handle extensive datasets and unlock deeper insights for large or growing websites.
-    ![n8n website performance analysis automation (bigquery)](./n8n-performance-analysis-of-pages-and-keywords-bigquery.png)
+    ![n8n-traffic-analysis-automation-for-websites-workflow-v2](./n8n-traffic-analysis-automation-for-websites-workflow-v2.png)
 - **Performance Analysis for Pages:**  
   Identify high-impact pages that need attention or are driving growth.
     ![n8n website performance analysis automation output pages](./n8n-performance-analysis-output-pages.png)
 - **Performance Analysis for Keywords:**  
   Quickly spot which keywords are losing traction and which are on the rise.
     ![n8n website performance analysis automation output keywords](./n8n-performance-analysis-output-keywords.png)
+- **Interactive Report (BigQuery Template)**
+  Analyze the performance for every page and keyword by using an interactive Report.
+  ![n8n-traffic-analysis-automation-for-websites-keyword-analysis](./n8n-traffic-analysis-automation-for-websites-keyword-analysis.png)
+- **Customized Reports for Multiple Domains (BigQuery Template)**
+  Set different tresholds and variables per website.
+  ![n8n-traffic-analysis-automation-for-websites-config-workflow](./n8n-traffic-analysis-automation-for-websites-config-workflow.png)
+  Set information like the clients email, name as well as your company information like domain, contact and more.
+  ![n8n-traffic-analysis-automation-for-websites-config](./n8n-traffic-analysis-automation-for-websites-config.png)
 
 ## ❓ Questions? Get in Touch Before You Buy!
 
