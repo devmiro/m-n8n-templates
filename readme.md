@@ -105,8 +105,16 @@ Streamline content optimization with data-driven suggestions and automated analy
 - [Learn More](./gsc-ai-seo-writer/readme.md)
 
 ### 4. Google Search Data Connection
-Template that includes three nodes that are pre-filled for fetching data like
+Template that includes three nodes that are pre-filled for fetching data like.
 - Overall clicks, queries, ctr and position by an url
 - Daily performance of your queries
 - Last time crawled, indexed status and more
 - [Learn More](./get-google-search-console-data/readme.md)
+
+### 5. Automated Mailing List Analysis
+Template that analyzes your mailing list subscribers, identifies businesses, and scrapes their websites to uncover valuable insights for personalized outreach.
+- Identifies business leads from your mailing list
+- Scrapes websites for business details and services offered.
+- Organizes findings in a Google Spreadsheet.
+- [Learn More](./mailing-list-analysis/readme.md)
+
