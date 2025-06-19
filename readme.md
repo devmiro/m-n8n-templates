@@ -40,10 +40,10 @@ Automate your content optimization with an AI-powered SEO team, uncovering keywo
 Automatically analyze your SEO performance with interactive reports delivered straight to your inbox.
 
 #### Key Features
-- **Unlimited Tracking**: Monitor keywords across multiple countries without limitations
-- **Performance Analysis**: Identify improved, stable, and declining keywords at a glance
-- **Comprehensive Tables**: Analyze keyword data in detailed, sortable table views
-- **Interactive Visualizations**: Track daily keyword performance through dynamic line charts
+- **Unlimited Tracking**: Monitor keywords across multiple countries without limitations.
+- **Performance Analysis**: Identify improved, stable, and declining keywords at a glance.
+- **Comprehensive Tables**: Analyze keyword data in detailed, sortable table views.
+- **Interactive Visualizations**: Track daily keyword performance through dynamic line charts.
 
 > [View Demo Report](./tracked-keyword-performance-report-generator/n8n-keyword-rank-tracking-example-report.html) | [View Product](https://marvomatic.com/products/n8n-keyword-rank-tracking-report-automation/)
 
@@ -52,11 +52,11 @@ Automatically analyze your SEO performance with interactive reports delivered st
 Instantly uncover your website’s top-performing pages and keywords with automated, actionable SEO insights—no technical skills required.
 
 #### Key Features
-- **Direct Integrations**: Connects with Google Search Console and BigQuery for first-party, large-scale data analysis
-- **Automatic Categorization**: Instantly see which pages and keywords are Declining, Stable, Growing, or experiencing Strong Growth
-- **Period-over-Period Analysis**: Effortlessly compare performance across different time frames to spot trends and opportunities
-- **Google Sheets Export**: All results are saved to a Google Spreadsheet for easy review and collaboration
-- **Low Costs**: Leverages free tiers of Google Search Console API and BigQuery
+- **Direct Integrations**: Connects with Google Search Console and BigQuery for first-party, large-scale data analysis.
+- **Automatic Categorization**: Instantly see which pages and keywords are Declining, Stable, Growing, or experiencing Strong Growth.
+- **Period-over-Period Analysis**: Effortlessly compare performance across different time frames to spot trends and opportunities.
+- **Google Sheets Export**: All results are saved to a Google Spreadsheet for easy review and collaboration.
+- **Low Costs**: Leverages free tiers of Google Search Console API and BigQuery.
 
 > [Learn More](./traffic-performance-analysis/readme.md) | [View Product](https://marvomatic.com/products/n8n-website-performance-analysis-workflow/)
 
@@ -65,13 +65,26 @@ Instantly uncover your website’s top-performing pages and keywords with automa
 Monitor your websites’ Google index status automatically and get alerted about deindexed pages to protect your organic traffic.
 
 #### Key Features
-- **Unlimited Domains & Sitemaps:** Check index status across all your sites without limits
-- **Automated Email Reports:** Receive regular alerts with actionable details on deindexed pages
-- **Comprehensive Data:** Track coverage state, last crawl time, canonical URLs, and more
-- **Google Sheets Integration:** Manage configurations and data storage seamlessly
-- **Free Google API Tier:** Uses Google Search Console’s free API to check up to 2,000 pages daily
+- **Unlimited Domains & Sitemaps:** Check index status across all your sites without limits.
+- **Automated Email Reports:** Receive regular alerts with actionable details on deindexed pages.
+- **Comprehensive Data:** Track coverage state, last crawl time, canonical URLs, and more.
+- **Google Sheets Integration:** Manage configurations and data storage seamlessly.
+- **Free Google API Tier:** Uses Google Search Console’s free API to check up to 2,000 pages daily.
 
 > [Learn More](./google-index-checker/readme.md) | [View Product](https://marvomatic.com/products/automated-google-index-checker/)
+
+### 5. Website SEO Audit Automation
+
+Automate your SEO audits and get instant, actionable insights to grow your website.
+
+#### Key Features
+- **Automated Website Analysis:** Save hours with automated reports that reveal what’s working, spot underperforming pages, and track keyword ranking movement.
+- **BigQuery Data Integration:** Get accurate, up-to-date data for all your page analysis, tracking detailed keyword movements and performance at scale.
+- **Actionable SEO Insights:** Receive clear, easy-to-read SEO reports saved directly to Google Drive for easy access and collaboration.
+- **Traffic & Performance Overview:** Instantly see where your visitors come from, how they interact with your site, and how each page is performing.
+- **Customizable & Exportable:** Use interactive table filters to quickly find what you need, then export your data for deeper analysis or sharing.
+
+> [Learn More](./website-seo-audit/readme.md) | [View Product](https://marvomatic.com/products/automated-website-analysis-report/) | [Demo](https://youtu.be/_FfJLiMNJLw?si=uw7HuAxjJ-AKpPJ8)
 
 ---
 
