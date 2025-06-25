@@ -58,7 +58,7 @@ Instantly uncover your website’s top-performing pages and keywords with automa
 - **Google Sheets Export**: All results are saved to a Google Spreadsheet for easy review and collaboration.
 - **Low Costs**: Leverages free tiers of Google Search Console API and BigQuery.
 
-> [Learn More](./traffic-performance-analysis/readme.md) | [View Product](https://marvomatic.com/products/n8n-website-performance-analysis-workflow/)
+> [Learn More](./traffic-performance-analysis/readme.md) | [View Product](https://marvomatic.com/products/n8n-website-performance-analysis-workflow/) | [Demo](https://youtu.be/P_6qXBhF8YU?si=luomUphYlhLifu8R)
 
 ### 4. Google Index Checker – Automated Deindexing Alerts
 
@@ -96,7 +96,7 @@ Track unlimited keywords for unlimited websites without the cost of expensive SE
 - Unlimited keywords and websites
 - Low-hanging fruit identification
 - Google Sheets or PostgreSQL integration
-- [Learn More](./keyword-rank-tracker/readme.md)
+- [Learn More](./keyword-rank-tracker/readme.md) | [Demo](https://youtu.be/_m_nY3vMSVk?si=hojeDjE_GgGJIFAv)
 
 
 ### 2. SERP Analysis Automation
@@ -107,7 +107,7 @@ Save 30+ minutes per article with automated SERP analysis and competitor researc
 - Fetches FAQs and related searches
 - Automated reporting
 - Uses Serper / SerpAPI / Crawl4AI / Firecrawl
-- [Learn More](./serp-analysis/readme.md)
+- [Learn More](./serp-analysis/readme.md) | [Demo](https://youtu.be/DEG9-EZYyUM?si=3h36soUABghPyVZ5)
 
 ### 3. Content Optimization Automation
 Streamline content optimization with data-driven suggestions and automated analysis.
@@ -117,17 +117,20 @@ Streamline content optimization with data-driven suggestions and automated analy
 - Historical performance tracking
 - [Learn More](./gsc-ai-seo-writer/readme.md)
 
-### 4. Google Search Data Connection
-Template that includes three nodes that are pre-filled for fetching data like.
-- Overall clicks, queries, ctr and position by an url
-- Daily performance of your queries
-- Last time crawled, indexed status and more
-- [Learn More](./get-google-search-console-data/readme.md)
+### 4. Google Search Console Analytics Nodes
+Comprehensive template with 12 pre-configured nodes for advanced SEO analysis:
+- Daily and period-based query performance tracking
+- Page-level keyword analysis and cannibalization detection
+- Performance drop monitoring and opportunity identification
+- Brand visibility tracking and content gap discovery
+- URL inspection with indexing status and crawl data
+- Device-specific performance metrics
+- [Learn More](./get-google-search-console-data/readme.md) | [Demo](https://youtu.be/UPG87Wxzaf8?si=PEYFwc70RS-LV0dN)
 
 ### 5. Automated Mailing List Analysis
 Template that analyzes your mailing list subscribers, identifies businesses, and scrapes their websites to uncover valuable insights for personalized outreach.
 - Identifies business leads from your mailing list
 - Scrapes websites for business details and services offered.
 - Organizes findings in a Google Spreadsheet.
-- [Learn More](./mailing-list-analysis/readme.md)
+- [Learn More](./mailing-list-analysis/readme.md) | [Demo](https://youtu.be/D67kp5QYRck?si=mYqxEOsdmJKRsLxi)
 
