@@ -2,7 +2,7 @@
 # n8n Website Performance Analysis Workflow
 
 **Get instant, actionable insights into your website’s performance—no technical skills required.**  
-These n8n templates connect directly to Google Search Console and BigQuery, making it easy to discover which pages and keywords are driving your traffic, spot trends, and identify new opportunities for growth. Forget manual data analysis and start making smarter, data-driven decisions to boost your organic results. You can find the bundle [here](https://marvomatic.com/products/n8n-website-performance-analysis-workflow/).
+These n8n templates connect directly to Google Search Console and BigQuery, making it easy to discover which pages and keywords are driving your traffic, spot trends, and identify new opportunities for growth. Forget manual data analysis and start making smarter, data-driven decisions to boost your organic results. You can find the bundle [here](https://marvomatic.com/products/n8n-website-performance-analysis-workflow/) and a demo of the workflow [here](https://youtu.be/P_6qXBhF8YU?si=0N3HEzFS1txeFvzG).
 
 ## 🚀 Key Features
 

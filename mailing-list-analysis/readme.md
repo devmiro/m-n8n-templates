@@ -2,7 +2,7 @@
 
 **Unlock the hidden potential in your mailing list. This automation analyzes subscribers, identifies businesses, and scrapes their websites to uncover valuable insights for personalized outreach.**
 
-> **[Click to learn more](https://marvomatic.com/products/automated-mailing-list-analysis/)**
+**[Click to learn more](https://marvomatic.com/products/automated-mailing-list-analysis/)** | **[Demo](https://youtu.be/D67kp5QYRck?si=mYqxEOsdmJKRsLxi)**
 
 ![n8n-automated-mailing-list-analysis](./n8n-automated-mailing-list-analysis.png)
 
