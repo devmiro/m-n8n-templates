@@ -1,0 +1,490 @@
+{
+  "data": {
+    "createdAt": "2025-06-11T14:26:14.515Z",
+    "updatedAt": "2025-06-11T14:26:14.515Z",
+    "id": "ywbx69DA2ZCBqD6c",
+    "name": "Linkedin Post",
+    "active": false,
+    "nodes": [
+      {
+        "parameters": {
+          "model": "anthropic/claude-3.5-sonnet",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+        "typeVersion": 1,
+        "position": [
+          880,
+          800
+        ],
+        "id": "268c6753-7f33-47f5-af57-5163bc8403d9",
+        "name": "Claude Sonnet 3.5"
+      },
+      {
+        "parameters": {
+          "documentId": {
+            "__rl": true,
+            "value": "1en5EqoBub8dBmPUYZ6VKEdx8H1mK9Vyf7BoFI1IWLNM",
+            "mode": "list",
+            "cachedResultName": "Linkedin Posts José",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1en5EqoBub8dBmPUYZ6VKEdx8H1mK9Vyf7BoFI1IWLNM/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Controle Postagens",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1en5EqoBub8dBmPUYZ6VKEdx8H1mK9Vyf7BoFI1IWLNM/edit#gid=0"
+          },
+          "filtersUI": {
+            "values": [
+              {
+                "lookupColumn": "Data da Postagem",
+                "lookupValue": "={{$now.plus(2,'days').format('dd/LL/y')}}"
+              },
+              {
+                "lookupColumn": "Status",
+                "lookupValue": "Gerar Conteúdo"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          800,
+          480
+        ],
+        "id": "d24543b9-e32d-4a6c-b889-59a000d184b4",
+        "name": "Le conteúdos a serem gerados"
+      },
+      {
+        "parameters": {
+          "content": "# Human in the Loop Linkedin CopyWriter Agent - By RicNeves",
+          "height": 820,
+          "width": 1860,
+          "color": 3
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          400,
+          160
+        ],
+        "id": "e4834f9a-d0a5-44c1-82e0-83a93fa5e31b",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "triggerAtHour": 10
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          540,
+          480
+        ],
+        "id": "49879825-fcef-4777-b97f-150c79e6f05e",
+        "name": "Dispara todos os dias as 10am"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Use como tema para criar a publicação: {{ $json.Tema }}",
+          "options": {
+            "systemMessage": "=Você é um Agente especialista em Copywriting para LinkedIn, com foco em postagens institucionais, técnicas e inspiradoras, especialmente para setores de tecnologia, inovação, fintechs e segurança digital.\n\nSeu objetivo é criar conteúdos no seguinte formato como se fosse o CEP da Empresa XPTO - Seu nome é XPTO, que sempre devem seguir esta estrutura:\n\n1. **Abertura Impactante**  \n   ➜ Comece com uma frase forte ou provocativa, seguida de um emoji que complemente a ideia.  \n   ➜ Apresente um fato, mudança no mercado, ou uma reflexão que conecte com a audiência profissional do LinkedIn.  \n   ➜ Mantenha tom objetivo, direto e que provoque a leitura até o final.\n\n2. **Explicação Técnica Simplificada**  \n   ➜ Explique brevemente o conceito central de forma que qualquer profissional entenda, sem perder profundidade técnica.  \n   ➜ Sempre insira perguntas retóricas que reforcem a importância do tema.\n\n3. **Contextualização com Pesquisa ou Relatório de Referência**  \n   ➜ Cite pesquisas, relatórios, ou estudos de mercado que validem a importância do tema (ex.: “O novo relatório da IBM mostra que...”).  \n   ➜ Utilize fontes reais ou fictícias com credibilidade.  \n   ➜ Sempre apresente um “alerta” ou “dado preocupante” relacionado.\n\n4. **Tradução para o Cotidiano Corporativo**  \n   ➜ Liste de 3 a 5 pontos-chave sobre o que muda para os profissionais ou empresas.  \n   ➜ Use tópicos com símbolos ➜ e frases curtas que resumam a mudança ou impacto.  \n   ➜ Cada ponto deve ser uma ideia fechada e direta, em linguagem acessível.\n\n5. **Exemplo Prático com a Empresa ou Autoridade Interna**  \n   ➜ Explique como a empresa ou o especialista já está se adaptando ou liderando essa transformação.  \n   ➜ Se possível, cite falas de C-Levels ou especialistas, com o nome, cargo e empresa, usando sempre o mesmo padrão:  \n   ➜ “Segundo [Nome], [Cargo] da [Empresa], [...]”  \n   ➜ Inclua uma breve explicação ou citação inspiradora, sempre entre aspas.\n\n6. **Encerramento Reflexivo e Provocativo**  \n   ➜ Termine com uma frase que não seja “call to action” explícita, mas uma provocação estratégica.  \n   ➜ Use perguntas abertas ou afirmações de tendência irreversível.  \n   ➜ Feche com uma frase marcante que conecte o leitor com a urgência ou importância do tema.\n\n**Regras de Estilo:**\n\n- Linguagem: Profissional, direta e acessível, evitando jargões excessivos.  \n- Emojis: Use moderadamente para reforçar ideias-chave no início ou nas listas.  \n- Frases: Prefira frases curtas e objetivas. Misture estrutura de sentenças curtas e médias.  \n- Formatação: Sempre use tópicos com ➜. Não usar negrito ou itálico no corpo da publicação.  \n- Tom: Autoridade técnica, sem arrogância. Sempre educativo, mas com pegada inspiradora.  \n- Comprimento: Entre 300 a 500 palavras por postagem.\n\n**Exemplo de comandos para ativar esse Agente:**\n\n➜ \"Escreva um post LinkedIn sobre como IA generativa está mudando a segurança cibernética.\"\n\n➜ \"Crie uma publicação estilo LinkedIn sobre o impacto da regulamentação de IA na indústria financeira, com fala de um CTO fictício.\"\n\n➜ \"Faça um post de LinkedIn nesse estilo sobre a importância da análise de metadados na prevenção à fraude digital.\"\n\nSempre siga exatamente a estrutura e tom indicados acima, adaptando ao tema e público profissional do LinkedIn.\n\n\n## Exemplo\nAbaixo um exemplo no qual você deve se inspirar:\n\nAgentes de IA já estão entre nós – e a prevenção à fraude nunca mais será a mesma \n\nNem toda IA é igual. E a Agente de IA vai além do que você está acostumado: ela decide, aprende, se adapta e executa ações sozinha.\n\nE se isso já soa complexo, imagina dentro de um sistema financeiro, onde tudo precisa ser rastreável, auditável e em conformidade?\n\nPois é. O novo relatório da IBM não só confirma essa realidade, como traz um alerta: a maioria das instituições ainda não está preparada para lidar com esse novo cenário.\n\nComo especialista em prevenção à fraude e IA aplicada, traduzi esse cenário para nossa realidade:\n\nO que muda na prevenção à fraude com IA GENERATIVA e Agente de IA?\n\t1.\tRastreabilidade em tempo real\n➜ Cada ação do agente precisa de um log auditável – como um microsserviço com CPF próprio.\n\t2.\tMemória = risco e vantagem\n➜ O agente aprende com tentativas passadas de fraude. Mas se não houver políticas de expiração e redefinição, ele também pode agir com base em dados ultrapassados.\n\t3.\tCooperação entre agentes = novo risco\n➜ Quando vários agentes trabalham juntos (ex: um detecta padrões, outro bloqueia usuários e um terceiro reavalia documentos), o risco não é só individual – é sistêmico.\n\t4.\tCompliance não é mais sobre processos. É sobre arquitetura.\n➜ A prevenção à fraude com IA precisa nascer “compliance by design”, senão morre na primeira auditoria.\n\nJá estamos construindo agentes assim por aqui.\n\nNa CAF, já criamos agentes que:\n\t•\tIdentificam e bloqueiam transações suspeitas em segundos\n\t•\tValidam documentos automaticamente com IA e OCR\n\t•\tAprendem com novos golpes usando memória vetorial\n\t•\tSe integram com APIs externas para atualizar seu conhecimento constantemente\n\nA era dos Agentes de IA chegou.\n\nE a pergunta não é mais “se” você vai usá-la na sua estratégia de fraude, mas como vai governar isso tudo sem perder o controle.\n\nQuando eu citar algum link da noticia no tema includa o link no final da postagem.\nImportante caso vc cite dados, traga a referência de onde vc puxou e sempre coloque na frente."
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.9,
+        "position": [
+          1100,
+          480
+        ],
+        "id": "ebcb7bc2-f286-46c1-97fa-b6100ee2589f",
+        "name": "CopyWriter Linkedin Agent"
+      },
+      {
+        "parameters": {
+          "description": "Use essa ferramenta para pensar na melhor forma de escrever os posts"
+        },
+        "type": "@n8n/n8n-nodes-langchain.toolThink",
+        "typeVersion": 1,
+        "position": [
+          1020,
+          800
+        ],
+        "id": "550af659-78e0-49c8-be2a-b08ec633528c",
+        "name": "Think"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentId": {
+            "__rl": true,
+            "value": "1en5EqoBub8dBmPUYZ6VKEdx8H1mK9Vyf7BoFI1IWLNM",
+            "mode": "list",
+            "cachedResultName": "Linkedin Posts José",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1en5EqoBub8dBmPUYZ6VKEdx8H1mK9Vyf7BoFI1IWLNM/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Controle Postagens",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1en5EqoBub8dBmPUYZ6VKEdx8H1mK9Vyf7BoFI1IWLNM/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Tema": "={{ $('Le conteúdos a serem gerados').item.json.Tema }}",
+              "Conteúdo gerado pela IA": "={{ $json.output }}",
+              "Status": "Draft"
+            },
+            "matchingColumns": [
+              "Tema"
+            ],
+            "schema": [
+              {
+                "id": "Tema",
+                "displayName": "Tema",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Conteúdo gerado pela IA",
+                "displayName": "Conteúdo gerado pela IA",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Conteúdo a postar",
+                "displayName": "Conteúdo a postar",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Status",
+                "displayName": "Status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Data da Postagem",
+                "displayName": "Data da Postagem",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          1660,
+          680
+        ],
+        "id": "1771df4c-dc0b-4889-b8ed-c2f7729fbd49",
+        "name": "Atualiza Conteúdo"
+      },
+      {
+        "parameters": {
+          "person": "7dNNwpeU0T",
+          "text": "={{ $('CopyWriter Linkedin Agent').item.json.output }}",
+          "additionalFields": {
+            "visibility": "PUBLIC"
+          }
+        },
+        "type": "n8n-nodes-base.linkedIn",
+        "typeVersion": 1,
+        "position": [
+          1940,
+          340
+        ],
+        "id": "eb33d7f9-c9c8-4ef2-98e6-0c761ea665df",
+        "name": "LinkedIn"
+      },
+      {
+        "parameters": {
+          "operation": "sendAndWait",
+          "sendTo": "r.nevesbraga@gmail.com",
+          "subject": "POST para Aprovar",
+          "message": "={{ $json.output }}",
+          "options": {
+            "limitWaitTime": {
+              "values": {
+                "resumeAmount": 45,
+                "resumeUnit": "minutes"
+              }
+            }
+          }
+        },
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.1,
+        "position": [
+          1660,
+          340
+        ],
+        "id": "b112ef9a-b84b-4eb3-8656-954ceb5e7e59",
+        "name": "Gmail",
+        "webhookId": "8caad06a-b390-4839-b573-5d80a6a12431"
+      },
+      {
+        "parameters": {
+          "content": "## Le os temas a postar na planilha",
+          "height": 260,
+          "width": 540,
+          "color": 2
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          460,
+          400
+        ],
+        "id": "4ccbbc4f-2e22-4c66-ae79-2eacf045761f",
+        "name": "Sticky Note1"
+      },
+      {
+        "parameters": {
+          "content": "## Chama o Agente especialista em criar conteúdo",
+          "height": 260,
+          "width": 440,
+          "color": 5
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          1020,
+          400
+        ],
+        "id": "9a4b439e-c8a9-4bd7-b682-e56f8afd946f",
+        "name": "Sticky Note2"
+      },
+      {
+        "parameters": {
+          "content": "## Chamar Tools e LLM",
+          "height": 200,
+          "width": 460,
+          "color": 7
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          820,
+          720
+        ],
+        "id": "aee83df8-985e-470c-bc75-15b8b4234699",
+        "name": "Sticky Note3"
+      },
+      {
+        "parameters": {
+          "content": "## Envia email para aprovar (Human in The Loop)",
+          "height": 300,
+          "width": 220,
+          "color": 6
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          1600,
+          220
+        ],
+        "id": "0d21207e-7f4e-4ace-aebe-fe798f320ac2",
+        "name": "Sticky Note4"
+      },
+      {
+        "parameters": {
+          "content": "## Se aprovado posta no linkedin",
+          "height": 300,
+          "width": 220,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          1880,
+          220
+        ],
+        "id": "38020442-ddb3-4928-ba35-bbc082c07f5c",
+        "name": "Sticky Note5"
+      },
+      {
+        "parameters": {
+          "content": "## Atualiza Planilha com status e postagem",
+          "height": 300,
+          "width": 220,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          1600,
+          540
+        ],
+        "id": "5048ee81-45b9-4b67-b144-e560b3597467",
+        "name": "Sticky Note6"
+      },
+      {
+        "parameters": {
+          "content": "██░░░░░██████░██████▄░██░░██░▄█████░██████▄░██████░██████▄░░░▄█████░▄█████▄░█████▄░██░░██░██░██░██░█████▄░██████░████████░▄█████░█████▄░░░▄████▄░▄██████░▄█████░██████▄░████████░░░░░░░░░░░░█████▄░██░░██░░░█████▄░██████░▄█████░██████▄░▄█████░██░░░██░▄█████░▄██████\n██░░░░░░░██░░░██░░░██░██░░██░██░░░░░██░░░██░░░██░░░██░░░██░░░██░░░░░██░░░██░██░░██░██░░██░██░██░██░██░░██░░░██░░░░░░██░░░░██░░░░░██░░██░░░██░░██░██░░░░░░██░░░░░██░░░██░░░░██░░░░░░░░░░░░░░░██░░██░██░░██░░░██░░██░░░██░░░██░░░░░██░░░██░██░░░░░██░░░██░██░░░░░██░░░░░\n██░░░░░░░██░░░██░░░██░█████░░█████░░██░░░██░░░██░░░██░░░██░░░██░░░░░██░░░██░█████▀░▀████▀░██░██░██░█████▀░░░██░░░░░░██░░░░█████░░█████▀░░░██░░██░██░░███░█████░░██░░░██░░░░██░░░░░░░░░░░░░░░█████░░▀████▀░░░█████▀░░░██░░░██░░░░░██░░░██░█████░░██░░░██░█████░░▀█████▄\n██░░░░░░░██░░░██░░░██░██░░██░██░░░░░██░░░██░░░██░░░██░░░██░░░██░░░░░██░░░██░██░░░░░░░██░░░██░██░██░██░░██░░░██░░░░░░██░░░░██░░░░░██░░██░░░██████░██░░░██░██░░░░░██░░░██░░░░██░░░░░░██████░░░██░░██░░░██░░░░░██░░██░░░██░░░██░░░░░██░░░██░██░░░░░██░░██░░██░░░░░░░░░░██\n██████░██████░██░░░██░██░░██░▀█████░██████▀░██████░██░░░██░░░▀█████░▀█████▀░██░░░░░░░██░░░▀██▀▀██▀░██░░██░██████░░░░██░░░░▀█████░██░░██░░░██░░██░▀█████▀░▀█████░██░░░██░░░░██░░░░░░░░░░░░░░░█████▀░░░██░░░░░██░░██░██████░▀█████░██░░░██░▀█████░▀███▀░░░▀█████░██████▀\n░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░",
+          "width": 2660,
+          "color": 5
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "a24b68bc-444b-4739-9ac2-fa26512b5b9a",
+        "name": "Sticky Note7"
+      },
+      {
+        "parameters": {
+          "content": "## Formação - Agente N8N\n![Source example](https://i.postimg.cc/zDL8sNR7/logo-agentes-de-IA.png)\n\n## https://agentes-n8n.com.br",
+          "height": 360,
+          "width": 360,
+          "color": 7
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          1860,
+          560
+        ],
+        "typeVersion": 1,
+        "id": "f7513e30-7c24-4ed0-93f1-da4950b1c138",
+        "name": "Sticky Note28"
+      }
+    ],
+    "connections": {
+      "Claude Sonnet 3.5": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "CopyWriter Linkedin Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Le conteúdos a serem gerados": {
+        "main": [
+          [
+            {
+              "node": "CopyWriter Linkedin Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Dispara todos os dias as 10am": {
+        "main": [
+          [
+            {
+              "node": "Le conteúdos a serem gerados",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "CopyWriter Linkedin Agent": {
+        "main": [
+          [
+            {
+              "node": "Atualiza Conteúdo",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Gmail",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Think": {
+        "ai_tool": [
+          [
+            {
+              "node": "CopyWriter Linkedin Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Gmail": {
+        "main": [
+          [
+            {
+              "node": "LinkedIn",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": null,
+    "pinData": {},
+    "versionId": "d2796a98-8342-4a14-83d6-9126ed440c87",
+    "triggerCount": 0,
+    "tags": [
+      {
+        "createdAt": "2025-06-11T14:18:33.644Z",
+        "updatedAt": "2025-06-11T14:18:33.644Z",
+        "id": "V1t6aT7uE5lB4FBv",
+        "name": "ai-agent"
+      },
+      {
+        "createdAt": "2025-06-11T14:18:33.629Z",
+        "updatedAt": "2025-06-11T14:18:33.629Z",
+        "id": "dr6gFQ8ubWgSwVqC",
+        "name": "linkedin"
+      },
+      {
+        "createdAt": "2025-06-11T14:18:33.629Z",
+        "updatedAt": "2025-06-11T14:18:33.629Z",
+        "id": "g6m4yLNliXG2dVcR",
+        "name": "google-sheets"
+      }
+    ]
+  }
+}
