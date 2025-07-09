@@ -1,0 +1,4751 @@
+{
+  "data": {
+    "createdAt": "2025-04-30T17:53:51.198Z",
+    "updatedAt": "2025-04-30T19:11:58.595Z",
+    "id": "4QavPOXQOrWxxNJj",
+    "name": "Atendimento Ofir",
+    "active": false,
+    "nodes": [
+      {
+        "parameters": {
+          "content": "## Manutenção das talelas do database - ofir\n",
+          "height": 380,
+          "width": 940,
+          "color": 2
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          1180,
+          920
+        ],
+        "id": "879f5a19-ed9c-48ff-ad67-0d78a755e4d7",
+        "name": "Sticky Note8"
+      },
+      {
+        "parameters": {
+          "content": "rodar para criar tabela \"ao_clientes\"",
+          "height": 274.7923843700217,
+          "width": 273.1627906976745,
+          "color": 4
+        },
+        "id": "49080a41-c73d-4f85-b18a-f508f4ec71e9",
+        "name": "Sticky Note11",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          1480,
+          980
+        ]
+      },
+      {
+        "parameters": {
+          "content": "rodar para limpar todas as tabelas",
+          "height": 274.7923843700217,
+          "width": 273.1627906976745,
+          "color": 3
+        },
+        "id": "62be943c-edda-4dee-a2fc-d75cd413f17c",
+        "name": "Sticky Note12",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          1780,
+          980
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "-- Drop the table if it exists\nDROP TABLE IF EXISTS ao_clientes;\n\n-- Create the table\nCREATE TABLE ao_clientes (\n    numero VARCHAR PRIMARY KEY,\n    departamento VARCHAR,\n    data JSONB DEFAULT '{}',\n    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,\n    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP\n);\n\n-- Create trigger function to automatically update updated_at\nCREATE OR REPLACE FUNCTION update_updated_at_column_ao_clientes()\nRETURNS TRIGGER AS $$\nBEGIN\n    NEW.updated_at = CURRENT_TIMESTAMP;\n    RETURN NEW;\nEND;\n$$ language 'plpgsql';\n\n-- Create trigger that calls the function before each update\nCREATE TRIGGER update_updated_at_column_ao_clientes\n    BEFORE UPDATE ON ao_clientes\n    FOR EACH ROW\n    EXECUTE FUNCTION update_updated_at_column_ao_clientes();",
+          "options": {}
+        },
+        "id": "9c6b9b4a-6727-470a-8cb4-1a2cde24e0dc",
+        "name": "criar_ao_clientes",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          1560,
+          1060
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "xgbfn9PNI4wJR5Yu",
+            "name": "EasyOfir"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "DO $$\nBEGIN\n    IF EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'ao_recepcionista_chat') THEN\n        DELETE FROM ao_recepcionista_chat;\n    END IF;\n\n    IF EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'ao_comercial_chat') THEN\n        DELETE FROM ao_comercial_chat;\n    END IF;\n\n    IF EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'ao_secretaria_chat') THEN\n        DELETE FROM ao_secretaria_chat;\n    END IF;\n\n    IF EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'ao_clientes') THEN\n        DELETE FROM ao_clientes;\n    END IF;\n\n    IF EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'ao_financeiro_chat') THEN\n        DELETE FROM ao_financeiro_chat;\n    END IF;\nEND $$;",
+          "options": {}
+        },
+        "id": "b55cf088-fed1-4188-949f-064f92c9c0f8",
+        "name": "limpar_todas_as_tabelas",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          1860,
+          1060
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "xgbfn9PNI4wJR5Yu",
+            "name": "EasyOfir"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $('config').item.json.url_webhook_n8n }}/webhook/agente-ofir/v1/financeiro",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"numero\": \"{{ $json.clienteNumero }}\",\n  \"mensagem\": \"{{ $json.mensagem }}\"\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          3240,
+          -120
+        ],
+        "id": "68fd66fb-545f-46d5-a01d-105e3b303b4a",
+        "name": "ia_financeiro",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XYDeNUnb3JmsypQm",
+            "name": "Robotizze"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $('config').item.json.url_webhook_n8n }}/webhook/agente-ofir/v1/secretaria",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "numero",
+                "value": "={{ $json.clienteNumero }}"
+              },
+              {
+                "name": "mensagem",
+                "value": "={{ $json.mensagem }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          3240,
+          240
+        ],
+        "id": "e98a03b6-0e06-419e-968a-fc692930751b",
+        "name": "ia_secretaria",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XYDeNUnb3JmsypQm",
+            "name": "Robotizze"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "errorMessage": "Infinity looping"
+        },
+        "type": "n8n-nodes-base.stopAndError",
+        "typeVersion": 1,
+        "position": [
+          2960,
+          -120
+        ],
+        "id": "d75d5dc1-247d-4ca5-bbaf-8543885f3bc0",
+        "name": "Stop and Error"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "300daa9a-1196-4fdc-aa73-576d335ae5d3",
+                "name": "mensagem",
+                "value": "={{ $json.mensagem ?? $json.body.mensagem }}",
+                "type": "string"
+              },
+              {
+                "id": "8d09f964-1c63-4d61-8c67-36f59193788f",
+                "name": "numero",
+                "value": "={{ $json.numero ?? $json.body.numero }}",
+                "type": "string"
+              },
+              {
+                "id": "708eb996-fdf7-4811-b93a-dc6853942cfb",
+                "name": "pushName",
+                "value": "={{ $json.pushName ?? \"Novo lead\" }}",
+                "type": "string"
+              },
+              {
+                "id": "96eefb68-21d4-41a7-a693-1d8b979b470a",
+                "name": "webhook",
+                "value": "={{ $json.webhook }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          2260,
+          360
+        ],
+        "id": "c327da0f-98b0-4f15-8f56-de96f0971f9c",
+        "name": "tratamento"
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "agente-ofir/v1/agente",
+          "authentication": "headerAuth",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          1920,
+          520
+        ],
+        "id": "3bc85d94-c940-4597-838b-fdf56ba16ccb",
+        "name": "rodar_agente",
+        "webhookId": "d711bc48-5fc8-4f7f-8354-787ef9e828f6",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XYDeNUnb3JmsypQm",
+            "name": "Robotizze"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "f6cbe8e0-9331-4015-aed9-22cfec90a6d1",
+                "name": "departamento",
+                "value": "=humano",
+                "type": "string"
+              },
+              {
+                "id": "c7fbf816-9505-4d98-b47a-1abbcf5c22f0",
+                "name": "mensagem",
+                "value": "Só um momento, estarei verificando como podemos lhe ajudar.",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          3240,
+          420
+        ],
+        "id": "a2dcac40-d83e-45b3-93ed-65e1426067ea",
+        "name": "humano"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $('config').item.json.url_webhook_n8n }}/webhook/agente-ofir/v1/comercial",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"numero\": \"{{ $json.clienteNumero }}\",\n  \"mensagem\": \"{{ $json.mensagem }}\"\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          3240,
+          60
+        ],
+        "id": "47c3b324-fae4-4f60-897d-238f7eef692d",
+        "name": "ia_comercial",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XYDeNUnb3JmsypQm",
+            "name": "Robotizze"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "784da313-0ddc-40d0-9422-22182af28f25",
+                "name": "clienteNumero",
+                "value": "={{ $('transferir_cliente').item.json.clienteNumero }}",
+                "type": "string"
+              },
+              {
+                "id": "dee352ee-f699-41ab-8291-98e9ec8b2b1c",
+                "name": "clienteData",
+                "value": "={{ $('transferir_cliente').item.json.clienteData }}",
+                "type": "object"
+              },
+              {
+                "id": "f6a08b10-b072-4d11-b4fb-dfc91ac4c7da",
+                "name": "clienteDepartamento",
+                "value": "={{ $('transferir_cliente').item.json.clienteDepartamento }}",
+                "type": "string"
+              },
+              {
+                "id": "36509cde-afaa-413a-b40f-bbb531375545",
+                "name": "mensagem",
+                "value": "={{ $('transferir_cliente').item.json.mensagem }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          3360,
+          660
+        ],
+        "id": "0784920c-4b49-4676-b8b1-1c57eaa916c9",
+        "name": "tratamento_cliente"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "5f457599-2e6d-46be-bde4-f922cc121bfa",
+                "name": "clienteNumero",
+                "value": "={{ $json.clienteNumero }}",
+                "type": "string"
+              },
+              {
+                "id": "9c034464-d953-4bd1-a622-e48a00528547",
+                "name": "clienteData",
+                "value": "={{ $json.clienteData }}",
+                "type": "object"
+              },
+              {
+                "id": "a4d2d45d-eb88-4ad8-8543-67973d515dab",
+                "name": "clienteDepartamento",
+                "value": "={{ $json.clienteDepartamento }}",
+                "type": "string"
+              },
+              {
+                "id": "9b795ede-9d27-43a0-a0aa-dafa04207222",
+                "name": "mensagem",
+                "value": "={{ $('tratamento').item.json.mensagem }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          2620,
+          360
+        ],
+        "id": "d201f420-e4d9-4398-ab3d-459acf1f2e6d",
+        "name": "mensagem"
+      },
+      {
+        "parameters": {
+          "method": "PATCH",
+          "url": "={{ $('config').item.json.url_webhook_n8n }}/webhook/agente-ofir/v1/cliente",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"numero\": \"{{ $json.clienteNumero }}\",\n  \"data\": {\n    \"departamentoOrigem\": \"{{ $('puxar_cliente').item.json.clienteDepartamento }}\",\n    \"departamentoDestino\": \"{{ $json.clienteDepartamento }}\"\n  },\n  \"departamento\": \"{{ $json.clienteDepartamento }}\",\n  \"outros\": { \n    \"mensagemAgente\": \"{{ $json.mensagem }}\"\n  }\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          3140,
+          660
+        ],
+        "id": "241e80cf-9cfb-4b99-9756-dcfe9da8bee1",
+        "name": "atualizar_cliente2",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XYDeNUnb3JmsypQm",
+            "name": "Robotizze"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "9726544b-7774-43c6-b110-574e30e859be",
+                "leftValue": "={{ $json.clienteDepartamento }}",
+                "rightValue": "={{ $('departamento').item.json.clienteDepartamento }}",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEquals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          3900,
+          680
+        ],
+        "id": "aea6c923-73e8-4720-b830-3b1a9a2e1a9d",
+        "name": "transferir_cliente",
+        "alwaysOutputData": false
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "2162b82e-a65b-4155-b504-149b5531157e",
+                "name": "clienteNumero",
+                "value": "={{ $('mensagem').item.json.clienteNumero }}",
+                "type": "string"
+              },
+              {
+                "id": "35deac04-51b5-4c72-9a5b-45eb00307d69",
+                "name": "clienteData",
+                "value": "={{ $('mensagem').item.json.clienteData }}",
+                "type": "object"
+              },
+              {
+                "id": "808a9de6-4181-4985-8e43-09fe9882b07e",
+                "name": "clienteDepartamento",
+                "value": "={{ $json.departamento }}",
+                "type": "string"
+              },
+              {
+                "id": "23c7cd7f-330a-4de9-a5b1-57b2f370962c",
+                "name": "mensagem",
+                "value": "={{ $json.mensagem }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          3640,
+          420
+        ],
+        "id": "c14e1575-105f-4ed7-8737-5ddccfd9a298",
+        "name": "agente_retorno"
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "b3b35544-ab83-48d3-9615-140c0fb837ec",
+                      "leftValue": "={{ $runIndex }}",
+                      "rightValue": 4,
+                      "operator": {
+                        "type": "number",
+                        "operation": "gt"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "ERRO"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "ee27e421-82c6-4241-af96-834c765cbecc",
+                      "leftValue": "={{ $json.clienteDepartamento }}",
+                      "rightValue": "=financeiro",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "financeiro"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "f5575cab-6d32-4e51-aeeb-4d7a37587ce8",
+                      "leftValue": "={{ $json.clienteDepartamento }}",
+                      "rightValue": "comercial",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "comercial"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "88ceb60a-5aef-461c-b7de-bd1e0b375a31",
+                      "leftValue": "={{ $json.clienteDepartamento }}",
+                      "rightValue": "secretaria",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "secretaria"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "7e082338-f421-4bf8-9211-edd31b224248",
+                      "leftValue": "={{ $json.clienteDepartamento }}",
+                      "rightValue": "humano",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "humano"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          2840,
+          320
+        ],
+        "id": "b2aa4cb6-d6ba-4e3e-a94b-3e4147614146",
+        "name": "departamento"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $('config').item.json.url_webhook_n8n }}/webhook/agente-ofir/v1/cliente",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "numero",
+                "value": "={{ $json.numero }}"
+              },
+              {
+                "name": "nome",
+                "value": "={{ $json.pushName }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          2440,
+          360
+        ],
+        "id": "9adc7894-4719-4de6-903f-0f90376856d9",
+        "name": "puxar_cliente",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XYDeNUnb3JmsypQm",
+            "name": "Robotizze"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": false,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "17b6fa1c-f4ea-4c75-9c9e-1a43900dbc58",
+                "leftValue": "={{ $json.body.apikey }}",
+                "rightValue": "={{ $json.evolutionApiKey }}",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
+                }
+              },
+              {
+                "id": "70c82c3b-7619-4b50-899f-17931323d19d",
+                "leftValue": "={{ $json.body.event }}",
+                "rightValue": "messages.upsert",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "looseTypeValidation": true,
+          "options": {
+            "ignoreCase": true
+          }
+        },
+        "id": "aec34031-a7fd-4b40-bb97-5a7496311115",
+        "name": "auth",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1920,
+          240
+        ]
+      },
+      {
+        "parameters": {
+          "content": "## Configuração",
+          "height": 300,
+          "width": 300
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          1340,
+          160
+        ],
+        "id": "d85b826d-e47c-4b9d-b8bd-d8ef27a896c2",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "b3708e78-3f46-4c99-aebe-65f4f26f66c1",
+                "name": "url_webhook_n8n",
+                "value": "https://n8n.roboitzze.us",
+                "type": "string"
+              },
+              {
+                "id": "1832bf7f-4280-438c-a303-8d669906578c",
+                "name": "url_api_whatsapp",
+                "value": "https://whatsapi.robotizze.us",
+                "type": "string"
+              },
+              {
+                "id": "d7036aff-4a03-4623-9874-d5603362b226",
+                "name": "instance",
+                "value": "Odonto",
+                "type": "string"
+              },
+              {
+                "id": "50ac7a75-bfc7-4075-9245-ee2c94739474",
+                "name": "evolutionApiKey",
+                "value": "68400F5356E6-4C39-9848-EEF47D4DA604",
+                "type": "string"
+              }
+            ]
+          },
+          "includeOtherFields": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1440,
+          240
+        ],
+        "id": "2d175429-0940-44d5-a5dc-1f1efe68cb03",
+        "name": "config"
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "/api/v1/chat",
+          "options": {}
+        },
+        "id": "e76ca4d3-1355-4b65-a53f-db14f3c9a74b",
+        "name": "Webhook",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          1140,
+          240
+        ],
+        "webhookId": "81dd8066-f3ed-462b-a538-3bad57450e37"
+      },
+      {
+        "parameters": {
+          "content": "## Agente IA: Comercial",
+          "height": 80,
+          "width": 1200,
+          "color": 2
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          3380,
+          1340
+        ],
+        "id": "c2acfe97-6e2c-4363-b816-7504d2d23976",
+        "name": "Sticky Note5"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $('config7').item.json.url_webhook_n8n }}/webhook/agente-ofir/v1/cliente",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "numero",
+                "value": "={{ $json.body.numero }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          3880,
+          1540
+        ],
+        "id": "476fa800-c3ae-4537-8a92-478b97511f48",
+        "name": "puxar_cliente4",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XYDeNUnb3JmsypQm",
+            "name": "Robotizze"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=<mensagem>{{ $('comercial_wh').item.json.body.mensagem }}</mensagem>",
+          "options": {
+            "systemMessage": "=Departamento atual: <departamento>{{ $json.clienteDepartamento }}</departamento>\n\n<departamentos>\n {{ $json.departamentos.map(item => `\n  <departamento_descricao>\n   <departamento>${item.departamento}</departamento>\n   <regra_de_transferencia>\n    ${item.regras}\n   </regra_de_transferencia>\n </departamento_descricao>\n`)  }}\n</departamentos>\n\n<contexto_sobre_odonotoclinic>\nHá quanto tempo a Odontoclinic Londrina está em atividade?\nResposta: A Odontoclinic Londrina está em atividade há mais de oito anos, oferecendo tecnologia e excelência em odontologia.\n\nQual é o grande diferencial da clínica para pacientes diabéticos e hipertensos?\nResposta: A Odontoclinic Londrina é a primeira clínica especializada em implantes dentários para diabéticos e hipertensos.\n\nQuais são os tratamentos oferecidos pela Odontoclinic Londrina?\nResposta: Os tratamentos incluem:\n\nOrtodontia\nAlinhadores\nLentes de contato dental\nToxina botulínica\nClareamento\nPróteses\nTratamento de canal\nExtração de siso\nPediatria\nRestaurações\nClínico geral\n\nQual é o benefício dos alinhadores em comparação aos aparelhos convencionais?\nResposta: Os alinhadores são práticos, rápidos, imperceptíveis e proporcionam um tratamento 25% mais rápido que os aparelhos convencionais.\n\nA extração de dentes do siso é dolorida na clínica?\nResposta: Não, a clínica oferece um protocolo indolor e diferenciado para a extração dos dentes do siso.\n\nComo a Odontoclinic trata as crianças?\nResposta: A clínica tem uma dentista exclusiva e especializada em pediatria, focada em transmitir confiança e tranquilidade às crianças, evitando traumas.\n\nQuem são as responsáveis pela Odontoclinic Londrina?\nResposta: As responsáveis são as irmãs Dra. Karine Schell e Dra. Karen Schell, empresárias, cristãs e mães que fundaram a clínica em 2015.\n\nQual é a experiência da Dra. Karine Schell?\nResposta: Dra. Karine Schell é Mestre e Especialista em Endodontia, com 17 anos de experiência e mais de 13.000 tratamentos de canal finalizados.\n\nQual é a especialidade da Dra. Karen Schell?\nResposta: Dra. Karen Schell é Especialista em Ortodontia, com 11 anos de experiência e mais de 3.000 tratamentos ortodônticos concluídos.\n\nOnde está localizada a Odontoclinic Londrina?\nResposta: A clínica está localizada na Rua Mato Grosso, 763 – Centro, Londrina – PR, e oferece estacionamento na Rua Mato Grosso, 717.\n\nComo entrar em contato para agendar uma consulta?\nResposta: É possível agendar pelo telefone (43) 3321-0025, pelo WhatsApp (43) 98813-7091 ou diretamente na clínica.\n\nQual é a missão da Odontoclinic Londrina?\nResposta: A missão da clínica é oferecer o melhor da odontologia com especialistas, tecnologia de ponta e materiais de alta qualidade, sempre mantendo valores de ambiente seguro, honestidade e ética.\n\nQual é o lema da Odontoclinic Londrina?\nResposta: “Sorria, a felicidade pertence a você.”\n\nQual é a visão da clínica em relação às restaurações dentárias?\nResposta: A clínica considera as restaurações dentárias como um aliado na prevenção de doenças graves, além de restaurar a qualidade de vida.\n\nQual é o foco no tratamento de canal da clínica?\nResposta: O tratamento de canal é realizado com conforto e tecnologia, sendo garantido que o procedimento na clínica não dói.\n\nO que diferencia o tratamento ortodôntico na Odontoclinic?\nResposta: A clínica tem expertise em oferecer tratamentos rápidos e eficientes, sem enrolação, utilizando os melhores aparelhos ortodônticos.\n\nQuais são os benefícios dos alinhadores oferecidos?\nResposta: Os alinhadores são práticos, rápidos, imperceptíveis e permitem um tratamento 25% mais rápido do que aparelhos convencionais.\n\nO que são lentes de contato dental e quais as vantagens?\nResposta: As lentes de contato dental garantem durabilidade e utilizam porcelana de alta qualidade para realçar sua melhor versão estética.\n\nPara quais fins a toxina botulínica é utilizada?\nResposta: A toxina botulínica é utilizada tanto para fins estéticos quanto para tratamentos como o de bruxismo, melhorando a qualidade de vida.\n\nPor que investir em clareamento dentário?\nResposta: O clareamento dentário é essencial para manter um sorriso impactante, considerado um dos principais acessórios e cartões de visita.\n\nComo as próteses dentárias podem melhorar a vida do paciente?\nResposta: As próteses fixas eliminam desconfortos, devolvendo autoconfiança para sorrir e mastigar sem medo.\n\nO tratamento de canal na clínica é doloroso?\nResposta: Não, a Odontoclinic proporciona conforto e tecnologia de ponta para garantir que o tratamento de canal seja indolor.\n\nA extração dos dentes do siso é tranquila?\nResposta: Sim, a clínica utiliza um protocolo diferenciado que garante uma extração de siso indolor e tranquila.\n\nComo a Odontoclinic atende as crianças?\nResposta: A clínica conta com uma dentista especializada em pediatria, garantindo um atendimento humanizado que transmite confiança e evita traumas.\n\nPor que as restaurações dentárias são importantes?\nResposta: As restaurações previnem doenças graves e também restauram a qualidade de vida dos pacientes, indo além da estética.\n\nQuais serviços são oferecidos pelo clínico geral?\nResposta: O clínico geral da Odontoclinic oferece protocolos personalizados para atender qualquer necessidade odontológica.\n</contexto_sobre_odontoclinic>\n\n<servicos>\n  <servico>\n    <nome>Ortodontia</nome>\n    <valor>R$ 350,00/mês (média de 24-36 meses)</valor>\n  </servico>\n  <servico>\n    <nome>Alinhadores</nome>\n    <valor>R$ 12.000,00 (tratamento completo)</valor>\n  </servico>\n  <servico>\n    <nome>Lentes de contato dental</nome>\n    <valor>R$ 2.500,00 (por dente)</valor>\n  </servico>\n  <servico>\n    <nome>Toxina botulínica</nome>\n    <valor>R$ 800,00 (por sessão)</valor>\n  </servico>\n  <servico>\n    <nome>Clareamento</nome>\n    <valor>R$ 900,00 (consultório + caseiro)</valor>\n  </servico>\n  <servico>\n    <nome>Próteses</nome>\n    <valor>R$ 2.000,00 (por elemento)</valor>\n  </servico>\n  <servico>\n    <nome>Tratamento de canal</nome>\n    <valor>R$ 1.200,00 (por dente)</valor>\n  </servico>\n  <servico>\n    <nome>Extração de siso</nome>\n    <valor>R$ 500,00 (por dente)</valor>\n  </servico>\n  <servico>\n    <nome>Restaurações</nome>\n    <valor>R$ 200,00 (por dente)</valor>\n  </servico>\n</servicos>\n\nVocê é a Jurema, integrante da equipe comercial da OdontoClinic Londrina. Você deve manter um tom amigável e profissional em todas as interações.\n\nO seu objetivo é tirar as dúvidas do cliente respondendo sobre produtos e serviço em <contexto_sobre_odontoclinic></contexto_sobre_odontoclinic> e <servicos></servicos>, identificar qual o serviço o cliente tem, atualizar o cadastro do cliente com o serviço identificado e apenas após a atualização do cadastro, então indicar o cliente para uma consulta.\n\nInicie a conversa de uma forma amigavel, pergunte sobre quais procedimentos baseado na lista de <servicos> o cliente teria interesse. \n\nUma vez identificado o interese, sem notificar o cliente, use a tool \"atualizar_interesse\" e passe o <nome> do <servico> identificado.\n\nApenas após a identificação do <servico> e atualizado, então faça uma sugestão para o cliente agendar uma consulta.\n\nAssim que identificar que o cliente deseja realizar uma consulta, transfira para o departamento secretaria.\n\nUse a calculadora sempre que precisar calcular os <valor> descritos no <servico>. A calculadora deve ser usada apenas para operações com INTEGERS\n\nSempre termine com uma pergunta aberta para criar maior engajamento.\n\nREGRAS PRINCIPAIS:\n\nMantenha respostas curtas e objetivas.\nSeja sempre cordial e prestativa.\nVocê deve avaliar a mensagem do cliente e decidir entre transferir ou responder diretamente.\n\nResponda apenas utlizando informações presentes em <contexto_sobre_odontoclinic></contexto_sobre_odontoclinic> e <servicos></servicos>.\n\nCaso não houver nenhuma informação presente em <contexto_sobre_odontoclinic></contexto_sobre_odontoclinic> e <servicos></servicos>, diga que irá solicitar uma ajuda de um outro colega seu e transfira para o departamente  \"humano\".\n\nPROCESSO DE DECISÃO:\n\nIdentifique a necessidade na mensagem\nConsulte as <regra_de_transferencia> \n\nEscolha entre as duas ações possíveis:\n\nApenas responder ao cliente com uma <mensagem>\n\nOu transferir o cliente de departamento e com uma <mensagem> para o departamento ao qual o cliente será transferido.\n\nNão informe ao cliente sobre a transferência.\n\nQuando houver uma <mensagemHumano></mensagemHumano> dentro de <mensagem></mensagem> responda o que estiver na <mensagemHumano></mensagemHumano> e continue no <departamento>{{ $json.clienteDepartamento }}</departamento>, não é para transferir o cliente para o departamento humano neste caso. Isto significa que um humano, responsável por este serviço respondeu ao cliente.\n\n\nResponda apenas usando o formato em JSON, sem aspas. Apenas o JSON.\n\n<output_schema>\n{ \n  \"mensagem\": STRING, \n  \"departamento\": STRING\n}\n</output_schema>\n\nCertifique-se de que na mensagem final ela está usando o formato descrito em <output_schema>.\n\n<exemplos>\n  <exemplo>\n  Human: Ola, eu gostaria de saber se voces possuem serviço para clareamento dental?\n  AI: { \"mensagem\": \"Olá! Aqui é Claudinéia da OdontoClinic Londrina. Sim, oferecemos serviços de clareamento dental. O clareamento é um dos grandes responsáveis pelo impacto de um belo sorriso. Você tem cuidado do seu? Estamos aqui para ajudar!\", \"departamento\": \"comercial\" }\n  </exemlo>\n<exemplo>\n  Human: Ola, eu gostaria de saber se voces possuem serviço para clareamento dental?\n  AI: { \"mensagem\": \"Olá! Aqui é Claudinéia da OdontoClinic Londrina. Sim, oferecemos serviços de clareamento dental. O clareamento é um dos grandes responsáveis pelo impacto de um belo sorriso. Você tem cuidado do seu? Estamos aqui para ajudar!\", \"departamento\": \"comercial\" }\n  Human: Eu tenho um problema bem específico no meu dente, acho que irá precisar de uma cirurgia avançada e aplicada com brocas de ouro. Como posso fazer?\n  AI: { \"mensagem\": \"Cliente com um problema específico, interessado em uma cirurgia dental. Informou que precisaria de brocas de ouro.\", \"departamento\": \"humano\" }\n  </exemlo>\n<exemplo>\n  Departamento atual: <departamento>teste</departamento>\n  Human: <mensagemHumano>Voce precisa de uma ajuda espeecializada</mensagemHumano>\n  AI: { \"mensagem\": \"Voce precisa de uma ajuda espeecializada\": \"teste\" }\n  </exemlo>\n<exemplos>"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.7,
+        "position": [
+          4120,
+          1540
+        ],
+        "id": "00c9fc46-0347-4917-8ecb-5780152c65ac",
+        "name": "AI Agent1"
+      },
+      {
+        "parameters": {
+          "sessionIdType": "customKey",
+          "sessionKey": "={{ $json.clienteNumero }}",
+          "tableName": "ao_comercial_chat"
+        },
+        "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+        "typeVersion": 1.3,
+        "position": [
+          4140,
+          1740
+        ],
+        "id": "ba118810-d2a3-40a2-aaff-5a4a2dc06f64",
+        "name": "Postgres Chat Memory1",
+        "credentials": {
+          "postgres": {
+            "id": "xgbfn9PNI4wJR5Yu",
+            "name": "EasyOfir"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "agente-ofir/v1/comercial",
+          "authentication": "headerAuth",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          3420,
+          1540
+        ],
+        "id": "96080560-a199-4606-8d37-f2553f0f6b31",
+        "name": "comercial_wh",
+        "webhookId": "d711bc48-5fc8-4f7f-8354-787ef9e828f6",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XYDeNUnb3JmsypQm",
+            "name": "Robotizze"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={\n  \"mensagem\": \"{{ $json.mensagem }}\",\n  \"departamento\": \"{{ $json.departamento }}\"\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          4720,
+          1540
+        ],
+        "id": "c740c2dd-86f9-412f-b39e-b95a0613adb4",
+        "name": "Respond to Webhook4"
+      },
+      {
+        "parameters": {
+          "toolDescription": "Use esta tool para atualizar o interesse do cliente. Use o formato JSON { servicoInteresse: STRING } no campo data. O campo data é do tipo objeto.",
+          "method": "PATCH",
+          "url": "={{ $('config7').item.json.url_webhook_n8n }}/webhook/agente-ofir/v1/cliente",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "parametersBody": {
+            "values": [
+              {
+                "name": "numero",
+                "valueProvider": "fieldValue",
+                "value": "={{ $json.clienteNumero }}"
+              },
+              {
+                "name": "departamento",
+                "valueProvider": "fieldValue",
+                "value": "={{ $json.clienteDepartamento }}"
+              },
+              {
+                "name": "data"
+              }
+            ]
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+        "typeVersion": 1.1,
+        "position": [
+          4280,
+          1740
+        ],
+        "id": "f65df438-5c95-4d1e-9635-1732f5255149",
+        "name": "atualizar_interesse",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XYDeNUnb3JmsypQm",
+            "name": "Robotizze"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+        "typeVersion": 1,
+        "position": [
+          4420,
+          1740
+        ],
+        "id": "7f2a751e-6547-44ee-a052-10b82e954490",
+        "name": "calculadora"
+      },
+      {
+        "parameters": {
+          "jsCode": "for (const item of $input.all()) {\n  const { output } = item.json;\n\n  const agenteResposta = JSON.parse(output);\n\n  if (agenteResposta.departamento !== $('puxar_cliente4').item?.json.clienteDepartamento) {\n    item.json = {\n      mensagem: $('comercial_wh').item?.json.body.mensagem,\n      departamento: agenteResposta.departamento\n    }\n  } else {\n    item.json = agenteResposta\n  }\n}\n\nreturn $input.all();"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          4500,
+          1540
+        ],
+        "id": "dd4d17dc-a76e-445b-86ec-56dc6609a61e",
+        "name": "tratamento1"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "6f17d77b-0e6d-4651-9229-5c2ea486cfc2",
+                "name": "url_webhook_n8n",
+                "value": "=https://n8n.robotizze.us",
+                "type": "string"
+              }
+            ]
+          },
+          "includeOtherFields": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          3660,
+          1540
+        ],
+        "id": "6dc6efe0-172f-4412-8ec9-7db4e32b6f90",
+        "name": "config7"
+      },
+      {
+        "parameters": {
+          "content": "## Configuração",
+          "height": 240,
+          "width": 190
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          3620,
+          1460
+        ],
+        "id": "bc374839-5acd-471c-996e-899b05342b33",
+        "name": "Sticky Note16"
+      },
+      {
+        "parameters": {
+          "content": "## Configuração",
+          "height": 240,
+          "width": 190
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          3680,
+          3320
+        ],
+        "id": "4bc1988a-f77a-4a7a-b95c-a21383f717fe",
+        "name": "Sticky Note15"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "6f17d77b-0e6d-4651-9229-5c2ea486cfc2",
+                "name": "url_webhook_n8n",
+                "value": "=https://n8n.robotizze.us",
+                "type": "string"
+              }
+            ]
+          },
+          "includeOtherFields": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          3720,
+          3400
+        ],
+        "id": "665b8077-4318-45c6-96f7-5acf5738ed5f",
+        "name": "config6"
+      },
+      {
+        "parameters": {
+          "content": "## Configuração",
+          "height": 240,
+          "width": 190
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          1380,
+          1460
+        ],
+        "id": "d49e4708-51d5-4fcc-8eb1-c793569caf13",
+        "name": "Sticky Note13"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "6f17d77b-0e6d-4651-9229-5c2ea486cfc2",
+                "name": "url_webhook_n8n",
+                "value": "=https://n8n.robotizze.us",
+                "type": "string"
+              },
+              {
+                "id": "efc67730-c53f-499e-8bf5-4ec79f6dacc9",
+                "name": "departamentos.secretaria",
+                "value": "=Transferir para a secretaria sempre que o cliente quiser agendar uma consulta ou gerenciar as suas consultas.",
+                "type": "string"
+              },
+              {
+                "id": "04fbf68d-ffcd-411c-afad-58b5406efad4",
+                "name": "departamentos.comercial",
+                "value": "=Transferir para o comercial sempre que o cliente tiver alguma duvida sobre o produto/serviço ou sobre os profissionais e a empresa. Apenas o comercial deve responder quais produtos e serviços a Nultra Food oferece.",
+                "type": "string"
+              },
+              {
+                "id": "9e801a5b-5ea7-4c10-a435-30d4115c7983",
+                "name": "departamentos.humano",
+                "value": "=Transferir para o humano quando não tiver mais nenhuma opção presente ou informação para repassar ao cliente.",
+                "type": "string"
+              },
+              {
+                "id": "ed70191d-7ec4-4b52-9791-7ff64d1be924",
+                "name": "departamentos.financeiro",
+                "value": "=Transferir toda vez que a secretária realizar um agendamento. Transferir toda vez que o cliente tiver uma dúvida sobre pagamentos.",
+                "type": "string"
+              }
+            ]
+          },
+          "includeOtherFields": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1420,
+          1540
+        ],
+        "id": "2f89cd0d-c51e-43ed-9b12-7c6933ae8abe",
+        "name": "config4"
+      },
+      {
+        "parameters": {
+          "content": "## Configuração",
+          "height": 240,
+          "width": 190
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          1440,
+          1980
+        ],
+        "id": "892f9b14-84d8-4e7e-a09f-d64b61c99335",
+        "name": "Sticky Note10"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "20440cf8-2428-48b4-8f1d-dea5f6f2f0d9",
+                "name": "numeroAdmin",
+                "value": "5518981927977@s.whatsapp.net",
+                "type": "string"
+              },
+              {
+                "id": "6f17d77b-0e6d-4651-9229-5c2ea486cfc2",
+                "name": "url_webhook_n8n",
+                "value": "https://n8n.robotizze.us",
+                "type": "string"
+              },
+              {
+                "id": "6ec99cb8-9674-4b5e-b614-02a2fcb02c97",
+                "name": "url_api_whatsapp",
+                "value": "https://whatsapi.robotizze.us",
+                "type": "string"
+              },
+              {
+                "id": "2d0dc33e-c970-46cc-9900-ffd076fb4f04",
+                "name": "instance",
+                "value": "Odonto",
+                "type": "string"
+              }
+            ]
+          },
+          "includeOtherFields": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1480,
+          2060
+        ],
+        "id": "f3fc2d35-ff7d-44c5-8bea-6b795ea623a0",
+        "name": "config3"
+      },
+      {
+        "parameters": {
+          "method": "PATCH",
+          "url": "={{ $('config6').item.json.url_webhook_n8n }}/webhook/agente-ofir/v1/cliente",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"numero\": \"{{ $('puxar_cliente6').item.json.clienteNumero }}\",\n  \"departamento\": \"{{ $('puxar_cliente6').item.json.clienteDepartamento }}\",\n  \"data\": {\n    \"asaasCustomerId\": \"{{ $json.asaasCustomerId }}\"\n  }\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          4360,
+          3220
+        ],
+        "id": "540bf3ec-cd86-4d94-aa91-4cec592c1898",
+        "name": "atualizar_cliente6",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XYDeNUnb3JmsypQm",
+            "name": "Robotizze"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "toolDescription": "Use esta tool para gerar o pixCode passando no campo \"value\" o </valor> do </produto_servico_interesse> no formato deste exemplo \"30.00\"",
+          "method": "POST",
+          "url": "={{ $('config6').item.json.url_webhook_n8n }}/webhook/v1/asaas/pix",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "parametersBody": {
+            "values": [
+              {
+                "name": "billingType",
+                "valueProvider": "fieldValue",
+                "value": "PIX"
+              },
+              {
+                "name": "asaasCustomerId",
+                "valueProvider": "fieldValue",
+                "value": "={{ $('get_client_asaas').item.json.asaasCustomerId }}"
+              },
+              {
+                "name": "value"
+              }
+            ]
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+        "typeVersion": 1.1,
+        "position": [
+          3960,
+          3860
+        ],
+        "id": "8d5a1c3e-eb22-4940-bf98-ab618cf7f951",
+        "name": "create_payment",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XYDeNUnb3JmsypQm",
+            "name": "Robotizze"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=<mensagem>{{ $('financeiro_wh').item.json.body.mensagem }}</mensagem>",
+          "options": {
+            "systemMessage": "=Departamento atual: <departamento>{{ $('puxar_cliente6').item.json.clienteDepartamento }}</departamento>\n\n<produto_servico_interesse>{{ $('puxar_cliente6').item.json.clienteData.servicoInteresse }}</produto_servico_interesse>\n<asaas_customer_id>{{ $('get_client_asaas').item.json.asaasCustomerId }}</asaas_customer_id>\n<payments>\n  {{ $('get_payments_asaas').item.json.payments.map(item => `\n<payment>\n    <id>${item.id}</id>\n    <value>${item.value}</value>\n    <status>${item.status}</status>\n<payment>\n`) }}\n<payments>\n\n<departamentos>\n {{ $('puxar_cliente6').item.json.departamentos.map(item => `\n  <departamento_descricao>\n   <departamento>${item.departamento}</departamento>\n   <regra_de_transferencia>\n    ${item.regras}\n   </regra_de_transferencia>\n </departamento_descricao>\n`)  }}\n</departamentos>\n\n<servicos>\n  <servico>\n    <nome>Ortodontia</nome>\n    <valor>R$ 350,00/mês (média de 24-36 meses)</valor>\n  </servico>\n  <servico>\n    <nome>Alinhadores</nome>\n    <valor>R$ 12.000,00 (tratamento completo)</valor>\n  </servico>\n  <servico>\n    <nome>Lentes de contato dental</nome>\n    <valor>R$ 2.500,00 (por dente)</valor>\n  </servico>\n  <servico>\n    <nome>Toxina botulínica</nome>\n    <valor>R$ 800,00 (por sessão)</valor>\n  </servico>\n  <servico>\n    <nome>Clareamento</nome>\n    <valor>R$ 900,00 (consultório + caseiro)</valor>\n  </servico>\n  <servico>\n    <nome>Próteses</nome>\n    <valor>R$ 2.000,00 (por elemento)</valor>\n  </servico>\n  <servico>\n    <nome>Tratamento de canal</nome>\n    <valor>R$ 1.200,00 (por dente)</valor>\n  </servico>\n  <servico>\n    <nome>Extração de siso</nome>\n    <valor>R$ 500,00 (por dente)</valor>\n  </servico>\n  <servico>\n    <nome>Restaurações</nome>\n    <valor>R$ 200,00 (por dente)</valor>\n  </servico>\n</servicos>\n\nVocê é a Jurema, integrante da equipe financeira da OdontoClinic Londrina. Você deve manter um tom amigável e profissional em todas as interações.\n\n# Seu objetivo é:\n- Identificar se o usuário deseja adquirir o </produto_servico_interesse>\n- Utilizar a tool \"create_payment\" para criar o PIX do <valor> indicado pelo <nome> do <sevico> em </produto_servico_interesse>\n- Encaminhar o \"pixCode\" que retornou da tool \"create_payment\" para o usuário, informando de que esta é a sua chave PIX para o pagamento.\n- Uma vez com a chave PIX gerada, informar que estará no aguardo do pagamento e perguntar se possui mais alguma informação.\n- Utilize as informação em </payments> para identificar todos os pagamentos deste cliente.\n \nUse a calculadora sempre que precisar calcular os <valor> descritos no <servico>. A calculadora deve ser usada apenas para operações com INTEGERS\n\nSempre termine com uma pergunta aberta para criar maior engajamento.\n\n# REGRAS PRINCIPAIS:\n- Mantenha respostas curtas e objetivas.\n- Seja sempre cordial e prestativa.\n- Você deve avaliar a mensagem do cliente e decidir entre transferir ou responder diretamente.\n- Responda apenas utlizando informações presentes em <servicos></servicos>.\n- Caso não houver nenhuma informação presente em <servicos></servicos>, diga que irá solicitar uma ajuda de um outro colega seu e transfira para o departamente  \"humano\".\n\n# PROCESSO DE DECISÃO:\n- Identifique a necessidade na mensagem\n- Consulte as <regra_de_transferencia> \n- Escolha entre as duas ações possíveis:\n- Apenas responder ao cliente com uma <mensagem>\n- Ou transferir o cliente de departamento e com uma <mensagem> para o departamento ao qual o cliente será transferido.\n- Não informe ao cliente sobre a transferência.\n\n# MENSAGEM HUMANO:\nQuando houver uma <mensagemHumano></mensagemHumano> dentro de <mensagem></mensagem> responda o que estiver na <mensagemHumano></mensagemHumano> e continue no <departamento>{{ $('puxar_cliente6').item.json.clienteDepartamento }}</departamento>, não é para transferir o cliente para o departamento humano neste caso. Isto significa que um humano, responsável por este serviço respondeu ao cliente.\n\n# MENSAGEM ASAAS:\nQuando houver uma <mensagemAsaas></mensagemAsaas> dentro de <mensagem></mensagem> verifique o </paymentStatus>. \n- Caso </paymentStatus> seja: RECEIVED, transfira para o departamento \"secretaria\" informando a seguinte frase: \"Pagamento recebido\"\n- Caso </paymentStatus> seja: OVERDUE, transfira para o departamento \"secretaria\" informando a seguinte frase: \"Pagamento em atraso\"\n\n# OUTPUT TYPE:\n- Responda apenas usando o formato em JSON, sem aspas. Apenas o JSON.\n<output_schema>\n{ \n  \"mensagem\": STRING, \n  \"departamento\": STRING\n}\n</output_schema>\n\nCertifique-se de que na mensagem final ela está usando o formato descrito em <output_schema>.\n\n<exemplos>\n  <exemplo>\n    Departamento atual: <departamento>teste</departamento>\n    Human: <mensagemHumano>Voce precisa de uma ajuda espeecializada</mensagemHumano>\n    AI: { \"mensagem\": \"Voce precisa de uma ajuda espeecializada\", \"departamento\": \"teste\" }\n  </exemlo>\n  <exemplo>\n    <produto_servico_interesse>Tratamento de canal</produto_servico_interesse>\n    Departamento atual: <departamento>financeiro</departamento>\n    Human: <mensagemHumano>Pode sim</mensagemHumano>\n    AI: { \"mensagem\": \"Então, apenas para confirmar, será o serviçø de tratamento de canal no valor é de R$ 1.200,00 por dente. Posso gerar um código PIX para o pagamento?\", \"departamento\": \"financeiro\" }\n  </exemlo>\n  <exemplo>\n    Departamento atual: <departamento>financeiro</departamento>\n    Human: <mensagemAsaas><paymentStatus>RECEIVED</paymentStatus><paymentId>pay_m8fl3ufjq5f4x3y3</paymentId></mensagemAsaas>\n    AI: { \"mensagem\": \"<paymentStatus>Pagamento recebido</paymentStatus>\", \"departamento\": \"secretaria\" }\n  </exemlo>\n  <exemplo>\n    Departamento atual: <departamento>financeiro</departamento>\n    Human: <mensagemAsaas><paymentStatus>OVERDUE</paymentStatus><paymentId>pay_m8fl3ufjq5f4x3y3</paymentId></mensagemAsaas>\n    AI: { \"mensagem\": \"<paymentStatus>Pagamento em atraso</paymentStatus>\", \"departamento\": \"secretaria\" }\n  </exemlo>\n<exemplos>"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.7,
+        "position": [
+          3740,
+          3620
+        ],
+        "id": "5c0c1558-bdca-4b15-87af-5acf7b001ed4",
+        "name": "Agente financeiro"
+      },
+      {
+        "parameters": {
+          "url": "={{ $('config6').item.json.url_webhook_n8n }}/webhook/v1/asaas/cliente?asaasCustomerId={{ $json.asaasCustomerId }}",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          4360,
+          3400
+        ],
+        "id": "6b931035-1af3-46e6-b165-1162eb9521c7",
+        "name": "get_payments_asaas",
+        "alwaysOutputData": true,
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XYDeNUnb3JmsypQm",
+            "name": "Robotizze"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $('config6').item.json.url_webhook_n8n }}/webhook/v1/asaas/cliente",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n    \"nome\": \"{{ $json.clienteData?.nome ?? \"\" }}\",\n    \"cpfCnpj\": \"{{ $json.clienteData.cpf.replaceAll(\".\", \"\").replaceAll(\"-\", \"\") }}\",\n    \"email\": \"{{ $json.clienteData.email }}\",\n    \"phone\": \"{{ $('financeiro_wh').item.json.body.numero.split('@')[0] }}\"\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          4140,
+          3400
+        ],
+        "id": "a088e978-ee59-40da-9a8c-3eda4a8b88d0",
+        "name": "get_client_asaas",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XYDeNUnb3JmsypQm",
+            "name": "Robotizze"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "agente-ofir/v1/financeiro",
+          "authentication": "headerAuth",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          3460,
+          3400
+        ],
+        "id": "871c2f35-afe7-49cc-aa53-463ed1228583",
+        "name": "financeiro_wh",
+        "webhookId": "d711bc48-5fc8-4f7f-8354-787ef9e828f6",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XYDeNUnb3JmsypQm",
+            "name": "Robotizze"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "for (const item of $input.all()) {\n  const { output } = item.json;\n\n  const agenteResposta = JSON.parse(output);\n\n  if (agenteResposta.departamento !== $('puxar_cliente6').item?.json.clienteDepartamento) {\n    item.json = {\n      mensagem: $('financeiro_wh').item?.json.body.mensagem,\n      departamento: agenteResposta.departamento\n    }\n  } else {\n    item.json = agenteResposta\n  }\n}\n\nreturn $input.all();"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          4120,
+          3620
+        ],
+        "id": "9046f331-3ea2-464d-a76c-07d06899306b",
+        "name": "tratamento2"
+      },
+      {
+        "parameters": {},
+        "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+        "typeVersion": 1,
+        "position": [
+          4120,
+          3860
+        ],
+        "id": "fe30dd98-9eea-4ae0-994f-dfa455789c20",
+        "name": "calculadora1"
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={\n  \"mensagem\": \"{{ $json.mensagem }}\",\n  \"departamento\": \"{{ $json.departamento }}\"\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          4340,
+          3620
+        ],
+        "id": "19829c85-b491-4888-bf9f-5a5c6f15274c",
+        "name": "Respond to Webhook7"
+      },
+      {
+        "parameters": {
+          "sessionIdType": "customKey",
+          "sessionKey": "={{ $('puxar_cliente6').item.json.clienteNumero }}",
+          "tableName": "ao_financeiro_chat"
+        },
+        "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+        "typeVersion": 1.3,
+        "position": [
+          3800,
+          3840
+        ],
+        "id": "8b8977e0-5928-4652-85d3-2fed19c947c2",
+        "name": "Postgres Chat Memory",
+        "credentials": {
+          "postgres": {
+            "id": "xgbfn9PNI4wJR5Yu",
+            "name": "EasyOfir"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $('config6').item.json.url_webhook_n8n }}/webhook/agente-ofir/v1/cliente",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "numero",
+                "value": "={{ $json.body.numero }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          3920,
+          3400
+        ],
+        "id": "cb1fbf2d-8096-434a-95a6-09b2f10a7082",
+        "name": "puxar_cliente6",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XYDeNUnb3JmsypQm",
+            "name": "Robotizze"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## Agente IA: Financeiro",
+          "height": 80,
+          "width": 1200,
+          "color": 2
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          3420,
+          3100
+        ],
+        "id": "9ebf2921-ef65-46e7-ab9c-921b18adc204",
+        "name": "Sticky Note9"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "INSERT INTO ao_clientes (numero, data, departamento)\nVALUES ('{{ $('criar_cliente').item.json.body.numero }}', '{}', 'comercial');\n",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          1760,
+          1740
+        ],
+        "id": "42db335b-f1d9-40bd-b6e8-015a64e6da28",
+        "name": "novo_cliente",
+        "credentials": {
+          "postgres": {
+            "id": "xgbfn9PNI4wJR5Yu",
+            "name": "EasyOfir"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "fa6fddc3-3892-4582-98e8-e60bb569d540",
+                "name": "numero",
+                "value": "={{ $json.body.numero }}",
+                "type": "string"
+              },
+              {
+                "id": "90038942-ba44-44b5-a549-c05a62dbe0ec",
+                "name": "departamento",
+                "value": "={{ $json.body.departamento }}",
+                "type": "string"
+              },
+              {
+                "id": "8e18a645-824b-437e-8dd3-4c461439a78b",
+                "name": "data",
+                "value": "={{ typeof $json.body.data === 'object' ? JSON.stringify($json.body.data) : $json.body.data }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1720,
+          2060
+        ],
+        "id": "f1ad608f-248a-4174-bff3-d2b807a97b95",
+        "name": "tratamento5"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "c8467648-c567-4716-a3b1-c18170e682f3",
+                "name": "comentario",
+                "value": "=Transferido de '{{ $('puxar_cliente2').item.json.clienteDepartamento }}' para '{{ $('atualizar_cliente').item.json.body.departamento }}'. Mensagem do Agente: '{{ $('atualizar_cliente').item.json.body.outros.mensagemAgente }}'. {{ $('atualizar_cliente').item.json.body.departamento === \"humano\" ? 'O que o agente deve responder neste caso?' : '' }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          2740,
+          2060
+        ],
+        "id": "0c2591b6-3814-4125-8651-6934313393d8",
+        "name": "comentario_transferencia"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "81ec2d50-b144-42d3-a071-1b0857369727",
+                "leftValue": "={{ $('atualizar_cliente').item.json.body.departamento }}",
+                "rightValue": "humano",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1920,
+          2280
+        ],
+        "id": "2677d377-6f97-44da-a561-e2d68fb1329a",
+        "name": "notificar_quando_for_humano"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $('config3').item.json.url_webhook_n8n }}/webhook/agente-ofir/v1/clickup",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"numero\": \"{{ $('puxar_cliente2').item.json.clienteNumero }}\",\n  \"acao\": \"ADICIONAR_COMENTARIO\",\n  \"data\": {\n    \"comentario\": \"{{ $json.comentario }}\"\n  }\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1720,
+          2280
+        ],
+        "id": "88dae1d8-f8fe-4369-af9c-dc62cf1203de",
+        "name": "adicionar_comentario_request",
+        "alwaysOutputData": true,
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XYDeNUnb3JmsypQm",
+            "name": "Robotizze"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "b851e14f-8413-494b-b23d-7ad38bcad1bd",
+                "leftValue": "={{ $('puxar_cliente2').item.json.clienteDepartamento }}",
+                "rightValue": "={{ $('atualizar_cliente').item.json.body.departamento }}",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEquals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          2520,
+          2060
+        ],
+        "id": "b05ef22c-174a-40a7-a1a7-22e843aced71",
+        "name": "foi_transferido"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $('config4').item.json.url_webhook_n8n }}/webhook/agente-ofir/v1/clickup",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"numero\": \"{{ $('criar_cliente').item.json.body.numero }}\",\n  \"acao\": \"CRIAR_LEAD\",\n  \"data\": {\n    \"nome\": \"{{ $('criar_cliente').item.json.body.nome ?? \"Novo lead\" }}\",\n    \"telefone\": \"{{ $('criar_cliente').item.json.body.numero.split('@')[0] }}\"\n  }\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1960,
+          1740
+        ],
+        "id": "0c6b4182-d096-4a7e-b385-57a7a29007d7",
+        "name": "criar_lead_request",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XYDeNUnb3JmsypQm",
+            "name": "Robotizze"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={ \"sucesso\": {{ $json.success }} }",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          2320,
+          2060
+        ],
+        "id": "57af28f1-0a93-4dfd-b243-25f6f4d7456b",
+        "name": "Respond to Webhook1"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "INSERT INTO ao_clientes (numero, data, departamento)\nVALUES ('{{ $('tratamento5').item.json.numero }}', '{{ $('tratamento5').item.json.data }}'::jsonb, '{{ $('tratamento5').item.json.departamento }}')\nON CONFLICT (numero) \nDO UPDATE SET \n    data = ao_clientes.data || EXCLUDED.data,\n    departamento = EXCLUDED.departamento,\n    updated_at = CURRENT_TIMESTAMP;",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          2120,
+          2060
+        ],
+        "id": "f972e7dc-ff05-4191-b419-e36d0367ae7f",
+        "name": "query_atualizar_data",
+        "alwaysOutputData": true,
+        "credentials": {
+          "postgres": {
+            "id": "xgbfn9PNI4wJR5Yu",
+            "name": "EasyOfir"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $('config3').item.json.url_webhook_n8n }}/webhook/agente-ofir/v1/cliente",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "numero",
+                "value": "={{ $json.numero }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1920,
+          2060
+        ],
+        "id": "d1436a3e-f605-43ca-837f-cec7ddd09421",
+        "name": "puxar_cliente2",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XYDeNUnb3JmsypQm",
+            "name": "Robotizze"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "httpMethod": "PATCH",
+          "path": "agente-ofir/v1/cliente",
+          "authentication": "headerAuth",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          1220,
+          2060
+        ],
+        "id": "f07c8488-4481-4412-b46d-b3d5728b13e0",
+        "name": "atualizar_cliente",
+        "webhookId": "d711bc48-5fc8-4f7f-8354-787ef9e828f6",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XYDeNUnb3JmsypQm",
+            "name": "Robotizze"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "agente-ofir/v1/cliente",
+          "authentication": "headerAuth",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          1220,
+          1540
+        ],
+        "id": "0810d151-0c20-4a09-bfb3-6377b3b4dcdf",
+        "name": "criar_cliente",
+        "webhookId": "d711bc48-5fc8-4f7f-8354-787ef9e828f6",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XYDeNUnb3JmsypQm",
+            "name": "Robotizze"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## Gerenciar tabela ao_clientes",
+          "height": 80,
+          "width": 1760,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          1180,
+          1340
+        ],
+        "id": "5a1a805b-b407-45f0-8e42-13911fa7957f",
+        "name": "Sticky Note1"
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={\n  \"clienteNumero\": \"{{ $json.clienteNumero }}\",\n  \"clienteData\": {{ JSON.stringify($json.clienteData) }},\n  \"clienteDepartamento\": \"{{ $json.clienteDepartamento }}\",\n  \"departamentos\": {{ JSON.stringify($json.departamentos) }}\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          2740,
+          1780
+        ],
+        "id": "6c8c895e-e390-4ef0-974b-a9945561cc2e",
+        "name": "Respond to Webhook"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "5ebd8843-19a7-4147-8ccd-fcb0e849f79c",
+                "name": "clienteNumero",
+                "value": "={{ $json.clienteNumero }}",
+                "type": "string"
+              },
+              {
+                "id": "9ab6c0a4-d5b4-493a-af98-8769b7882df4",
+                "name": "clienteData",
+                "value": "={{ $json.clienteData }}",
+                "type": "object"
+              },
+              {
+                "id": "3d17f8e5-f803-482d-9135-cb6a26741033",
+                "name": "clienteDepartamento",
+                "value": "={{ $json.clienteDepartamento }}",
+                "type": "string"
+              },
+              {
+                "id": "a605908c-0c4c-459b-ad9c-f55bee82a31a",
+                "name": "departamentos.secretaria",
+                "value": "={{ $('config4').item.json.departamentos.secretaria }}",
+                "type": "string"
+              },
+              {
+                "id": "88b9f74d-9690-4869-af09-e52f3a8c00c5",
+                "name": "departamentos.comercial",
+                "value": "={{ $('config4').item.json.departamentos.comercial }}",
+                "type": "string"
+              },
+              {
+                "id": "de760c54-de51-49b2-8afe-c46d6844bce4",
+                "name": "departamentos.humano",
+                "value": "={{ $('config4').item.json.departamentos.humano }}",
+                "type": "string"
+              },
+              {
+                "id": "29c78a8d-7e8d-4e91-ae07-cf8519ee47b4",
+                "name": "departamentos.financeiro",
+                "value": "={{ $('config4').item.json.departamentos.financeiro }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          2500,
+          1540
+        ],
+        "id": "a109ca1c-b380-4714-8b43-15a15d912ded",
+        "name": "cliente_atualizado"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "f7a93cbd-d1d5-4b67-ab6a-83b6cec5ffb7",
+                "leftValue": "={{ $json.clienteNumero }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "exists",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          2240,
+          1720
+        ],
+        "id": "60d1be5b-63c2-4fc4-9ecd-c62d94332ab0",
+        "name": "cliente_existente"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "1581cf30-cf13-4576-85f3-596fde5e0a5b",
+                "name": "clienteNumero",
+                "value": "={{ $json.numero }}",
+                "type": "string"
+              },
+              {
+                "id": "df687a37-1dce-4f4f-9c0e-249f6094f51b",
+                "name": "clienteData",
+                "value": "={{ $json.data }}",
+                "type": "object"
+              },
+              {
+                "id": "5932652e-f969-4e57-8848-d53136184603",
+                "name": "clienteDepartamento",
+                "value": "={{ $json.departamento }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1960,
+          1540
+        ],
+        "id": "9f6bc23f-aca1-4005-8a5a-0eda931af783",
+        "name": "cliente"
+      },
+      {
+        "parameters": {
+          "operation": "select",
+          "schema": {
+            "__rl": true,
+            "mode": "list",
+            "value": "public"
+          },
+          "table": {
+            "__rl": true,
+            "value": "ao_clientes",
+            "mode": "list",
+            "cachedResultName": "ao_clientes"
+          },
+          "limit": 1,
+          "where": {
+            "values": [
+              {
+                "column": "numero",
+                "value": "={{ $('criar_cliente').item.json.body.numero }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          1620,
+          1540
+        ],
+        "id": "c0c51096-00c9-4810-8d18-9c1bbd141c7f",
+        "name": "Postgres",
+        "alwaysOutputData": true,
+        "credentials": {
+          "postgres": {
+            "id": "xgbfn9PNI4wJR5Yu",
+            "name": "EasyOfir"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## Agente IA: Secretaria (agendamentos)",
+          "height": 80,
+          "width": 1920,
+          "color": 2
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          3380,
+          1980
+        ],
+        "id": "236c6c76-f9de-4f33-88a9-341697beb8d8",
+        "name": "Sticky Note7"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $('config2').item.json.url_webhook_n8n }}/webhook/agente-ofir/v1/cliente",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "numero",
+                "value": "={{ $('secretaria_wh').item.json.body.numero }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          4120,
+          2300
+        ],
+        "id": "bdca5de3-a023-4f26-ba46-fc25fe717bd3",
+        "name": "puxar_cliente5",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XYDeNUnb3JmsypQm",
+            "name": "Robotizze"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "sessionIdType": "customKey",
+          "sessionKey": "={{ $json.clienteNumero }}",
+          "tableName": "ao_secretaria_chat",
+          "contextWindowLength": 10
+        },
+        "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+        "typeVersion": 1.3,
+        "position": [
+          3620,
+          2800
+        ],
+        "id": "de7cd87e-0817-44cc-a661-b72b1deadb24",
+        "name": "Postgres Chat Memory2",
+        "credentials": {
+          "postgres": {
+            "id": "xgbfn9PNI4wJR5Yu",
+            "name": "EasyOfir"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={\n  \"mensagem\": \"{{ $json.mensagem }}\",\n  \"departamento\": \"{{ $json.departamento }}\"\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          4140,
+          2540
+        ],
+        "id": "47240f6a-92d3-4e6e-b562-740dbb3ad5d8",
+        "name": "Respond to Webhook5"
+      },
+      {
+        "parameters": {
+          "descriptionType": "manual",
+          "toolDescription": "Use essa ferramenta para deletar eventos e consultas no calendário usando o eventId",
+          "operation": "delete",
+          "calendar": {
+            "__rl": true,
+            "value": "={{ $fromAI(\"calendarioId\",\"<calendario><calendarioId></calendarioId></calendario>\") }}",
+            "mode": "id"
+          },
+          "eventId": "={{ $fromAI(\"eventId\",\"Id do evento que deve ser excluído\") }}",
+          "options": {}
+        },
+        "id": "84a8997d-dc5d-4df8-8262-f6792825c995",
+        "name": "Deletar Evento1",
+        "type": "n8n-nodes-base.googleCalendarTool",
+        "typeVersion": 1.1,
+        "position": [
+          3880,
+          2800
+        ],
+        "credentials": {
+          "googleCalendarOAuth2Api": {
+            "id": "CLswL5GFQlJQUlv2",
+            "name": "Base Calendar"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "descriptionType": "manual",
+          "toolDescription": "Use essa ferramenta para criar novas consultas no calendário.",
+          "calendar": {
+            "__rl": true,
+            "value": "={{ $fromAI(\"calendarioId\",\"<calendario><calendarioId></calendarioId></calendario>\") }}",
+            "mode": "id"
+          },
+          "start": "={{ $fromAI(\"Start_Time\",\"Horário inicial do evento ex.:2024-10-08 00:00:00\") }}",
+          "end": "={{ $fromAI(\"End_Time\",\"Horário final do evento ex.:2024-10-08 00:01:00\") }}",
+          "additionalFields": {
+            "attendees": [
+              "={{ $('puxar_cliente5').item.json.clienteData.email }}"
+            ],
+            "summary": "=pendente | Consulta agendada. Telefone {{ $('puxar_cliente5').item.json.clienteNumero.split(\"@\")[0] }}\n"
+          }
+        },
+        "id": "a8fb6eb3-ab86-468c-bd63-078c44cc3c6f",
+        "name": "Criar Eventos1",
+        "type": "n8n-nodes-base.googleCalendarTool",
+        "typeVersion": 1.1,
+        "position": [
+          4140,
+          2800
+        ],
+        "credentials": {
+          "googleCalendarOAuth2Api": {
+            "id": "CLswL5GFQlJQUlv2",
+            "name": "Base Calendar"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "id": "0eb5ca16-8e85-4245-a53e-2d510b55e104",
+        "name": "Calculator1",
+        "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+        "typeVersion": 1,
+        "position": [
+          3740,
+          2800
+        ]
+      },
+      {
+        "parameters": {
+          "descriptionType": "manual",
+          "toolDescription": "Use essa ferramenta para consultar datas e disponibilidade para novas consultas ou apenas para checar o que já foi agendado. Este ferramenta irá retornar todas as consultas no perído selecionado",
+          "operation": "getAll",
+          "calendar": {
+            "__rl": true,
+            "value": "={{ $fromAI(\"calendarioId\",\"<calendario><calendarioId></calendarioId></calendario>\") }}",
+            "mode": "id"
+          },
+          "returnAll": true,
+          "options": {
+            "timeMin": "={{ $fromAI(\"Initital_DateTime\", \"Data e hora inicial da consulta Ex.: 2024-10-17 00:00:00\") }}",
+            "timeMax": "={{ $fromAI(\"Final_DateTime\", \"Data e hora final da consulta Ex.: 2024-10-17 00:00:00\") }}",
+            "query": ""
+          }
+        },
+        "id": "b529d30b-681f-4048-bfbf-97538cec4ff4",
+        "name": "get_many",
+        "type": "n8n-nodes-base.googleCalendarTool",
+        "typeVersion": 1.2,
+        "position": [
+          4020,
+          2800
+        ],
+        "credentials": {
+          "googleCalendarOAuth2Api": {
+            "id": "CLswL5GFQlJQUlv2",
+            "name": "Base Calendar"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "agente-ofir/v1/secretaria",
+          "authentication": "headerAuth",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          3420,
+          2300
+        ],
+        "id": "fee70a10-991c-4bb7-bc0f-b57b73ea0865",
+        "name": "secretaria_wh",
+        "webhookId": "d711bc48-5fc8-4f7f-8354-787ef9e828f6",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XYDeNUnb3JmsypQm",
+            "name": "Robotizze"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "4468a981-b3b4-404f-93d7-0c21b6a11cc1",
+                "leftValue": "={{ $('tratamento4').item.json.eventId }}",
+                "rightValue": "eventId",
+                "operator": {
+                  "type": "string",
+                  "operation": "exists",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          4340,
+          2540
+        ],
+        "id": "4b4ddab8-4432-4415-a4b7-6c54d5de7d61",
+        "name": "novo_evento"
+      },
+      {
+        "parameters": {
+          "operation": "get",
+          "calendar": {
+            "__rl": true,
+            "value": "={{ $json.calendarioId }}",
+            "mode": "id"
+          },
+          "eventId": "={{ $json.eventId }}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleCalendar",
+        "typeVersion": 1.2,
+        "position": [
+          4560,
+          2520
+        ],
+        "id": "de038e65-a337-4643-bfe1-b4d54787b8c2",
+        "name": "puxar_consulta",
+        "credentials": {
+          "googleCalendarOAuth2Api": {
+            "id": "CLswL5GFQlJQUlv2",
+            "name": "Base Calendar"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $('config2').item.json.url_webhook_n8n }}/webhook/agente-ofir/v1/clickup",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"numero\": \"{{ $('puxar_cliente5').item.json.clienteNumero }}\",\n  \"acao\": \"ATUALIZAR_CONSULTA_DATA\",\n  \"data\": {\n    \"consultaData\": \"{{ $json.start.dateTime }}\",\n    \"calendarioNome\": \"{{ $('tratamento4').item.json.calendarioNome }}\"\n  }\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          4780,
+          2520
+        ],
+        "id": "9cc9a685-e21f-41aa-85e2-fb79d6080a83",
+        "name": "atualizar_consultaData_request",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XYDeNUnb3JmsypQm",
+            "name": "Robotizze"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "6f17d77b-0e6d-4651-9229-5c2ea486cfc2",
+                "name": "calendarios",
+                "value": "=[| { \"nome\": \"Karina\", \"calendarioId\": \"7468a9aa95339de27fdb786d7c3ea7709cc9c4bc0200ce7210b216d739096bcb@group.calendar.google.com\" }, { \"nome\": \"Samir\", \"calendarioId\": \"7468a9aa95339de27fdb786d7c3ea7709cc9c4bc0200ce7210b216d739096bcb@group.calendar.google.com\" }, { \"nome\": \"Willian\", \"calendarioId\": \"7468a9aa95339de27fdb786d7c3ea7709cc9c4bc0200ce7210b216d739096bcb@group.calendar.google.com\" }]",
+                "type": "array"
+              },
+              {
+                "id": "2b3a7721-0174-47e8-83f3-1d11698431ef",
+                "name": "url_webhook_n8n",
+                "value": "https://n8n.robotizze.us",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          3680,
+          2300
+        ],
+        "id": "22b82f12-0a95-4bda-bc64-804166864875",
+        "name": "config2"
+      },
+      {
+        "parameters": {
+          "content": "## Configuração",
+          "height": 240,
+          "width": 190
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          3640,
+          2220
+        ],
+        "id": "bfb78f40-ff6a-40ab-94dc-f6dd14bc6694",
+        "name": "Sticky Note6"
+      },
+      {
+        "parameters": {
+          "jsCode": "for (const item of $input.all()) {\n  item.json.calendarioSorteio = item.json.calendarios[Math.floor(Math.random() * item.json.calendarios.length)]\n}\n\nreturn $input.all();"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          3900,
+          2300
+        ],
+        "id": "b8b39e94-7586-4166-8d39-188d9bf078fc",
+        "name": "sorteio_calendario"
+      },
+      {
+        "parameters": {
+          "jsCode": "for (const item of $input.all()) {\n  const output = JSON.parse(item.json.output);\n\n  let mensagem = output.mensagem;\n\n  // Foi transferido de departmaneto? Então devemos utilizar a mensagem do cliente para \n  // ser encaminhada ao próximo agente e não a mensagem do agente atual.\n  // \n  // Esta condicional checa se o departamento mudou.\n  if ($('puxar_cliente5').item.json.clienteDepartamento !== output.departamento) {\n    mensagem = $('secretaria_wh').item.json.body.mensagem;\n    output.mensagem = mensagem;\n  }\n  \n  item.json = output;\n}\n\nreturn $input.all();"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          3960,
+          2540
+        ],
+        "id": "99bf7ecf-c1fc-49de-8da5-a705cbb7d258",
+        "name": "tratamento4"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=<mensagem>{{ $('secretaria_wh').item.json.body.mensagem }}</mensagem>",
+          "options": {
+            "systemMessage": "=Departamento atual: <departamento>{{ $json.clienteDepartamento }}</departamento>\n\n<departamentos>\n {{ $json.departamentos.map(item => `\n  <departamento_descricao>\n   <departamento>${item.departamento}</departamento>\n   <regra_de_transferencia>\n    ${item.regras}\n   </regra_de_transferencia>\n </departamento_descricao>\n`)  }}\n</departamentos>\n\n<calendarios>\n{{ $('config2').item.json.calendarios.map(item => `\n    <calendario>\n      <nome>${item.nome}</nome>\n      <calendarioId>${item.calendarioId}</calendarioId>\n    </calendario>\n`) }}\n</calendarios>\n\n<REGRAS_PRINCIPAIS>\n\n<INSTRUCAO> Você é uma secretária virtual projetada para gerenciar de forma eficiente e amigável os agendamentos e cancelamentos de consultas. Seu nome é \"Jurema\" e você trabalha para a OdontoClinic Londrina.\n\nFocada em oferecer uma experiência prática e personalizada, o assistente exibe horários disponíveis, pergunta se o cliente concorda com a data e hora antes de confirmar o agendamento e fornece todos os detalhes essenciais após a marcação.\n\nPergunte ao cliente se ele possui alguma preferência por algum profissional que esteja listado em <calendarios></calendarios>. \n\nCaso não possuir, escolha o calendario: {{ $('sorteio_calendario').item.json.calendarioSorteio.nome }}, calendarioId: {{ $('sorteio_calendario').item.json.calendarioSorteio.calendarioId }}. \n\nUse o <calendarioId></calendarioId> na hora de buscar, criar e deletar eventos.\n\nO assistente também respeita o formato brasileiro de data e hora (DD/MM/AAAA e HH) e opera no fuso horário \"America/Sao_Paulo\".\n\nSempre verifica as datas disponiveis no calendário antes de oferecer ao cliente.\n\nhorário de funcionamento:\nSegunda a sexta: das 8h às 21h.\nSábado: das 8h às 12h. nunca agende fora do horario de funcionamento.\n\nUse como referencia para a data e hora atual: <currentDateTime>{{ (() => {\n  const date = new Date(); // Obtém a data atual\n  const days = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado']; // Dias da semana em português\n  const pad = n => n.toString().padStart(2, '0'); // Adiciona zero à esquerda\n  const dayName = days[date.getDay()]; // Obtém o nome do dia\n  const year = date.getFullYear();\n  const month = pad(date.getMonth() + 1); // Mês começa em 0\n  const day = pad(date.getDate());\n  const hours = pad(date.getHours());\n  const minutes = pad(date.getMinutes());\n  const seconds = pad(date.getSeconds());\n  return `${dayName}, ${year}-${month}-${day} ${hours}:${minutes}:${seconds}`; // Retorna no formato desejado\n})() }}</currentDateTime>\n\nNunca agende nada antes de: {{ $now }}\n\nfaça agendamentos de 30 minutos de duração.\nse o horario pedido pelo cliente ja tiver alguma consulta marcada, sugira o mais proximo 30 minutos antes ou 30 minutos depois da consulta existente, mas esta proibido marcar em um horario que ja exista uma consulta\n\nPergunte se o cliente pode confirmar, mas não confirme diretamente a consulta.\n\nSempre utilize o timezone \"America/Sao_Paulo\" para todas as operações.\n\nSempre utilize a tool Calculator1 para calcular diferença de datas, horarios e dias. Apenas use numero inteiros para calcular valores.\n\n<AGENDAMENTO>\nPara pesquisar as datas de um evento no calendário, sempre utilize a tool Calculator1.\n\nAssim que voce agendar uma consulta, repasse as informações sobre a consulta, como profissional, data e hora e pergunte se já poderia gerar o PIX para o pagamento. \n\nAssim que o cliente confirmar, transfira ele para o departamento financeiro.\n</AGENDAMENTO>\n\n<REAGENDAMENTO>\nDe acordo com o histórico de mensagens, siga o processo de reagendamento nesta ordem:\n1. use a calculadora(apenas some numeros inteiros, sem usar textos) para identificar a data e hora especifica que o cliente gostaria de marcar a <NOVA_CONSULTA>.\n2. Busque todos os eventos apartir do horario da <NOVA_CONSULTA> até para os próximos 2 dias.\n2.1 Utilize a ferramenta \"get_many\" que irá retornar quais consultas existem no perídodo selecionado. Caso ela retornar um array vazio [] significa que a agenda da profissional está vazia.\n2.2 Caso já houver uma consulta no mesmo horário, sugira uma data mais próxima.\n2.3 Caso não houver nenhuma consulta no mesmo horário, confirme com o usuário a <NOVA_CONSULTA>.\n3. Quando o usário confirmar, delete a consulta anterior usando o eventId. Crie a <NOVA_CONSULTA>.\n</REAGENDAMENTO>\n\n<CANCELAMENTO>\nBaseado no histórico de mensagens, extraia as informações do evento a ser cancelado (data, hora e eventId).\nCaso não localize o evento, retorne false com uma mensagem de erro.\n</CANCELAMENTO>\n\n<CONFIRMACAO>\nEscreva mensagens breves e cordiais confirmando a consulta com base no evento já agendado, respeitando o timezone America/Sao_Paulo.\n</CONFIRMACAO>\n\n<AGENDAMENTOS>\nQuando a <mensagem></mensagem> for algo parecido com \"Ola tudo bem? Eu estou precisando fazer uma limpesa dental, como q eu façø? Tem agendamento?\"\n\nApenas realize uma busca até o próximo dia útil e informe a data mais próxima para um possivel agendamento.\n</AGENDAMENTOS>\n\n<FALLBACK>\nCaso você não identificar nenhunma intenção especifican relacionado a agendamentos, realize uma busca dos próximos agendamentos até o próximo dia útil e retorne a data disponível mais próxima para ser agendada.\n</FALLBACK>\n\n<TROCA_DE_PROFISSIONAL>\nCaso o cliente queira mudar de profissional, use as regras de <REAGENDAMENTO></REAGENDAMENTO> com o calendarioId da profissional que ele queira, antes de realizar a troca.\n</TROCA_DE_PROFISSIONAL>\n\nExceções:\n\nCaso identifique uma situação específica de exceção, encaminhe para o departamento humano.\n\nRegras Importantes:\n\nSeja cordial e direta.\nResponda sempre no timezone: America/Sao_Paulo.\nNunca confirme agendamentos automaticamente; peça confirmação ao cliente.\nApenas responda sobre agendamentos; ignore qualquer outro contexto.\nRetorne mensagens no formato JSON, sem aspas ou informações adicionais.\n\nExemplo de Resposta:\n\n<departamento>teste</departamento>\nHuman: Pode marcar uma reunião para terça às 14h?\nAI: { \"mensagem\": \"Terça-feira às 14h está disponível. Poderia confirmar esse horário?\", \"departamento\": \"teste\" }\n\n<OUTPUT>\nExemplo quando uma consulta for agendada e tiver um eventId da ferramenta, inserir o eventId no JSON conforme o Exemplo:\n\n<output_format_eventId>\n{ \"mensagem\": \"message from AI\", \"departamento\": \"departamento\", \"eventId\": \"id\",  \"calendarioId\": \"id\", \"calendarioNome\": \"nome\" }\n</output_format_eventId>\n\n<output_format_eventId_example>\n{ \"mensagem\": \"message from AI\", \"departamento\": \"teste\", \"eventId\": \"87aw898ad807d80s\",  \"calendarioId\": \"c_f1584a79804ce179cfa693d02395eba6f339089502d9847ba95892c1394d9605@group.calendar.google.com\"\", \"calendarioNome\": \"Flavia\" }\n</output_format_eventId_example>\n\n<output_schema>\n{ \n  \"mensagem\": STRING, \n  \"departamento\": STRING, \n  \"eventId\": STRING|UNDEFINED,\n  \"calendarioId\": STRING|UNDEFINED,\n  \"calendarioNome\": STRING|UNDEFINED \n}\n</output_schema>\n\n</OUTPUT>\n\nCertifique-se de que na mensagem final ela está usando o formato descrito em <OUTPUT>.\n\n</REGRAS_PRINCIPAIS>\n\n\n<PROCESSO_DE_DECISAO>\n\nConsulte as <regra_de_transferencia> \n\nEscolha entre as duas ações possíveis:\n\nApenas responder ao cliente com uma mensagem\n\nOu transferir o cliente de departamento e com uma mensagem para o departamento ao qual o cliente será transferido.\n\nNão informe ao cliente sobre a transferência.\n\nQuando houver uma <mensagemHumano></mensagemHumano> dentro de <mensagem></mensagem> responda o que estiver na <mensagemHumano></mensagemHumano> e continue no <departamento>{{ $json.clienteDepartamento }}</departamento>, não é para transferir o cliente para o departamento humano neste caso. Isto significa que um humano, responsável por este serviço respondeu ao cliente.\n\n</PROCESSO_DE_DECISAO>\n\nNão invente nenhuma informação que não foi dada neste system_prompt.\n\nCaso você não souber a informação, consulte <regra_de_transferencia> para transferir o cliente para algum outro departamento.\n\n# PAYMENT STAUTS:\n- Quando receber dentro de </mensagem> a informação <paymentStatus>OVERDUE</paymentStatus>. Deletar o eventId anteriormente agendado e informar ao cliente de que infelizmente não foi possivel localizar o seu pagamento e neste caso, o pré-agendamento que estava como pendente foi excluido. Perguntar se gostaria de fazer um novo agendamento.\n- Quando receber dentro de </mensagem> a informação <paymentStatus>RECEIVED</paymentStatus>. user a ferramenta tool \"update_calendar\" para atualziar o eventId de pendente para confirmado. Informar ao cliente de que já recebemos o seu pagamento e acabamos de confirmar a sua consulta.\n\n<exemplos>\n  <exemplo>\n    Departamento atual: <departamento>secretaria</departamento>\n    Human: <paymentStatus>OVERDUE</paymentStatus><paymentId>pay_qazvdudbcqa17x7r</paymentId>\n    AI: Deletar Evento1 tool call\n    AI: { \"mensagem\": \"Olá Rangel, infelizmente não foi possivel localizar o seu pagamento e neste caso, o pré-agendamento que estava como pendente foi excluido. Gostaria de fazer um novo agendamento?\", \"departamento\": \"secretaria\" }\n  </exemlo>\n  <exemplo>\n    Departamento atual: <departamento>secretaria</departamento>\n    Human: <paymentStatus>RECEIVED</paymentStatus><paymentId>pay_qazvdudbcqa17x7r</paymentId>\n    AI: update_calendar tool call\n    AI: { \"mensagem\": \"Olá Rangel, gostaria de informar que já recebemos o seu pagamento e acabamos de confirmar a sua consulta\", \"departamento\": \"secretaria\" }\n  </exemlo>\n  <exemplo>\n    Departamento atual: <departamento>teste</departamento>\n    Human: <mensagemHumano>Voce precisa de uma ajuda espeecializada</mensagemHumano>\n    AI: { \"mensagem\": \"Voce precisa de uma ajuda espeecializada\", \"departamento\": \"teste\" }\n  </exemlo>\n  <exemplo>\n    Departamento atual: <departamento>teste</departamento>\n    Human: Ola eu gostaria de agendar a minha consulta para o serviço de clareamento dental. Voces teriam disponibilidade para amanha pela manha?\n    AI: Calculator1 tool call -  Only INTEGERS\n    AI: get_many tool call\n    AI: { \"mensagem\": \"Amanhã pela manhã está disponível para o agendamento de um clareamento dental. Você gostaria de agendar para algum horário específico entre 8h e 12h?\", \"departamento\": \"teste\" }\n  </exemlo>\n  <exemplo>\n    Departamento atual: <departamento>teste</departamento>\n    Human: A eu tenho interesse sim. Poderia ser amanha as 10 da manha?\n    AI: Calculator1 tool call -  Only INTEGERS\n    AI: get_many tool call\n    AI: { \"mensagem\": \"Amanhã as 10h está disponível para o agendamento . Posso confirmar?\", \"departamento\": \"teste\" }\n  </exemlo>\n  </exemplo>\n  <exemplo>\n    Departamento atual: <departamento>teste</departamento>\n    Human: Eu preciso agendar o meu clareamento dental. teria disponibilidade para hoje de tarde? obrigado\n    AI: Calculator1 tool call -  Only INTEGERS\n    AI: get_many tool call\n    AI: { \"mensagem\": \"Hoje à tarde está disponível para o agendamento de um clareamento dental. Você gostaria de agendar para algum horário específico entre 13h e 21h?\", \"departamento\": \"teste\" }\n    Human: Pode ser as 13h.\n    AI: Calculator1 tool call -  Only INTEGERS\n    AI: { \"mensagem\": \"Sua consulta de clareamento dental foi agendada para hoje às 13h com a Flavia. Posso já gerar o PIX desta consulta?\", \"departamento\": \"teste\", \"eventId\": \"87aw898ad807d80s\",  \"calendarioId\": \"c_f1584a79804ce179cfa693d02395eba6f339089502d9847ba95892c1394d9605@group.calendar.google.com\"\", \"calendarioNome\": \"Flavia\" }\n    Human: Pode gerar sim.\n    AI: { \"mensagem\": \"Gerar o PIX para o cliente\", \"departamento\": \"financeiro\" }\n  </exemplo>\n  <exemplo>\n    Departamento atual: <departamento>secretaria</departamento>\n    Human: Perdão, poderia ser com a Karine no mesmo horario esta consulta? obrigado\n    AI: Calculator1 tool call -  Only INTEGERS\n    AI: Deletar Evento1 tool call\n    AI: get_many tool call. Example when it returns events on the same requested date and time\n    AI: { \"mensagem\": \"Desculpe mas a Karine está já ocupada neste horario, poderia agendar com outro profissional?\", \"departamento\": \"secretaria\" }\n  </exemlo>\n<exemplos>"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.7,
+        "position": [
+          3620,
+          2540
+        ],
+        "id": "2d352bf1-be23-48e1-96a5-2c7c900c66a4",
+        "name": "agente_secretaria"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "f1e9e8eb-6578-4a48-8a36-292501188729",
+                "leftValue": "={{ $json.clienteData.email !== undefined && $json.clienteData.nome !== undefined && $json.clienteData.cpf !== undefined }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          4340,
+          2300
+        ],
+        "id": "fe4cfd52-4caf-4c52-8993-5e48a0bf0341",
+        "name": "cadastro_completo"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=<mensagem>{{ $('secretaria_wh').item.json.body.mensagem }}</mensagem>",
+          "options": {
+            "systemMessage": "=Departamento atual: <departamento>{{ $json.clienteDepartamento }}</departamento>\n\n<departamentos>\n {{ $json.departamentos.map(item => `\n  <departamento_descricao>\n   <departamento>${item.departamento}</departamento>\n   <regra_de_transferencia>\n    ${item.regras}\n   </regra_de_transferencia>\n </departamento_descricao>\n`)  }}\n</departamentos>\n\n<cpf_formato>\nRegEx:\n^([-\\.\\s]?(\\d{3})){3}[-\\.\\s]?(\\d{2})$\n\nTest:\n345.753.428-40\nTest:\n345.753.422.99\nTest:\n123-543-667.54\nTest:\n123 456 789 01\nTest:\n34575342840\n</cpf_formato>\n\nVocê é uma secretária virtual projetada para gerenciar de forma eficiente e amigável o cadastro do cliente antes de realizar uma consulta. Seu nome é \"Selma\" e você trabalha para a OdontoClinic Londrina.\n\nA sua função é solicitar o Nome, email e CPF do cliente.\n\nO Email tem que ser válido. Caso contrário, solicite ao cliente para informar um email válido.\n\nO CPF tem que ser válido. Consulte as regras e exemplos em <cpf_formato></cpf_formato> de como validar o CPF. Caso contrário, solicite ao cliente para informar um CPF válido.\n\nUse a tool \"atualizar_cliente_cadastro\" assim que o cliente responder essas 3 informações. \n\nApós atualizar o cadastro usando a tool atualizar_cliente_cadastro, pergunte então qual a preferência de dia e horario do cliente.\n\nNão informe que já estarea checando a disponibilidade. Termine sempre com uma pergunta.\n\n\nREGRAS PRINCIPAIS:\n\nMantenha respostas curtas e objetivas\nSeja sempre cordial e prestativa\nVocê deve avaliar a mensagem do cliente e decidir entre transferir ou responder diretamente\n\nPROCESSO DE DECISÃO:\n\nIdentifique a necessidade na mensagem\nConsulte as <regra_de_transferencia> \n\nEscolha entre as duas ações possíveis:\n\nApenas responder ao cliente com uma <mensagem>\n\nOu transferir o cliente de departamento e com uma <mensagem> para o departtamento ao qual o cliente será transferido.\n\nNão informe ao cliente sobre a transferência.\n\nSempre responda o cliente, quando não souber o que responder, avise que irá chamar um assistente para lhe ajudar.\n\nQuando houver uma <mensagemHumano></mensagemHumano> dentro de <mensagem></mensagem> responda o que estiver na <mensagemHumano></mensagemHumano> e continue no <departamento>{{ $json.clienteDepartamento }}</departamento>, não é para transferir o cliente para o departamento humano neste caso. Isto significa que um humano, responsável por este serviço respondeu ao cliente.\n\nResponda apenas usando o formato em JSON, sem aspas. Apenas o JSON.\n\n<output_schema>\n{ \n  \"mensagem\": STRING, \n  \"departamento\": STRING\n}\n</output_schema>\n\nCertifique-se de que na mensagem final ela está usando o formato descrito em <output_schema>.\n\n<exemplos>\n  <exemplo>\n    Human: Eu preciso agendar o meu clareamento dental. teria disponibilidade para hoje de tarde? obrigado\n    AI: { \"mensagem\": \"Para realizar o agendamento da consulta, poderia por gentileza me passar o seu nome, email e cpf?\", \"departamento\": \"secretaria\" }\n    Human: Claro, Guilherme Reis, teste@gmail.com e 07216216127\n    AI: atualizar_cliente_cadastro tool call\n    AI: Obrigada! Você possui alguma preferência de dia e horário para a consulta?\n  </exemlo>\n  <exemplo>\n  Departamento atual: <departamento>secretaria</departamento>\n  Human: <mensagemHumano>Voce precisa de uma ajuda espeecializada</mensagemHumano>\n  AI: { \"mensagem\": \" Voce precisa de uma ajuda espeecializada\": \"secretaria\" }\n  </exemlo>\n<exemplos>"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.7,
+        "position": [
+          4600,
+          2100
+        ],
+        "id": "69f08926-08d4-447c-bc9b-e8ac5a72e221",
+        "name": "agente_auxiliar_secretaria"
+      },
+      {
+        "parameters": {
+          "sessionIdType": "customKey",
+          "sessionKey": "={{ $json.clienteNumero }}",
+          "tableName": "ao_secretaria_chat",
+          "contextWindowLength": 10
+        },
+        "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+        "typeVersion": 1.3,
+        "position": [
+          4720,
+          2320
+        ],
+        "id": "6157561b-a5bf-4867-a1fe-0213929b706a",
+        "name": "Postgres Chat Memory3",
+        "credentials": {
+          "postgres": {
+            "id": "xgbfn9PNI4wJR5Yu",
+            "name": "EasyOfir"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={\n  \"mensagem\": \"{{ $json.mensagem }}\",\n  \"departamento\": \"{{ $json.departamento }}\"\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          5140,
+          2100
+        ],
+        "id": "09f16299-c10f-4f7e-b705-b17158ad3fb3",
+        "name": "Respond to Webhook6"
+      },
+      {
+        "parameters": {
+          "mode": "raw",
+          "jsonOutput": "={{ JSON.parse($json.output) }}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          4940,
+          2100
+        ],
+        "id": "8efeff6a-dcb3-40cf-919c-34ef15583a52",
+        "name": "tratamento3"
+      },
+      {
+        "parameters": {
+          "toolDescription": "Use esta tool para atualizar o cadastro do cliente. Use o formato JSON { nome: STRING, email: STRING, cpf: STRING } no campo data. O campo data é do tipo objeto.",
+          "method": "PATCH",
+          "url": "={{ $('config2').item.json.url_webhook_n8n }}/webhook/agente-ofir/v1/cliente",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "parametersBody": {
+            "values": [
+              {
+                "name": "numero",
+                "valueProvider": "fieldValue",
+                "value": "={{ $json.clienteNumero }}"
+              },
+              {
+                "name": "departamento",
+                "valueProvider": "fieldValue",
+                "value": "={{ $json.clienteDepartamento }}"
+              },
+              {
+                "name": "data"
+              }
+            ]
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+        "typeVersion": 1.1,
+        "position": [
+          4860,
+          2320
+        ],
+        "id": "ed4e3604-b5a6-4d8e-a98e-2e5e6b66df58",
+        "name": "atualizar_cliente_cadastro",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XYDeNUnb3JmsypQm",
+            "name": "Robotizze"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "descriptionType": "manual",
+          "toolDescription": "Use essa ferramenta para confirmar um evento quando receber uma informação de <paymentStatus>Pagamento recebido</paymentStatus>",
+          "operation": "update",
+          "calendar": {
+            "__rl": true,
+            "value": "={{ $fromAI(\"calendarioId\",\"<calendario><calendarioId></calendarioId></calendario>\") }}",
+            "mode": "id"
+          },
+          "eventId": "={{ $fromAI(\"eventId\",\"Id do evento que deve ser alterado\") }}",
+          "updateFields": {
+            "summary": "=confirmado | Consulta agendada. Telefone {{ $('puxar_cliente5').item.json.clienteNumero.split(\"@\")[0] }}"
+          }
+        },
+        "type": "n8n-nodes-base.googleCalendarTool",
+        "typeVersion": 1.2,
+        "position": [
+          4280,
+          2800
+        ],
+        "id": "acfa5923-d1e3-47d4-8009-a9f0b5670a2b",
+        "name": "update_calendar",
+        "credentials": {
+          "googleCalendarOAuth2Api": {
+            "id": "CLswL5GFQlJQUlv2",
+            "name": "Base Calendar"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## CLICK UP - Integração",
+          "height": 80,
+          "width": 1920,
+          "color": 3
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          1200,
+          2560
+        ],
+        "id": "e55038fa-52d2-4a78-9b56-51ad8d50f083",
+        "name": "Sticky Note2"
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "agente-ofir/v1/clickup",
+          "authentication": "headerAuth",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          1220,
+          2840
+        ],
+        "id": "cf6f4114-5290-40f8-b463-36f9f1adb97d",
+        "name": "criar_ou_atualizar_lead",
+        "webhookId": "d711bc48-5fc8-4f7f-8354-787ef9e828f6",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XYDeNUnb3JmsypQm",
+            "name": "Robotizze"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $('config1').item.json.url_webhook_n8n }}/webhook/agente-ofir/v1/cliente",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "numero",
+                "value": "={{ $('criar_ou_atualizar_lead').item.json.body.numero }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1820,
+          2840
+        ],
+        "id": "97e437d6-eab2-4850-aee5-75cbfb8aaffd",
+        "name": "puxar_cliente1",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XYDeNUnb3JmsypQm",
+            "name": "Robotizze"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $('criar_ou_atualizar_lead').item.json.body.acao }}",
+                      "rightValue": "CRIAR_LEAD",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "CRIAR_LEAD"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "4009ce8a-a78c-4f83-9862-e86295c595ff",
+                      "leftValue": "={{ $('criar_ou_atualizar_lead').item.json.body.acao }}",
+                      "rightValue": "ADICIONAR_COMENTARIO",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "ADICIONAR_COMENTARIO"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "2854cd1c-b1c6-4851-97f7-fcc092066f9b",
+                      "leftValue": "={{ $('criar_ou_atualizar_lead').item.json.body.acao }}",
+                      "rightValue": "ATUALIZAR_CONSULTA_DATA",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "ATUALIZAR_CONSULTA_DATA"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          2020,
+          2840
+        ],
+        "id": "ffdebdb8-613d-41e5-bacd-ed90cafe01eb",
+        "name": "crm_acao"
+      },
+      {
+        "parameters": {
+          "method": "PATCH",
+          "url": "={{ $('config1').item.json.url_webhook_n8n }}/webhook/agente-ofir/v1/cliente",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"numero\": \"{{ $('criar_ou_atualizar_lead').item.json.body.numero }}\",\n  \"data\": {\n    \"crmId\": \"{{ $json.id }}\"\n  },\n  \"departamento\": \"{{ $('puxar_cliente1').item.json.clienteDepartamento }}\"\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          2540,
+          2660
+        ],
+        "id": "a782cca4-c30d-439c-9a31-5d8ddad9ce81",
+        "name": "atualizar_cliente1",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XYDeNUnb3JmsypQm",
+            "name": "Robotizze"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "{\n  \"sucesso\": true\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          2920,
+          2840
+        ],
+        "id": "715235be-1caf-4c57-9a84-e4a6a9412032",
+        "name": "Respond to Webhook2"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "a2d7d0bb-f307-46cd-9a7e-6784493f0444",
+                "name": "dinastiaClienteId",
+                "value": "=80103ecd-c9c4-4f6d-a9d9-6b0737bded09",
+                "type": "string"
+              },
+              {
+                "id": "b26b7681-6ebe-420f-853c-562f5aa44117",
+                "name": "consultaDataId",
+                "value": "d57547f1-1a9d-4b76-99c8-37505785c2df",
+                "type": "string"
+              },
+              {
+                "id": "92c13e4d-58a2-459b-bde7-6da208f82df1",
+                "name": "url_webhook_n8n",
+                "value": "https://n8n.robotizze.us",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1520,
+          2840
+        ],
+        "id": "26d406f3-1be7-4995-9c16-2ab91788a6f7",
+        "name": "config1"
+      },
+      {
+        "parameters": {
+          "content": "## Configuração",
+          "height": 300,
+          "width": 300
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          1420,
+          2740
+        ],
+        "id": "5bf35422-635e-46ed-8375-0790d5b8bf72",
+        "name": "Sticky Note3"
+      },
+      {
+        "parameters": {
+          "resource": "comment",
+          "commentOn": "task",
+          "id": "={{ $json.clienteData.crmId }}",
+          "commentText": "=IA: {{ $('criar_ou_atualizar_lead').item.json.body.data.comentario }}",
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.clickUp",
+        "typeVersion": 1,
+        "position": [
+          2320,
+          2840
+        ],
+        "id": "2cbe6161-31e6-4db5-9c55-cf792a0bb7e3",
+        "name": "adicionar_comentario_crm",
+        "credentials": {
+          "clickUpApi": {
+            "id": "NDm5aeqHBEXwBWeG",
+            "name": "ClickUp account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "7f332c70-b70e-40dd-8c40-fdf104b36806",
+                "leftValue": "={{ $json.history_items[0].comment.text_content }}",
+                "rightValue": "IA:",
+                "operator": {
+                  "type": "string",
+                  "operation": "notStartsWith"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1660,
+          3520
+        ],
+        "id": "1055abf2-1508-417c-ac4e-037bed199180",
+        "name": "comentario_humano"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT *\nFROM ao_clientes\nWHERE DATA ->> 'crmId' = '{{ $json.history_items[0].comment.parent }}'\nLIMIT 1;",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          1920,
+          3500
+        ],
+        "id": "f2a2023a-e7eb-4319-bf39-23c52358a9f8",
+        "name": "cliente1",
+        "credentials": {
+          "postgres": {
+            "id": "xgbfn9PNI4wJR5Yu",
+            "name": "EasyOfir"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "PATCH",
+          "url": "={{ $('config5').item.json.url_webhook_n8n }}/webhook/agente-ofir/v1/cliente",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"numero\": \"{{ $json.numero }}\",\n  \"data\": {\n    \"departamentoOrigem\": \"humano\",\n    \"departamentoDestino\": \"{{ $json.data.departamentoOrigem }}\"\n  },\n  \"departamento\": \"{{ $json.data.departamentoOrigem }}\",\n  \"outros\": { \n    \"mensagemAgente\": \"Mensagem respondida\"\n  }\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          2420,
+          3700
+        ],
+        "id": "777a5054-6f27-4eca-ac18-891fc4668f86",
+        "name": "atualizar_cliente3",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XYDeNUnb3JmsypQm",
+            "name": "Robotizze"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $('config5').item.json.url_webhook_n8n }}/webhook/agente-ofir/v1/agente",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"numero\": \"{{ $('cliente1').item.json.numero }}\",\n  \"mensagem\": \"<mensagemHumano>{{ $('novo_comentario').item.json.history_items[0].comment.comment[0].text }}</mensagemHumano>\"\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          2660,
+          3700
+        ],
+        "id": "0a4b59ba-9325-488b-b101-0a8795e1696f",
+        "name": "rodar_agente_request",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XYDeNUnb3JmsypQm",
+            "name": "Robotizze"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "team": "=901311336441",
+          "events": [
+            "taskCommentPosted"
+          ],
+          "filters": {
+            "listId": ""
+          }
+        },
+        "type": "n8n-nodes-base.clickUpTrigger",
+        "typeVersion": 1,
+        "position": [
+          1220,
+          3520
+        ],
+        "id": "0d4f5363-6af2-4407-afae-ad8ae1162d02",
+        "name": "novo_comentario",
+        "webhookId": "1987f979-340c-48a4-98e1-17438e81017a",
+        "credentials": {
+          "clickUpApi": {
+            "id": "NDm5aeqHBEXwBWeG",
+            "name": "ClickUp account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "setCustomField",
+          "task": "={{ $json.clienteData.crmId }}",
+          "field": "={{ $('config1').item.json.consultaDataId }}",
+          "value": "={{ $('criar_ou_atualizar_lead').item.json.body.data.consultaData.toDateTime().format('x') }}"
+        },
+        "type": "n8n-nodes-base.clickUp",
+        "typeVersion": 1,
+        "position": [
+          2320,
+          3060
+        ],
+        "id": "c26a2a32-cb03-4bcc-b455-7ec324161fb6",
+        "name": "atualizar_consulta_data",
+        "credentials": {
+          "clickUpApi": {
+            "id": "NDm5aeqHBEXwBWeG",
+            "name": "ClickUp account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "comment",
+          "commentOn": "task",
+          "id": "={{ $('puxar_cliente1').item.json.clienteData.crmId }}",
+          "commentText": "=IA: Consulta Agendada para {{ $('criar_ou_atualizar_lead').item.json.body.data.consultaData.toDateTime().format('dd/MM/yyyy hh:mm:ss')}} com {{ $('criar_ou_atualizar_lead').item.json.body.data.calendarioNome }}",
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.clickUp",
+        "typeVersion": 1,
+        "position": [
+          2520,
+          3060
+        ],
+        "id": "ee73debd-1beb-4dc9-ad80-25b07198b62f",
+        "name": "adicionar_comentario_crm1",
+        "credentials": {
+          "clickUpApi": {
+            "id": "NDm5aeqHBEXwBWeG",
+            "name": "ClickUp account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "id": "={{ $('puxar_cliente1').item.json.clienteData.crmId }}",
+          "updateFields": {
+            "status": "AGENDADOS"
+          }
+        },
+        "type": "n8n-nodes-base.clickUp",
+        "typeVersion": 1,
+        "position": [
+          2700,
+          3060
+        ],
+        "id": "3c9d5f16-fd51-416b-9d0b-481bc3478748",
+        "name": "mudar_de_funil",
+        "credentials": {
+          "clickUpApi": {
+            "id": "NDm5aeqHBEXwBWeG",
+            "name": "ClickUp account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $('novo_comentario').item.json.history_items[0].comment.comment[0].text }}",
+                      "rightValue": "pausar",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "PAUSAR"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "4e2abc0f-6c42-4801-9975-e5b0b269e4a2",
+                      "leftValue": "={{ $('novo_comentario').item.json.history_items[0].comment.comment[0].text }}",
+                      "rightValue": "ativar",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": "={{ true }}",
+                "outputKey": "ATIVAR"
+              }
+            ]
+          },
+          "options": {
+            "fallbackOutput": "extra"
+          }
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          2140,
+          3500
+        ],
+        "id": "3aa305d9-4a93-4d66-a8ed-b2a6fe94d803",
+        "name": "comandos"
+      },
+      {
+        "parameters": {
+          "method": "PATCH",
+          "url": "={{ $('config5').item.json.url_webhook_n8n }}/webhook/agente-ofir/v1/cliente",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"numero\": \"{{ $json.numero }}\",\n  \"data\": {\n    \"departamentoOrigem\": \"{{ $json.departamento }}\",\n    \"departamentoDestino\": \"humano\"\n  },\n  \"departamento\": \"humano\",\n  \"outros\": { \n    \"mensagemAgente\": \"Conversa pausada.\"\n  }\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          2420,
+          3320
+        ],
+        "id": "ad8faa09-61c7-413d-8465-b2a56b9a6b04",
+        "name": "atualizar_cliente4",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XYDeNUnb3JmsypQm",
+            "name": "Robotizze"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "PATCH",
+          "url": "={{ $('config5').item.json.url_webhook_n8n }}/webhook/agente-ofir/v1/cliente",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"numero\": \"{{ $json.numero }}\",\n  \"data\": {\n    \"departamentoOrigem\": \"humano\",\n    \"departamentoDestino\": \"{{ $json.data.departamentoOrigem }}\"\n  },\n  \"departamento\": \"{{ $json.data.departamentoOrigem }}\",\n  \"outros\": { \n    \"mensagemAgente\": \"Conversa ativada.\"\n  }\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          2420,
+          3500
+        ],
+        "id": "fb2060b4-9450-41cf-95bf-f14528a9d35e",
+        "name": "atualizar_cliente5",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XYDeNUnb3JmsypQm",
+            "name": "Robotizze"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "6f17d77b-0e6d-4651-9229-5c2ea486cfc2",
+                "name": "url_webhook_n8n",
+                "value": "=https://n8n.robotizze.us",
+                "type": "string"
+              }
+            ]
+          },
+          "includeOtherFields": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1460,
+          3520
+        ],
+        "id": "94ffdea7-378d-46a5-9afc-f348538aec58",
+        "name": "config5"
+      },
+      {
+        "parameters": {
+          "content": "## Configuração",
+          "height": 240,
+          "width": 190
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          1420,
+          3440
+        ],
+        "id": "2b8572f3-a122-4c73-ad91-f9138de931f3",
+        "name": "Sticky Note14"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          1140,
+          440
+        ],
+        "id": "5801dd8d-683d-40ee-9885-2f7c3e7fc9d6",
+        "name": "When clicking ‘Test workflow’"
+      },
+      {
+        "parameters": {
+          "jsCode": "for (const item of $input.all()) {\n  const { departamentos, ...rest } = item.json;\n  const departamentosArray = [];\n\n  Object.entries(item.json.departamentos).forEach(([key, value]) => {\n    departamentosArray.push({\n      departamento: key,\n      regras: value\n    });\n  });\n\n  item.json = { departamentos: departamentosArray, ...rest }\n  \n}\n\nreturn $input.all();"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2500,
+          1780
+        ],
+        "id": "153db0e6-6a77-46a6-aadf-c14cb8a2ddd3",
+        "name": "departamentos_tratamento"
+      },
+      {
+        "parameters": {
+          "model": "gpt-4.1-mini",
+          "options": {
+            "temperature": 0
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1,
+        "position": [
+          4000,
+          1740
+        ],
+        "id": "9a4051ae-6e14-42ad-ad9c-57efe1ac52c6",
+        "name": "OpenAI Chat Model2",
+        "credentials": {
+          "openAiApi": {
+            "id": "u7CSeoLtDHjjuz4h",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "model": "gpt-4.1",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1,
+        "position": [
+          3480,
+          2800
+        ],
+        "id": "02a6c8ac-8531-481d-8e0e-ed83ad11c63d",
+        "name": "OpenAI Chat Model3",
+        "credentials": {
+          "openAiApi": {
+            "id": "u7CSeoLtDHjjuz4h",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "model": "gpt-4.1",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1,
+        "position": [
+          4580,
+          2320
+        ],
+        "id": "d0165699-d1d0-40b6-8dcf-6ab9d0437747",
+        "name": "OpenAI Chat Model4",
+        "credentials": {
+          "openAiApi": {
+            "id": "u7CSeoLtDHjjuz4h",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "model": "gpt-4.1",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1,
+        "position": [
+          3640,
+          3840
+        ],
+        "id": "69ed907e-8148-4210-9792-f5bea0168733",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "u7CSeoLtDHjjuz4h",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $('config3').item.json.url_api_whatsapp }}/message/sendText/{{ $('config3').item.json.instance }}",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "=number",
+                "value": "={{ $('puxar_cliente2').item.json.clienteNumero }}"
+              },
+              {
+                "name": "=text",
+                "value": "=Temos um paciente que precisa do seu retorno"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          2120,
+          2280
+        ],
+        "id": "07dd8ba7-0f72-44c1-b93f-71d67f095b3e",
+        "name": "WhatsApp Text1",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XYDeNUnb3JmsypQm",
+            "name": "Robotizze"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "# COMO USAR O AGENTE\n## ASSISTA O VIDEO NA COMUNIDADE DINASTIA\n## https://www.dinastia.uk/links-bio\n\n# CONFIGURAR AS CREDENCIAIS\n## WEBHOOK\n## WHASTAPP\n## BANCO DE DADOS\n## MEMORIA\n## LLM\n## CALENDARIO\n## CLICKUP\n\n# CONFIGURAR AS VARIAVEIS\n## CONFIG 1 AO 7\n\n# ATIVAR O FLUXO\n\n# CONFIGURAR BANCO DE DADOS",
+          "height": 860,
+          "width": 720,
+          "color": 5
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          280,
+          -120
+        ],
+        "id": "2ba3e458-6fa8-4089-b381-e0f6e7c02e98",
+        "name": "Sticky Note4"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          4860,
+          600
+        ],
+        "id": "e9a70892-03c1-4366-8521-b2099c08d4d1",
+        "name": "Node"
+      },
+      {
+        "parameters": {
+          "fieldToSplitOut": "mensagem",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitOut",
+        "typeVersion": 1,
+        "position": [
+          4500,
+          680
+        ],
+        "id": "d90c609f-9ef6-4b5d-aeba-017bd11260a8",
+        "name": "msgs1"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          4680,
+          680
+        ],
+        "id": "a64fb615-f0ec-49a5-88e4-e41edd60898a",
+        "name": "single_msg"
+      },
+      {
+        "parameters": {
+          "jsCode": "for (const item of $input.all()) {\n  item.json.mensagem = $input.last().json.mensagem\n    .replace(/\\*\\*/g, '*') // substitui ** por *\n    .split('\\n\\n');\n}\n\nreturn $input.all();"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          4300,
+          680
+        ],
+        "id": "98488c53-ebbc-4fab-9e6f-f637b3338c9d",
+        "name": "split_output"
+      },
+      {
+        "parameters": {
+          "content": "## Split message + reply\n\nWe will split the model's output message and reply each individual chunk by delaying 1 second.",
+          "height": 820,
+          "width": 940
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          4200,
+          360
+        ],
+        "id": "ea4b9057-5e29-44a6-9f7b-8ad3a589a641",
+        "name": "Sticky Note20"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $('config').item.json.url_api_whatsapp }}/message/sendText/{{ $('config').item.json.instance }}",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "=number",
+                "value": "={{ $('puxar_cliente').item.json.clienteNumero }}"
+              },
+              {
+                "name": "=text",
+                "value": "={{ $json.mensagem }}"
+              },
+              {
+                "name": "=delay",
+                "value": "={{ Number(0) }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          4860,
+          780
+        ],
+        "id": "f86ea125-36c1-44fe-940c-6382f4d8a155",
+        "name": "WhatsApp Text",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XYDeNUnb3JmsypQm",
+            "name": "Robotizze"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "list",
+          "operation": "getAll",
+          "team": "36984450",
+          "space": "61040171",
+          "folder": "90136815068",
+          "filters": {}
+        },
+        "type": "n8n-nodes-base.clickUp",
+        "typeVersion": 1,
+        "position": [
+          1220,
+          3720
+        ],
+        "id": "f81864f6-a591-4936-bd03-dea657e37130",
+        "name": "get list",
+        "credentials": {
+          "clickUpApi": {
+            "id": "NDm5aeqHBEXwBWeG",
+            "name": "ClickUp account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "team": "=901311336441",
+          "space": "90122567961",
+          "folderless": true,
+          "list": "901209254053",
+          "name": "={{ $('criar_ou_atualizar_lead').item.json.body.data.nome }}",
+          "additionalFields": {
+            "assignees": [
+              176645684
+            ],
+            "customFieldsJson": "=[ {\"id\": \"{{ $('config1').item.json.dinastiaClienteId }}\", \"value\": \"{{ $('criar_ou_atualizar_lead').item.json.body.numero }}\"} ]",
+            "content": "=Telefone: {{ $('criar_ou_atualizar_lead').item.json.body.data.telefone }}",
+            "startDate": "={{ $now.toFormat(\"yyyy-MM-dd HH:mm\") }}",
+            "startDateTime": "={{ true }}",
+            "status": "novo led"
+          }
+        },
+        "id": "c3c86414-ffa3-4279-877e-25317d236fb9",
+        "name": "criar_lead_crm_list_ofir",
+        "type": "n8n-nodes-base.clickUp",
+        "typeVersion": 1,
+        "position": [
+          2320,
+          2660
+        ],
+        "credentials": {
+          "clickUpApi": {
+            "id": "NDm5aeqHBEXwBWeG",
+            "name": "ClickUp account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "a2d7d0bb-f307-46cd-9a7e-6784493f0444",
+                "name": "numero",
+                "value": "={{ $json.body.data?.key?.remoteJid ?? $json.body.numero}}",
+                "type": "string"
+              },
+              {
+                "id": "d910cf27-2143-4aad-9838-72f671cca83a",
+                "name": "pushName",
+                "value": "={{ $json?.body?.data?.pushName ?? \"Novo lead\" }}",
+                "type": "string"
+              },
+              {
+                "id": "c1bcd8a2-8818-4b95-a1cc-e7eb3d8aa48d",
+                "name": "mensagem",
+                "value": "={{ $json?.body?.data?.message?.conversation || $json?.body?.data?.message?.extendedTextMessage?.text || $json?.body?.data?.message?.ephemeralMessage?.message?.extendedTextMessage?.text }}",
+                "type": "string"
+              }
+            ]
+          },
+          "includeOtherFields": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1720,
+          240
+        ],
+        "id": "1193dc46-54e9-4db5-ab7d-cd54963e2b6d",
+        "name": "variables"
+      }
+    ],
+    "connections": {
+      "ia_financeiro": {
+        "main": [
+          [
+            {
+              "node": "agente_retorno",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "ia_secretaria": {
+        "main": [
+          [
+            {
+              "node": "agente_retorno",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "tratamento": {
+        "main": [
+          [
+            {
+              "node": "puxar_cliente",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "humano": {
+        "main": [
+          [
+            {
+              "node": "agente_retorno",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "ia_comercial": {
+        "main": [
+          [
+            {
+              "node": "agente_retorno",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "tratamento_cliente": {
+        "main": [
+          [
+            {
+              "node": "departamento",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "mensagem": {
+        "main": [
+          [
+            {
+              "node": "departamento",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "atualizar_cliente2": {
+        "main": [
+          [
+            {
+              "node": "tratamento_cliente",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "transferir_cliente": {
+        "main": [
+          [
+            {
+              "node": "atualizar_cliente2",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "split_output",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "agente_retorno": {
+        "main": [
+          [
+            {
+              "node": "transferir_cliente",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "departamento": {
+        "main": [
+          [
+            {
+              "node": "Stop and Error",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "ia_financeiro",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "ia_comercial",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "ia_secretaria",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "humano",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "puxar_cliente": {
+        "main": [
+          [
+            {
+              "node": "mensagem",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "auth": {
+        "main": [
+          [
+            {
+              "node": "tratamento",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "config": {
+        "main": [
+          [
+            {
+              "node": "variables",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "config",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "puxar_cliente4": {
+        "main": [
+          [
+            {
+              "node": "AI Agent1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AI Agent1": {
+        "main": [
+          [
+            {
+              "node": "tratamento1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Postgres Chat Memory1": {
+        "ai_memory": [
+          [
+            {
+              "node": "AI Agent1",
+              "type": "ai_memory",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "comercial_wh": {
+        "main": [
+          [
+            {
+              "node": "config7",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "atualizar_interesse": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent1",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "calculadora": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent1",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "tratamento1": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook4",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "config7": {
+        "main": [
+          [
+            {
+              "node": "puxar_cliente4",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "config6": {
+        "main": [
+          [
+            {
+              "node": "puxar_cliente6",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "config4": {
+        "main": [
+          [
+            {
+              "node": "Postgres",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "config3": {
+        "main": [
+          [
+            {
+              "node": "tratamento5",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "create_payment": {
+        "ai_tool": [
+          [
+            {
+              "node": "Agente financeiro",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Agente financeiro": {
+        "main": [
+          [
+            {
+              "node": "tratamento2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "get_payments_asaas": {
+        "main": [
+          [
+            {
+              "node": "Agente financeiro",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "get_client_asaas": {
+        "main": [
+          [
+            {
+              "node": "get_payments_asaas",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "atualizar_cliente6",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "financeiro_wh": {
+        "main": [
+          [
+            {
+              "node": "config6",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "tratamento2": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook7",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "calculadora1": {
+        "ai_tool": [
+          [
+            {
+              "node": "Agente financeiro",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Postgres Chat Memory": {
+        "ai_memory": [
+          [
+            {
+              "node": "Agente financeiro",
+              "type": "ai_memory",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "puxar_cliente6": {
+        "main": [
+          [
+            {
+              "node": "get_client_asaas",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "novo_cliente": {
+        "main": [
+          [
+            {
+              "node": "criar_lead_request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "tratamento5": {
+        "main": [
+          [
+            {
+              "node": "puxar_cliente2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "comentario_transferencia": {
+        "main": [
+          [
+            {
+              "node": "adicionar_comentario_request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "notificar_quando_for_humano": {
+        "main": [
+          [
+            {
+              "node": "WhatsApp Text1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "adicionar_comentario_request": {
+        "main": [
+          [
+            {
+              "node": "notificar_quando_for_humano",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "foi_transferido": {
+        "main": [
+          [
+            {
+              "node": "comentario_transferencia",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "criar_lead_request": {
+        "main": [
+          [
+            {
+              "node": "Postgres",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Respond to Webhook1": {
+        "main": [
+          [
+            {
+              "node": "foi_transferido",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "query_atualizar_data": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "puxar_cliente2": {
+        "main": [
+          [
+            {
+              "node": "query_atualizar_data",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "atualizar_cliente": {
+        "main": [
+          [
+            {
+              "node": "config3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "criar_cliente": {
+        "main": [
+          [
+            {
+              "node": "config4",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "cliente_atualizado": {
+        "main": [
+          [
+            {
+              "node": "departamentos_tratamento",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "cliente_existente": {
+        "main": [
+          [
+            {
+              "node": "cliente_atualizado",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "novo_cliente",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "cliente": {
+        "main": [
+          [
+            {
+              "node": "cliente_existente",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Postgres": {
+        "main": [
+          [
+            {
+              "node": "cliente",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "puxar_cliente5": {
+        "main": [
+          [
+            {
+              "node": "cadastro_completo",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Postgres Chat Memory2": {
+        "ai_memory": [
+          [
+            {
+              "node": "agente_secretaria",
+              "type": "ai_memory",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Respond to Webhook5": {
+        "main": [
+          [
+            {
+              "node": "novo_evento",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Deletar Evento1": {
+        "ai_tool": [
+          [
+            {
+              "node": "agente_secretaria",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Criar Eventos1": {
+        "ai_tool": [
+          [
+            {
+              "node": "agente_secretaria",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Calculator1": {
+        "ai_tool": [
+          [
+            {
+              "node": "agente_secretaria",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "get_many": {
+        "ai_tool": [
+          [
+            {
+              "node": "agente_secretaria",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "secretaria_wh": {
+        "main": [
+          [
+            {
+              "node": "config2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "novo_evento": {
+        "main": [
+          [
+            {
+              "node": "puxar_consulta",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "puxar_consulta": {
+        "main": [
+          [
+            {
+              "node": "atualizar_consultaData_request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "config2": {
+        "main": [
+          [
+            {
+              "node": "sorteio_calendario",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "sorteio_calendario": {
+        "main": [
+          [
+            {
+              "node": "puxar_cliente5",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "tratamento4": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook5",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "agente_secretaria": {
+        "main": [
+          [
+            {
+              "node": "tratamento4",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "cadastro_completo": {
+        "main": [
+          [
+            {
+              "node": "agente_secretaria",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "agente_auxiliar_secretaria",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "agente_auxiliar_secretaria": {
+        "main": [
+          [
+            {
+              "node": "tratamento3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Postgres Chat Memory3": {
+        "ai_memory": [
+          [
+            {
+              "node": "agente_auxiliar_secretaria",
+              "type": "ai_memory",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "tratamento3": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook6",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "atualizar_cliente_cadastro": {
+        "ai_tool": [
+          [
+            {
+              "node": "agente_auxiliar_secretaria",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "update_calendar": {
+        "ai_tool": [
+          [
+            {
+              "node": "agente_secretaria",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "criar_ou_atualizar_lead": {
+        "main": [
+          [
+            {
+              "node": "config1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "puxar_cliente1": {
+        "main": [
+          [
+            {
+              "node": "crm_acao",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "crm_acao": {
+        "main": [
+          [
+            {
+              "node": "criar_lead_crm_list_ofir",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "adicionar_comentario_crm",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "atualizar_consulta_data",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "atualizar_cliente1": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "config1": {
+        "main": [
+          [
+            {
+              "node": "puxar_cliente1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "adicionar_comentario_crm": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "comentario_humano": {
+        "main": [
+          [
+            {
+              "node": "cliente1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "cliente1": {
+        "main": [
+          [
+            {
+              "node": "comandos",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "atualizar_cliente3": {
+        "main": [
+          [
+            {
+              "node": "rodar_agente_request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "novo_comentario": {
+        "main": [
+          [
+            {
+              "node": "config5",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "atualizar_consulta_data": {
+        "main": [
+          [
+            {
+              "node": "adicionar_comentario_crm1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "adicionar_comentario_crm1": {
+        "main": [
+          [
+            {
+              "node": "mudar_de_funil",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "mudar_de_funil": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "comandos": {
+        "main": [
+          [
+            {
+              "node": "atualizar_cliente4",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "atualizar_cliente5",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "atualizar_cliente3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "config5": {
+        "main": [
+          [
+            {
+              "node": "comentario_humano",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "When clicking ‘Test workflow’": {
+        "main": [
+          [
+            {
+              "node": "config",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "departamentos_tratamento": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model2": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent1",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model3": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "agente_secretaria",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model4": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "agente_auxiliar_secretaria",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Agente financeiro",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "msgs1": {
+        "main": [
+          [
+            {
+              "node": "single_msg",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "single_msg": {
+        "main": [
+          [
+            {
+              "node": "Node",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "WhatsApp Text",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "split_output": {
+        "main": [
+          [
+            {
+              "node": "msgs1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "WhatsApp Text": {
+        "main": [
+          [
+            {
+              "node": "single_msg",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "criar_lead_crm_list_ofir": {
+        "main": [
+          [
+            {
+              "node": "atualizar_cliente1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "variables": {
+        "main": [
+          [
+            {
+              "node": "auth",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "rodar_agente": {
+        "main": [
+          [
+            {
+              "node": "tratamento",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {
+      "Webhook": [
+        {
+          "json": {
+            "headers": {
+              "host": "n8n.dinastia.uk",
+              "user-agent": "axios/1.7.9",
+              "content-length": "774",
+              "accept-encoding": "gzip, compress, deflate, br",
+              "content-type": "application/json",
+              "x-forwarded-for": "177.78.20.96",
+              "x-forwarded-host": "n8n.dinastia.uk",
+              "x-forwarded-port": "443",
+              "x-forwarded-proto": "https",
+              "x-forwarded-server": "53a0bfbe0604",
+              "x-real-ip": "177.78.20.96"
+            },
+            "params": {},
+            "query": {},
+            "body": {
+              "event": "messages.upsert",
+              "instance": "DinastIA",
+              "data": {
+                "key": {
+                  "remoteJid": "5517997466835@s.whatsapp.net",
+                  "fromMe": true,
+                  "id": "3AC7B819E7DD143F375B"
+                },
+                "pushName": "Braulio Dias Ribeiro",
+                "status": "SERVER_ACK",
+                "message": {
+                  "conversation": "Oiii"
+                },
+                "contextInfo": {
+                  "expiration": 604800,
+                  "ephemeralSettingTimestamp": "1743379012",
+                  "disappearingMode": {
+                    "initiator": "INITIATED_BY_ME",
+                    "trigger": "ACCOUNT_SETTING",
+                    "initiatedByMe": true
+                  }
+                },
+                "messageType": "conversation",
+                "messageTimestamp": 1745938085,
+                "instanceId": "dda6d95b-8e1c-433c-bef9-215c5aca82ba",
+                "source": "ios"
+              },
+              "destination": "https://n8n.dinastia.uk/webhook/api/v1/chat",
+              "date_time": "2025-04-29T11:48:05.910Z",
+              "sender": "5517997466835@s.whatsapp.net",
+              "server_url": "https://evoapi.bdrtec.com.br",
+              "apikey": "FF19DF0A7A4B-4A66-A7AA-774E0D28147F"
+            },
+            "webhookUrl": "https://n8n.dinastia.uk/webhook/api/v1/chat",
+            "executionMode": "production"
+          }
+        }
+      ]
+    },
+    "versionId": "a73ac83b-1970-46bc-bd83-21e7250f7ddf",
+    "triggerCount": 0,
+    "tags": [
+      {
+        "createdAt": "2025-04-30T17:50:34.169Z",
+        "updatedAt": "2025-04-30T17:50:34.169Z",
+        "id": "R4Nw28JsSVW2KioT",
+        "name": "AO-v1.6"
+      }
+    ]
+  }
+}
