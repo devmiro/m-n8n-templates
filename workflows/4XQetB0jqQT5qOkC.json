@@ -1,0 +1,1455 @@
+{
+  "data": {
+    "createdAt": "2025-04-23T12:22:47.774Z",
+    "updatedAt": "2025-05-13T20:06:11.818Z",
+    "id": "4XQetB0jqQT5qOkC",
+    "name": "ImobAI - CRM",
+    "active": true,
+    "nodes": [
+      {
+        "parameters": {
+          "content": "## CRM - ClickUp integration\n\nCreate an account at clickup.com and integrate this flow with your account. Not mandatory. Just don't run the \"clients_webhook\" to set up the webhook trigger",
+          "height": 2400,
+          "width": 2540,
+          "color": 3
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "436fc2d4-c2e7-464c-950d-2e9d89cc877f",
+        "name": "Sticky Note8"
+      },
+      {
+        "parameters": {
+          "content": "## Supabase Webhook\n\nThis webhook will be called whenever the chats or clients table are updated",
+          "height": 680,
+          "width": 400
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          0,
+          140
+        ],
+        "id": "0589c2f9-a2b3-4663-bdbd-716be17fb699",
+        "name": "Sticky Note9"
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "imobai/v1/clickup/update",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          140,
+          460
+        ],
+        "id": "ce614333-8591-4906-a2db-068839c97cb1",
+        "name": "supabase-webhook",
+        "webhookId": "4e706b4a-8787-4def-9fcf-e81c8bafc673"
+      },
+      {
+        "parameters": {
+          "content": "## Config\nIn this node you need to set the same apiKey that you have already set when creating the \"clients_webhook_trigger\"",
+          "height": 680,
+          "width": 400,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          400,
+          140
+        ],
+        "id": "bf5c3e76-6bba-40a4-ac35-da6aa7e7ccbd",
+        "name": "Sticky Note10"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "0567bbc7-ad60-4cc2-9daa-7700e6907aaf",
+                "name": "apiKey",
+                "value": "292693248E84-4D6B-B043-02A6058A87A8",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          540,
+          460
+        ],
+        "id": "1bf4a5fb-6416-4078-8b02-8287a01279c5",
+        "name": "config1"
+      },
+      {
+        "parameters": {
+          "content": "## Auth + normalisation\n\n- Auth:\nMake sure that only your application can be the single one to receive these sort of events\n\n- Normalisation:\nIdentify the client_id when chats or clients gets updated.",
+          "height": 680,
+          "width": 460
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          800,
+          140
+        ],
+        "id": "c3ca44ed-4944-40e6-99e8-77f89076afe0",
+        "name": "Sticky Note11"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "4dad8a50-710e-49f7-8d99-4176a82591f0",
+                "leftValue": "={{ $json.apiKey }}",
+                "rightValue": "={{ $('supabase-webhook').item.json.query.apiKey }}",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.filter",
+        "typeVersion": 2.2,
+        "position": [
+          880,
+          460
+        ],
+        "id": "a33ed58d-4832-4606-aaa6-08bfaef003f0",
+        "name": "auth1"
+      },
+      {
+        "parameters": {
+          "team": "36984450",
+          "space": "61040171",
+          "folder": "90136815068",
+          "list": "901312108011",
+          "name": "={{ $json.body.nome }} | {{ $json.body.numero.split('@')[0] }}",
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.clickUp",
+        "typeVersion": 1,
+        "position": [
+          340,
+          1820
+        ],
+        "id": "0f113a12-d953-4627-a19b-985b48fa3b44",
+        "name": "create",
+        "credentials": {
+          "clickUpApi": {
+            "id": "NDm5aeqHBEXwBWeG",
+            "name": "ClickUp account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "upsert",
+          "schema": {
+            "__rl": true,
+            "mode": "list",
+            "value": "public"
+          },
+          "table": {
+            "__rl": true,
+            "value": "clientes",
+            "mode": "list",
+            "cachedResultName": "clientes"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "crm_id": "={{ $json.id }}",
+              "nome": "Novo Lead",
+              "numero": "={{ $('Webhook').item.json.body.numero }}"
+            },
+            "matchingColumns": [
+              "numero"
+            ],
+            "schema": [
+              {
+                "id": "numero",
+                "displayName": "numero",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "nome",
+                "displayName": "nome",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false,
+                "removed": false
+              },
+              {
+                "id": "created_at",
+                "displayName": "created_at",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "dateTime",
+                "canBeUsedToMatch": false,
+                "removed": true
+              },
+              {
+                "id": "follow_up",
+                "displayName": "follow_up",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": false,
+                "removed": true
+              },
+              {
+                "id": "follow_up_ativo",
+                "displayName": "follow_up_ativo",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "boolean",
+                "canBeUsedToMatch": false,
+                "removed": true
+              },
+              {
+                "id": "ultima_msg_enviada",
+                "displayName": "ultima_msg_enviada",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "dateTime",
+                "canBeUsedToMatch": false,
+                "removed": true
+              },
+              {
+                "id": "crm_id",
+                "displayName": "crm_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": false
+              },
+              {
+                "id": "pause_ai",
+                "displayName": "pause_ai",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "boolean",
+                "canBeUsedToMatch": false,
+                "removed": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          540,
+          1820
+        ],
+        "id": "2e558891-d657-475f-80c8-1e8b4110081b",
+        "name": "update_crm_id",
+        "credentials": {
+          "postgres": {
+            "id": "p2EJKXJEmxZwupRD",
+            "name": "ImobSup"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## Client + action\n\n- Client:\nFetch the existent client record (if it exists)",
+          "height": 680,
+          "width": 500
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          1260,
+          140
+        ],
+        "id": "6b62da16-965a-4b53-91d3-153fe0006152",
+        "name": "Sticky Note15"
+      },
+      {
+        "parameters": {
+          "operation": "select",
+          "schema": {
+            "__rl": true,
+            "mode": "list",
+            "value": "public"
+          },
+          "table": {
+            "__rl": true,
+            "value": "clientes",
+            "mode": "list",
+            "cachedResultName": "clientes"
+          },
+          "limit": 1,
+          "where": {
+            "values": [
+              {
+                "column": "numero",
+                "value": "={{ $json.clientId }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          1420,
+          460
+        ],
+        "id": "78781e79-4949-43b2-8f69-3f50d24ce5f9",
+        "name": "client1",
+        "alwaysOutputData": false,
+        "credentials": {
+          "postgres": {
+            "id": "p2EJKXJEmxZwupRD",
+            "name": "ImobSup"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "26f618f3-d414-403d-ac9d-b742f96ea636",
+                "name": "clientId",
+                "value": "={{ $('supabase-webhook').item.json.body.record.session_id || $('supabase-webhook').item.json.body.record.client_id  }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1100,
+          460
+        ],
+        "id": "8f84a5ce-c909-4e6d-991f-a7793dd66087",
+        "name": "normalised"
+      },
+      {
+        "parameters": {
+          "content": "## new chat (buffer, sort, push msg)\nBuffer first all the changes, sort by ID then add the chats in the activities",
+          "height": 680,
+          "width": 780
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          1760,
+          140
+        ],
+        "id": "a0a22408-5f07-4a35-81fa-619229a2e132",
+        "name": "Sticky Note16"
+      },
+      {
+        "parameters": {
+          "resource": "comment",
+          "commentOn": "task",
+          "id": "={{ $('client1').item.json.crm_id }}",
+          "commentText": "=*** {{ $json.msgs.split('|')[1] }}",
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.clickUp",
+        "typeVersion": 1,
+        "position": [
+          1880,
+          660
+        ],
+        "id": "18f90099-c128-41b4-a66c-a0faf6770a04",
+        "name": "add_comment1",
+        "credentials": {
+          "clickUpApi": {
+            "id": "NDm5aeqHBEXwBWeG",
+            "name": "ClickUp account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "push",
+          "list": "=buffer:{{ $('client1').item.json.crm_id }}",
+          "messageData": "={{ $('msg').item.json.msg }}",
+          "tail": true
+        },
+        "type": "n8n-nodes-base.redis",
+        "typeVersion": 1,
+        "position": [
+          2040,
+          280
+        ],
+        "id": "b935a356-d9a5-4cf7-8ee2-d0d0763da32b",
+        "name": "push1",
+        "credentials": {
+          "redis": {
+            "id": "HdbYe2LiP4df3jlW",
+            "name": "Redis account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "amount": 2
+        },
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          2200,
+          280
+        ],
+        "id": "d7d94118-68db-477b-b437-33cce1770e35",
+        "name": "Wait1",
+        "webhookId": "43aa8e0d-8bb5-48d9-b869-620cb9651025"
+      },
+      {
+        "parameters": {
+          "operation": "get",
+          "propertyName": "msgs",
+          "key": "=buffer:{{ $('client1').item.json.crm_id }}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.redis",
+        "typeVersion": 1,
+        "position": [
+          2360,
+          280
+        ],
+        "id": "6bfb680a-057c-4f09-821f-6618418b0832",
+        "name": "msgs2",
+        "credentials": {
+          "redis": {
+            "id": "HdbYe2LiP4df3jlW",
+            "name": "Redis account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "42afc77a-7ce3-48c1-bccf-e26a7b291ad8",
+                "leftValue": "={{ $json.msgs.last() }}",
+                "rightValue": "={{ $('msg').item.json.msg }}",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.filter",
+        "typeVersion": 2.2,
+        "position": [
+          1880,
+          480
+        ],
+        "id": "8a91f01c-309f-496e-a9e5-0fdd7f251e36",
+        "name": "filterBuffer1"
+      },
+      {
+        "parameters": {
+          "operation": "delete",
+          "key": "=buffer:{{ $('client1').item.json.crm_id }}"
+        },
+        "type": "n8n-nodes-base.redis",
+        "typeVersion": 1,
+        "position": [
+          2040,
+          480
+        ],
+        "id": "026f2bc0-ea18-4bd8-8c5e-22a138b3b5ba",
+        "name": "deleteBuffer1",
+        "credentials": {
+          "redis": {
+            "id": "HdbYe2LiP4df3jlW",
+            "name": "Redis account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "e06fc8ae-dffb-479c-969c-82c6130a67ec",
+                "name": "msg",
+                "value": "={{ $('supabase-webhook').item.json.body.record.id }}|{{ $('supabase-webhook').item.json.body.record.message.type === 'human' ? '🔴': '🤖' }}: {{ $('supabase-webhook').item.json.body.record.message.content }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1880,
+          280
+        ],
+        "id": "1615da55-78eb-46f6-b1b6-1556542fbb1d",
+        "name": "msg"
+      },
+      {
+        "parameters": {
+          "fieldToSplitOut": "msgs",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitOut",
+        "typeVersion": 1,
+        "position": [
+          2200,
+          480
+        ],
+        "id": "8dfbb8e4-50f7-4881-9747-677b74c25718",
+        "name": "Split Out"
+      },
+      {
+        "parameters": {
+          "sortFieldsUi": {
+            "sortField": [
+              {
+                "fieldName": "msgs"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.sort",
+        "typeVersion": 1,
+        "position": [
+          2360,
+          480
+        ],
+        "id": "fc37e701-8075-40e2-a4fb-a320d5d0d3b6",
+        "name": "sort_by_id"
+      },
+      {
+        "parameters": {
+          "content": "## ClickUp Webhook\n\nThis webhook will be called whenever there's a change in a task in ClickUp, like a new comments in the activities panel or a custom field being updated.",
+          "height": 680,
+          "width": 400
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          0,
+          820
+        ],
+        "id": "7cf88092-dbea-40f9-b77e-e55e51ada555",
+        "name": "Sticky Note14"
+      },
+      {
+        "parameters": {
+          "content": "## Client\n\n- Client:\nFetch the existent client record (if it exists)",
+          "height": 680,
+          "width": 460
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          800,
+          820
+        ],
+        "id": "5a79d612-e0a2-40a4-9700-e295727843f7",
+        "name": "Sticky Note17"
+      },
+      {
+        "parameters": {
+          "operation": "select",
+          "schema": {
+            "__rl": true,
+            "mode": "list",
+            "value": "public"
+          },
+          "table": {
+            "__rl": true,
+            "value": "clientes",
+            "mode": "list",
+            "cachedResultName": "clientes"
+          },
+          "limit": 1,
+          "where": {
+            "values": [
+              {
+                "column": "crm_id",
+                "value": "={{ $('task_updated').item.json.task_id }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          980,
+          1120
+        ],
+        "id": "e949b389-7abd-4b27-a201-627a55141cad",
+        "name": "client2",
+        "alwaysOutputData": false,
+        "credentials": {
+          "postgres": {
+            "id": "p2EJKXJEmxZwupRD",
+            "name": "ImobSup"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## Action\n\n- Action:\nIdentify which action should we focus to address coming from ClickUp",
+          "height": 680,
+          "width": 500
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          1260,
+          820
+        ],
+        "id": "e72036e6-640f-4334-a152-b4c55601eead",
+        "name": "Sticky Note18"
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $('task_updated').item.json.history_items[0].field === 'custom_field' && $('task_updated').item.json.history_items[0].custom_field.name === 'pauseAI' }}",
+                      "rightValue": "",
+                      "operator": {
+                        "type": "boolean",
+                        "operation": "true",
+                        "singleValue": true
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "pauseAI"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "2c3087da-031a-4370-b457-915d0ad3ebcf",
+                      "leftValue": "={{ $('task_updated').item.json.history_items[0].field === 'comment' && !$('task_updated').item.json.history_items[0].comment.comment[0].text.startsWith('***') }}",
+                      "rightValue": "comment",
+                      "operator": {
+                        "type": "boolean",
+                        "operation": "true",
+                        "singleValue": true
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "human_reply"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          1460,
+          1120
+        ],
+        "id": "6f4503c9-2c4d-4f9c-8ded-fd6fe4357022",
+        "name": "action1"
+      },
+      {
+        "parameters": {
+          "content": "## pauseAI\nUpdate the pause_ai value from the database so that we can prevent the IA to be called",
+          "height": 340,
+          "width": 780
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          1760,
+          820
+        ],
+        "id": "f1752533-405f-40c8-90bd-d76070e1acd9",
+        "name": "Sticky Note19"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "schema": {
+            "__rl": true,
+            "mode": "list",
+            "value": "public"
+          },
+          "table": {
+            "__rl": true,
+            "value": "clientes",
+            "mode": "list",
+            "cachedResultName": "clientes"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "pause_ai": "={{ $('task_updated').item.json.history_items[0].after !== null }}",
+              "numero": "={{ $json.numero }}"
+            },
+            "matchingColumns": [
+              "numero"
+            ],
+            "schema": [
+              {
+                "id": "numero",
+                "displayName": "numero",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "nome",
+                "displayName": "nome",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "created_at",
+                "displayName": "created_at",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "dateTime",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "follow_up",
+                "displayName": "follow_up",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "follow_up_ativo",
+                "displayName": "follow_up_ativo",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "boolean",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "ultima_msg_enviada",
+                "displayName": "ultima_msg_enviada",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "dateTime",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "crm_id",
+                "displayName": "crm_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "pause_ai",
+                "displayName": "pause_ai",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "boolean",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          1840,
+          960
+        ],
+        "id": "933805e0-7c11-4946-a865-27d85072c676",
+        "name": "update_pause_ai",
+        "credentials": {
+          "postgres": {
+            "id": "p2EJKXJEmxZwupRD",
+            "name": "ImobSup"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## human reply\nUpdate the chats table and send the message to the user when we got a reply from a human",
+          "height": 340,
+          "width": 780
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          1760,
+          1160
+        ],
+        "id": "e10962bf-44fb-4500-9a18-4fb10e9d7dea",
+        "name": "Sticky Note21"
+      },
+      {
+        "parameters": {
+          "schema": {
+            "__rl": true,
+            "mode": "list",
+            "value": "public"
+          },
+          "table": {
+            "__rl": true,
+            "value": "chats",
+            "mode": "list",
+            "cachedResultName": "chats"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "session_id": "={{ $json.numero }}",
+              "message": "={\n  \"type\": \"ai\",\n  \"content\": \"{{ $('task_updated').item.json.history_items[0].comment.text_content.replaceAll('\\n', '\\\\n') }}\",\n  \"tool_calls\": [],\n  \"additional_kwargs\": {},\n  \"response_metadata\": {},\n  \"invalid_tool_calls\": []\n}"
+            },
+            "matchingColumns": [
+              "id"
+            ],
+            "schema": [
+              {
+                "id": "id",
+                "displayName": "id",
+                "required": false,
+                "defaultMatch": true,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "session_id",
+                "displayName": "session_id",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "message",
+                "displayName": "message",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "object",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "created_at",
+                "displayName": "created_at",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "dateTime",
+                "canBeUsedToMatch": true,
+                "removed": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          1840,
+          1320
+        ],
+        "id": "3b54452e-701e-4ff5-8e83-b5c75c7e1cb5",
+        "name": "save_chat1",
+        "credentials": {
+          "postgres": {
+            "id": "p2EJKXJEmxZwupRD",
+            "name": "ImobSup"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "=https://fletoapi.robotizze.us/message/sendText/{{ $('config2').item.json.evolutionInstanceName }}",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"number\": \"{{ $('client2').item.json.numero }}\",\n  \"delay\": 1000,\n  \"text\": \"{{ $json.message.content.replaceAll('\\n', '\\\\n')  }}\"\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          2060,
+          1320
+        ],
+        "id": "1da3a38f-014d-4885-a78e-894318f91c43",
+        "name": "replyWhatsApp1",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XYDeNUnb3JmsypQm",
+            "name": "Robotizze"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## Config\nThis node is here so that you can set all the necessary fields in order to run this Agent",
+          "height": 680,
+          "width": 400,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          400,
+          820
+        ],
+        "id": "ace4baa4-807d-4143-a71f-43455d46d416",
+        "name": "Sticky Note22"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "0567bbc7-ad60-4cc2-9daa-7700e6907aaf",
+                "name": "evolutionInstanceName",
+                "value": "dinastia-jurema",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          540,
+          1120
+        ],
+        "id": "9c7df003-e4ec-4b57-9757-164f1ca54917",
+        "name": "config2"
+      },
+      {
+        "parameters": {
+          "team": "36984450",
+          "events": [
+            "taskUpdated"
+          ],
+          "filters": {
+            "listId": "901312108011"
+          }
+        },
+        "type": "n8n-nodes-base.clickUpTrigger",
+        "typeVersion": 1,
+        "position": [
+          160,
+          1120
+        ],
+        "id": "3b60b076-cec5-47ee-a2c5-b47b6867c077",
+        "name": "task_updated",
+        "webhookId": "e6dbbbd1-72f3-40f7-b4af-dde5845731c9",
+        "credentials": {
+          "clickUpApi": {
+            "id": "NDm5aeqHBEXwBWeG",
+            "name": "ClickUp account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## Create new client",
+          "height": 680,
+          "width": 800
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          0,
+          1500
+        ],
+        "id": "2d87c365-0a36-4016-97ed-40ef3876af22",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "imobai/v1/clickup",
+          "authentication": "headerAuth",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          120,
+          1820
+        ],
+        "id": "92136891-7c9b-4956-b659-1e9a366eaa1a",
+        "name": "Webhook",
+        "webhookId": "5b4044a1-b401-44ce-a998-2370415abd23",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XYDeNUnb3JmsypQm",
+            "name": "Robotizze"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "list",
+          "operation": "getAll",
+          "team": "36984450",
+          "space": "61040171",
+          "folder": "90136815068",
+          "filters": {}
+        },
+        "type": "n8n-nodes-base.clickUp",
+        "typeVersion": 1,
+        "position": [
+          160,
+          1320
+        ],
+        "id": "3560bdff-53de-4f31-8e9b-02a553e24edc",
+        "name": "get list",
+        "credentials": {
+          "clickUpApi": {
+            "id": "NDm5aeqHBEXwBWeG",
+            "name": "ClickUp account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "supabase-webhook": {
+        "main": [
+          [
+            {
+              "node": "config1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "config1": {
+        "main": [
+          [
+            {
+              "node": "auth1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "auth1": {
+        "main": [
+          [
+            {
+              "node": "normalised",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "create": {
+        "main": [
+          [
+            {
+              "node": "update_crm_id",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "client1": {
+        "main": [
+          [
+            {
+              "node": "msg",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "normalised": {
+        "main": [
+          [
+            {
+              "node": "client1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "push1": {
+        "main": [
+          [
+            {
+              "node": "Wait1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait1": {
+        "main": [
+          [
+            {
+              "node": "msgs2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "msgs2": {
+        "main": [
+          [
+            {
+              "node": "filterBuffer1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "filterBuffer1": {
+        "main": [
+          [
+            {
+              "node": "deleteBuffer1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "deleteBuffer1": {
+        "main": [
+          [
+            {
+              "node": "Split Out",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "msg": {
+        "main": [
+          [
+            {
+              "node": "push1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Split Out": {
+        "main": [
+          [
+            {
+              "node": "sort_by_id",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "sort_by_id": {
+        "main": [
+          [
+            {
+              "node": "add_comment1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "client2": {
+        "main": [
+          [
+            {
+              "node": "action1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "action1": {
+        "main": [
+          [
+            {
+              "node": "update_pause_ai",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "save_chat1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "save_chat1": {
+        "main": [
+          [
+            {
+              "node": "replyWhatsApp1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "config2": {
+        "main": [
+          [
+            {
+              "node": "client2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "task_updated": {
+        "main": [
+          [
+            {
+              "node": "config2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "create",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1",
+      "callerPolicy": "workflowsFromSameOwner",
+      "timeSavedPerExecution": 2
+    },
+    "staticData": {
+      "node:task_updated": {
+        "webhookId": "62c6c8ee-748e-449c-83e1-d318ca2054d1",
+        "secret": "COU7PNOV3RZ0DWLGOIZIJPNRW75JTX70SM7KGIA1HBTT70RKUJMSTQR0VQB8RJZ5"
+      }
+    },
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {
+      "supabase-webhook": [
+        {
+          "json": {
+            "headers": {
+              "host": "n8n.dinastia.uk",
+              "user-agent": "pg_net/0.14.0",
+              "content-length": "300",
+              "accept": "*/*",
+              "content-type": "application/json",
+              "x-forwarded-for": "18.168.2.106",
+              "x-forwarded-host": "n8n.dinastia.uk",
+              "x-forwarded-port": "443",
+              "x-forwarded-proto": "https",
+              "x-forwarded-server": "53a0bfbe0604",
+              "x-real-ip": "18.168.2.106",
+              "accept-encoding": "gzip"
+            },
+            "params": {},
+            "query": {
+              "apiKey": "9879AWDAWD09809809809AWDAWDADW"
+            },
+            "body": {
+              "type": "INSERT",
+              "table": "chats",
+              "record": {
+                "id": 1,
+                "message": {
+                  "type": "human",
+                  "content": "Ola tudo bem?",
+                  "additional_kwargs": {},
+                  "response_metadata": {}
+                },
+                "created_at": "2025-04-03T17:09:08.917653+00:00",
+                "session_id": "447928821569@s.whatsapp.net"
+              },
+              "schema": "public",
+              "old_record": null
+            },
+            "webhookUrl": "https://n8n.dinastia.uk/webhook/imobai/v1/clickup/update",
+            "executionMode": "production"
+          }
+        }
+      ],
+      "Webhook": [
+        {
+          "json": {
+            "headers": {
+              "host": "n8n.dinastia.uk",
+              "user-agent": "axios/1.8.2",
+              "content-length": "40",
+              "accept": "application/json,text/html,application/xhtml+xml,application/xml,text/*;q=0.9, image/*;q=0.8, */*;q=0.7",
+              "accept-encoding": "gzip, compress, deflate, br",
+              "authorization": "efafeafae89aef789afe986aef976aef976aef97afe",
+              "content-type": "application/json",
+              "x-forwarded-for": "172.18.0.1",
+              "x-forwarded-host": "n8n.dinastia.uk",
+              "x-forwarded-port": "443",
+              "x-forwarded-proto": "https",
+              "x-forwarded-server": "53a0bfbe0604",
+              "x-real-ip": "172.18.0.1"
+            },
+            "params": {},
+            "query": {},
+            "body": {
+              "numero": "447928821569@s.whatsapp.net",
+              "nome": "Guilherme Reis"
+            },
+            "webhookUrl": "https://n8n.dinastia.uk/webhook/imobai/v1/clickup",
+            "executionMode": "production"
+          }
+        }
+      ]
+    },
+    "versionId": "3983877c-2943-4c2b-8295-317a8a2c741f",
+    "triggerCount": 3,
+    "tags": [
+      {
+        "createdAt": "2025-05-13T17:39:36.827Z",
+        "updatedAt": "2025-05-13T17:39:36.827Z",
+        "id": "GqByyY9zFQXMEMeg",
+        "name": "ImobiAI-v3.8"
+      },
+      {
+        "createdAt": "2025-04-23T12:22:29.463Z",
+        "updatedAt": "2025-04-23T12:22:29.463Z",
+        "id": "4S9MQmwpVOTxSxMM",
+        "name": "ImobiAI-v3.7"
+      }
+    ]
+  }
+}
