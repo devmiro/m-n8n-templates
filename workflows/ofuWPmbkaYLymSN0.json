@@ -1,0 +1,545 @@
+{
+  "data": {
+    "createdAt": "2025-07-09T19:01:54.067Z",
+    "updatedAt": "2025-07-09T19:01:54.067Z",
+    "id": "ofuWPmbkaYLymSN0",
+    "name": "My workflow 2",
+    "active": false,
+    "nodes": [
+      {
+        "parameters": {
+          "operation": "fromJson",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1,
+        "position": [
+          -460,
+          320
+        ],
+        "id": "ee01966d-6318-44d1-a1d6-a4de9070f2ed",
+        "name": "convertJson"
+      },
+      {
+        "parameters": {
+          "command": "n8n export:workflow --backup --output=/home/node/n8n-backups/workflows"
+        },
+        "id": "e38d13c5-d576-485c-aca2-01563afd1dca",
+        "name": "exportWorkflows",
+        "type": "n8n-nodes-base.executeCommand",
+        "position": [
+          -820,
+          320
+        ],
+        "typeVersion": 1
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "triggerAtHour": 6,
+                "triggerAtMinute": 45
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          -1180,
+          320
+        ],
+        "id": "487bb48a-2f86-42e0-a16c-46a7d9b002b3",
+        "name": "Schedule Trigger"
+      },
+      {
+        "parameters": {
+          "command": "rm -rf /home/node/n8n-backups/workflows"
+        },
+        "id": "0579baed-a9b9-4d34-95c9-22092e214e61",
+        "name": "removeOldWorkflows",
+        "type": "n8n-nodes-base.executeCommand",
+        "typeVersion": 1,
+        "position": [
+          -1000,
+          320
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "fromJson",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1,
+        "position": [
+          740,
+          360
+        ],
+        "id": "b471e4d3-89c6-4ffc-843d-0410f37a764a",
+        "name": "extraiJson"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://evo.dinastia.uk/message/sendText/ProjetoRH",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "apikey",
+                "value": "3B53D0D4EA99-48F4-A6E8-014BAC6B9779"
+              }
+            ]
+          },
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "number",
+                "value": "556299597044"
+              },
+              {
+                "name": "text",
+                "value": "Backup de workflows realizado com sucesso."
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          180,
+          0
+        ],
+        "id": "28d13c78-6825-48b3-92f5-315396d23896",
+        "name": "notificaWhastapp"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "d4271593-b3a6-4607-a6d9-6ea8070d7fb0",
+        "name": "loop",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          -200,
+          320
+        ]
+      },
+      {
+        "parameters": {
+          "amount": 2
+        },
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          80,
+          340
+        ],
+        "id": "e30d51ff-e306-4805-8515-d839a98e1351",
+        "name": "Wait",
+        "webhookId": "106d1ebd-c727-40a2-ba32-61bb406c3687"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "40e3f6bd-ceb6-446a-b6e2-f1650a05a510",
+                "leftValue": "={{ $json.error }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "exists",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          480,
+          340
+        ],
+        "id": "1a9fc1a9-6676-436a-9412-675b6a9102b4",
+        "name": "verificaSeExisteWorkflow"
+      },
+      {
+        "parameters": {
+          "resource": "file",
+          "operation": "get",
+          "owner": {
+            "__rl": true,
+            "value": "devmiro",
+            "mode": "name"
+          },
+          "repository": {
+            "__rl": true,
+            "value": "m-n8n-templates",
+            "mode": "list",
+            "cachedResultName": "m-n8n-templates",
+            "cachedResultUrl": "https://github.com/devmiro/m-n8n-templates"
+          },
+          "filePath": "=workflows/{{ $json.data.id }}.json",
+          "additionalParameters": {}
+        },
+        "type": "n8n-nodes-base.github",
+        "typeVersion": 1.1,
+        "position": [
+          300,
+          340
+        ],
+        "id": "856c50be-4218-4b3c-8b53-b121bed68285",
+        "name": "GitHubWorkflow",
+        "webhookId": "9462a3b7-2669-4e2d-a5f2-9fea99b580cb",
+        "credentials": {
+          "githubApi": {
+            "id": "bPe8PNVQEe8mlhMw",
+            "name": "GitHub account"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "f61fb189-e1af-4bd7-9e8a-852a64a2d816",
+                "leftValue": "={{ $json.data.updatedAt }}",
+                "rightValue": "={{ $('Wait').item.json.data.updatedAt }}",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEquals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          940,
+          360
+        ],
+        "id": "9e328964-c95e-4024-b5aa-e56e33c589b1",
+        "name": "verificarSeAtualizouWorkflow"
+      },
+      {
+        "parameters": {
+          "resource": "file",
+          "owner": {
+            "__rl": true,
+            "value": "devmiro",
+            "mode": "name"
+          },
+          "repository": {
+            "__rl": true,
+            "value": "m-n8n-templates",
+            "mode": "list",
+            "cachedResultName": "m-n8n-templates",
+            "cachedResultUrl": "https://github.com/devmiro/m-n8n-templates"
+          },
+          "filePath": "=workflows/{{ $('Wait').item.json.data.id }}.json",
+          "fileContent": "={{ JSON.stringify($('Wait').item.json, null, 2) }}",
+          "commitMessage": "={{ $('Wait').item.json.data.name }}",
+          "additionalParameters": {
+            "branch": {
+              "branch": "main"
+            }
+          }
+        },
+        "id": "8e2ac916-f189-4ed8-b880-5ceff9033e03",
+        "name": "criaWokrflow",
+        "type": "n8n-nodes-base.github",
+        "typeVersion": 1,
+        "position": [
+          1180,
+          40
+        ],
+        "webhookId": "969f5c25-4275-47de-9767-f833a4d4505d",
+        "credentials": {
+          "githubApi": {
+            "id": "bPe8PNVQEe8mlhMw",
+            "name": "GitHub account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "file",
+          "operation": "edit",
+          "owner": {
+            "__rl": true,
+            "value": "devmiro",
+            "mode": "name"
+          },
+          "repository": {
+            "__rl": true,
+            "value": "m-n8n-templates",
+            "mode": "list",
+            "cachedResultName": "m-n8n-templates",
+            "cachedResultUrl": "https://github.com/devmiro/m-n8n-templates"
+          },
+          "filePath": "=workflows/{{ $('Wait').item.json.data.id }}.json",
+          "fileContent": "={{ JSON.stringify($('Wait').item.json, null, 2) }}",
+          "commitMessage": "={{ $('Wait').item.json.data.name }}",
+          "additionalParameters": {
+            "branch": {
+              "branch": "main"
+            }
+          }
+        },
+        "id": "318437ae-4d0f-4f86-b4c8-13f7a37bb291",
+        "name": "atualizaWorkflow",
+        "type": "n8n-nodes-base.github",
+        "typeVersion": 1,
+        "position": [
+          1220,
+          340
+        ],
+        "webhookId": "7f8aa361-5de3-4448-a9fb-76621429acce",
+        "credentials": {
+          "githubApi": {
+            "id": "bPe8PNVQEe8mlhMw",
+            "name": "GitHub account"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.limit",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "13610a3e-be4e-4c45-a157-9ebb8ba9d2f5",
+        "name": "Limit"
+      },
+      {
+        "parameters": {
+          "fileSelector": "/home/node/n8n-backups/workflows/*.json"
+        },
+        "id": "278b0dac-2f45-4eb9-b29a-95803784daac",
+        "name": "readWorkflows",
+        "type": "n8n-nodes-base.readBinaryFiles",
+        "position": [
+          -640,
+          320
+        ],
+        "typeVersion": 1
+      }
+    ],
+    "connections": {
+      "exportWorkflows": {
+        "main": [
+          [
+            {
+              "node": "readWorkflows",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "convertJson": {
+        "main": [
+          [
+            {
+              "node": "loop",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Schedule Trigger": {
+        "main": [
+          [
+            {
+              "node": "removeOldWorkflows",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "removeOldWorkflows": {
+        "main": [
+          [
+            {
+              "node": "exportWorkflows",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "extraiJson": {
+        "main": [
+          [
+            {
+              "node": "verificarSeAtualizouWorkflow",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "loop": {
+        "main": [
+          [
+            {
+              "node": "Limit",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Wait",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait": {
+        "main": [
+          [
+            {
+              "node": "GitHubWorkflow",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "verificaSeExisteWorkflow": {
+        "main": [
+          [
+            {
+              "node": "criaWokrflow",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "extraiJson",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "GitHubWorkflow": {
+        "main": [
+          [
+            {
+              "node": "verificaSeExisteWorkflow",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "verificarSeAtualizouWorkflow": {
+        "main": [
+          [
+            {
+              "node": "atualizaWorkflow",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "loop",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "criaWokrflow": {
+        "main": [
+          [
+            {
+              "node": "loop",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "atualizaWorkflow": {
+        "main": [
+          [
+            {
+              "node": "loop",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Limit": {
+        "main": [
+          [
+            {
+              "node": "notificaWhastapp",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "readWorkflows": {
+        "main": [
+          [
+            {
+              "node": "convertJson",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "beabd096-62c7-404b-8608-12d0ee5b7c61",
+    "triggerCount": 0,
+    "tags": []
+  }
+}
