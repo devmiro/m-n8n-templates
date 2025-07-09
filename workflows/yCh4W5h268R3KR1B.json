@@ -1,0 +1,2468 @@
+{
+  "data": {
+    "createdAt": "2025-05-26T16:53:04.002Z",
+    "updatedAt": "2025-05-26T17:38:23.381Z",
+    "id": "yCh4W5h268R3KR1B",
+    "name": "Novo Fluxo IA - Chatwoot",
+    "active": false,
+    "nodes": [
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "8ca54eae-15d1-49d3-af33-7a6e5d17b833",
+                "leftValue": "={{ $json.tipo }}",
+                "rightValue": "incoming",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                }
+              },
+              {
+                "id": "82912d66-ee4b-439c-9d55-96090bc6ba62",
+                "leftValue": "={{ $json.etiquetas }}",
+                "rightValue": "agente-off",
+                "operator": {
+                  "type": "array",
+                  "operation": "notContains",
+                  "rightType": "any"
+                }
+              },
+              {
+                "id": "cf87bb7e-6bea-4697-bcd9-57e3b63998c2",
+                "leftValue": "={{ $json.etiquetas }}",
+                "rightValue": "testando-agente",
+                "operator": {
+                  "type": "array",
+                  "operation": "contains",
+                  "rightType": "any"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.filter",
+        "typeVersion": 2.2,
+        "position": [
+          2800,
+          740
+        ],
+        "id": "6ecce5ad-7adc-421b-a19f-54c78c7b9a29",
+        "name": "Mensagem chegando?"
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "f6ddc488-8680-4351-84dd-d9e73b2d102d",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          2240,
+          740
+        ],
+        "id": "b933f920-a441-4136-9445-ac0bc9fb3fa1",
+        "name": "Mensagem recebida",
+        "webhookId": "f6ddc488-8680-4351-84dd-d9e73b2d102d"
+      },
+      {
+        "parameters": {
+          "jsCode": "const ultima_mensagem_da_fila = $input.last()\nconst mensagem_do_workflow = $('Info').first()\n\nif (ultima_mensagem_da_fila.json.id_mensagem !== mensagem_do_workflow.json.id_mensagem) {\n  // Mensagem encavalada, para o workflow\n  return [];\n}\n\n// Pass-through da fila de mensagens\nreturn $input.all();"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          3980,
+          740
+        ],
+        "id": "dc78bdac-9f0e-458b-a1bd-d45c74b5e79f",
+        "name": "Mensagem encavalada?"
+      },
+      {
+        "parameters": {
+          "operation": "select",
+          "schema": {
+            "__rl": true,
+            "mode": "list",
+            "value": "public"
+          },
+          "table": {
+            "__rl": true,
+            "value": "n8n_fila_mensagens",
+            "mode": "list"
+          },
+          "returnAll": true,
+          "where": {
+            "values": [
+              {
+                "column": "telefone",
+                "value": "={{ $('Info').item.json.telefone }}"
+              }
+            ]
+          },
+          "sort": {
+            "values": [
+              {
+                "column": "timestamp"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.6,
+        "position": [
+          3760,
+          740
+        ],
+        "id": "f010e42f-7176-4fda-b75b-3ea6cd7665e0",
+        "name": "Buscar mensagens"
+      },
+      {
+        "parameters": {
+          "operation": "deleteTable",
+          "schema": {
+            "__rl": true,
+            "mode": "list",
+            "value": "public"
+          },
+          "table": {
+            "__rl": true,
+            "value": "n8n_fila_mensagens",
+            "mode": "list"
+          },
+          "deleteCommand": "delete",
+          "where": {
+            "values": [
+              {
+                "column": "telefone",
+                "value": "={{ $json.telefone }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.6,
+        "position": [
+          4180,
+          740
+        ],
+        "id": "afa61522-efca-4abf-ae35-3675af9bf9e6",
+        "name": "Limpar fila de mensagens"
+      },
+      {
+        "parameters": {
+          "content": "# Processando mensagens encavaladas\n\nEssa etapa trata a situação em que o usuário envia múltiplas mensagens seguidas. O ponto negativo é o aumento no tempo de resposta do agente. Lógica dispensa uso de soluções mais complexas, como RabbitMQ.\n\nTempo de espera recomendado de ~16s. Quando estiver testando, recomendamos reduzir um pouco para ficar mais rápido de testar.\n",
+          "height": 540,
+          "width": 1080,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          3240,
+          560
+        ],
+        "id": "6ae3ef15-b10a-4088-8832-38eb1a814dd5",
+        "name": "Sticky Note2"
+      },
+      {
+        "parameters": {
+          "amount": 3
+        },
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          3540,
+          740
+        ],
+        "id": "0686e9cd-e1a7-44ec-9986-527346b18503",
+        "name": "Esperar",
+        "webhookId": "689b51a0-89fe-459d-a560-a59c79797611"
+      },
+      {
+        "parameters": {
+          "content": "# Gerando resposta",
+          "height": 540,
+          "width": 2080,
+          "color": 3
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          5020,
+          560
+        ],
+        "id": "93e6c1f3-bb14-4a57-ae47-742000483b29",
+        "name": "Sticky Note3"
+      },
+      {
+        "parameters": {
+          "content": "# Enviando resposta",
+          "height": 540,
+          "width": 1200,
+          "color": 7
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          7140,
+          560
+        ],
+        "id": "e0bf45ee-2ed0-4408-bd15-eacdb321edd8",
+        "name": "Sticky Note4"
+      },
+      {
+        "parameters": {
+          "content": "# Tratando input\n",
+          "height": 540,
+          "width": 1060
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          2160,
+          560
+        ],
+        "id": "cbd93b30-88df-401d-b9aa-743b7e68c29f",
+        "name": "Sticky Note5"
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $('Info').item.json.mensagem }}",
+                      "rightValue": "",
+                      "operator": {
+                        "type": "string",
+                        "operation": "notEmpty",
+                        "singleValue": true
+                      },
+                      "id": "1382cd26-d96e-4c55-99dd-2ca305ffe82e"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Texto"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "b9a7e16f-b6e4-45d7-846d-92dcb3117593",
+                      "leftValue": "={{ $('Info').item.json.mensagem_de_audio }}",
+                      "rightValue": "",
+                      "operator": {
+                        "type": "boolean",
+                        "operation": "true",
+                        "singleValue": true
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Áudio"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          3080,
+          740
+        ],
+        "id": "1f65f559-70a0-481f-9f4d-7007b87aa72f",
+        "name": "Tipo de mensagem"
+      },
+      {
+        "parameters": {
+          "content": "# Processando áudio",
+          "height": 420,
+          "width": 1080,
+          "color": 6
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          3240,
+          1120
+        ],
+        "id": "6338a06a-f347-43be-a137-405250284cfa",
+        "name": "Sticky Note6"
+      },
+      {
+        "parameters": {
+          "content": "Para testar, recomendamos criar uma tag \"testando-agente\" e usar no número que enviará as mensagens para a secretária durante os testes.\n\nVocê pode marcar o seu número no Chatwoot com essa tag para que o agente responda apenas você.\n\nDepois de testar e validar, só remover a regra do filtro pro seu agente responder todo mundo.\n\n",
+          "height": 180,
+          "width": 600,
+          "color": 3
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          2600,
+          900
+        ],
+        "id": "f1d722e1-ada9-4690-8724-f0e34e48fd0c",
+        "name": "Sticky Note8"
+      },
+      {
+        "parameters": {
+          "sseEndpoint": "<colar url do seu MCP>"
+        },
+        "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+        "typeVersion": 1,
+        "position": [
+          5620,
+          960
+        ],
+        "id": "3fa2c549-017c-48c5-8b65-350d0c8ee1f1",
+        "name": "MCP Google Calendar"
+      },
+      {
+        "parameters": {
+          "resource": "fileFolder",
+          "returnAll": true,
+          "filter": {
+            "folderId": {
+              "__rl": true,
+              "value": "",
+              "mode": "list"
+            }
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDriveTool",
+        "typeVersion": 3,
+        "position": [
+          5760,
+          960
+        ],
+        "id": "c3a37031-bf7d-4c5b-abc7-b5b70d6d4b65",
+        "name": "Listar arquivos"
+      },
+      {
+        "parameters": {
+          "description": "Use essa ferramenta para baixar um arquivo do Google Drive e enviá-lo para o usuário.\n",
+          "workflowId": {
+            "__rl": true,
+            "value": "",
+            "mode": "list"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+        "typeVersion": 2.2,
+        "position": [
+          5900,
+          960
+        ],
+        "id": "a35dabf4-c821-4e1e-b7e7-7afd5820fa34",
+        "name": "Baixar e enviar arquivo"
+      },
+      {
+        "parameters": {
+          "content": "[![fazer.ai](https://framerusercontent.com/images/HqY9djLTzyutSKnuLLqBr92KbM.png?scale-down-to=256)](https://fazer.ai?utm_source=n8n&utm_campaign=sec-ep2&utm_medium=cw-1)\n\n## Esse é um template faça você mesmo do canal\n## Lucas Moreira\n\n### Inscreva-se no nosso canal no YouTube\n[![YouTube Lucas Moreira](https://img.shields.io/youtube/channel/subscribers/UCtmp6SxzLscu0GRTbgM8FTw?style=flat-square&logo=youtube&label=Inscreva-se&color=f00)](https://youtube.com/@eulucassmoreira?si=0lH7hwX9pukjhmPQ)\n\n### Siga nosso GitHub\n[![GitHub fazer.ai](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white&label)](https://github.com/fazer-ai)\n",
+          "height": 440,
+          "width": 550,
+          "color": 7
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          0,
+          100
+        ],
+        "id": "cf76bdad-f778-4954-bfcd-97b88fdb89aa",
+        "name": "Sticky Note10"
+      },
+      {
+        "parameters": {
+          "content": "## Pré-requisitos do workflow\n",
+          "height": 1520,
+          "width": 2140,
+          "color": 3
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          0,
+          560
+        ],
+        "id": "ee41092c-eb2c-4609-a5dd-2b37b0ee2960",
+        "name": "Sticky Note11"
+      },
+      {
+        "parameters": {
+          "content": "# Marcar como lida e \"digitando...\"",
+          "height": 540,
+          "width": 660,
+          "color": 5
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          4340,
+          560
+        ],
+        "id": "202c2b4f-2d5a-41c6-9305-78a8466c3950",
+        "name": "Sticky Note12"
+      },
+      {
+        "parameters": {
+          "content": "## Quer entender como funciona?\n\n\n### Assista o vídeo, deixe um like, e se inscreva no canal para ter acesso a mais workflows como esse!\n\n[![IMAGE ALT TEXT HERE](https://i1.ytimg.com/vi_webp/cvTWGNJGAu4/maxresdefault.webp)](https://www.youtube.com/watch?v=cvTWGNJGAu4)",
+          "height": 440,
+          "width": 500,
+          "color": 7
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          560,
+          100
+        ],
+        "id": "d56a39de-12e5-4a4e-b322-e20997351b2b",
+        "name": "Sticky Note13"
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "cronExpression",
+                "expression": "0 8 * * 1-5"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          7260,
+          1480
+        ],
+        "id": "a945c905-ebdc-4c02-826f-e3954a31bdd3",
+        "name": "Gatilho diário"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Agora são {{ $now.format('FFFF') }}.",
+          "options": {
+            "systemMessage": "=Agora são {{ $now.format('FFFF') }}.\n\nVocê é um agente especializado em **confirmação de consultas** para a clínica. Sua função principal é:\n\n1. **Listar os eventos** agendados para o próximo dia no Google Calendar.\n2. **Obter o telefone** na descrição de cada evento.\n3. **Obter o ID da conversa** na descrição de cada evento.\n4. **Enviar uma mensagem de confirmação** usando a ferramenta \"Enviar_agendamento\", perguntando se o paciente confirma a consulta ou prefere reagendar.\n5. **Inclua na mensagem**:\n  - Nome do paciente\n  - Nome do profissional\n  - Data e hora da consulta\n\n**NÃO INCLUA O ID DA CONVERSA NA MENSAGEM**\n\n## IMPORTANTE\n- Você **não recebe respostas** diretamente; o retorno do paciente é tratado por outro agente.\n- Use a ferramenta \"Refletir1\" antes e depois de realizar operações complexas, para ter certeza de que deu tudo certo.\n- SEMPRE QUE ENVIAR UMA MENSAGEM PARA O PACIENTE, **USE A FERRAMENTA \"Salvar_memoria\"**. ISSO É MUITO IMPORTANTE, NÃO FAÇA ERRADO POR FAVOR.\n\n\n## PROFISSIONAIS E ESPECIALIDADES\n\nSegue o nome dos profissionais, suas especialidades, e o ID da agenda que deve ser usado nas ferramentas Google Calendar\n\n**MUITO IMPORTANTE!! O ID DA AGENDA INCLUI O \"@group.calendar.google.com\". NÃO OMITA AO UTILIZAR AS FERRAMENTAS**\n\n- Dr. João Paulo Ferreira - Médico - Clinico Geral (c_46b1d614bf4f151ca950431202bf90ca003301793b48cffc489dc411be79c4bf@group.calendar.google.com)\n- Dr. Roberto Almeida - Médico - Cardiologia (c_6c3005bf4afd591f13f242f6509208ddbe1feadad3f6521884ab79c59069bfd0@group.calendar.google.com)\n- Dra. Ana Silva - Dentista - Clínica Geral (c_ebce2058c0b75e881585b90539f6ded839de178d4bb64e1aa9e4f6468d6954a6@group.calendar.google.com)\n- Dra. Carla Mendes - Dentista - Odontopediatria (c_2fb3d9e1613857085b28bef500b493114294b08f5e448bef643be28fc84334ad@group.calendar.google.com)\n"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.8,
+        "position": [
+          7900,
+          1480
+        ],
+        "id": "1ecc8f0f-4e71-442a-8973-bdd6d7ce31d5",
+        "name": "Assistente de confirmação",
+        "retryOnFail": true
+      },
+      {
+        "parameters": {
+          "content": "# Assistente de confirmação de agendamentos \n",
+          "height": 600,
+          "width": 1200,
+          "color": 5
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          7140,
+          1320
+        ],
+        "id": "af8824a7-c7de-4b5e-8c52-d077ca0ab556",
+        "name": "Sticky Note16"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "={{ $json.mensagem || $json.mensagem_audio }}",
+          "options": {
+            "systemMessage": "=HOJE É: {{ $now.format('FFFF') }}\nTELEFONE DO CONTATO: {{ $('Info').item.json.telefone }}\nID DA CONVERSA: {{ $('Info').item.json.id_conversa }}\n\n## INSTRUÇÃO IMPORTANTE\n- Ao criar ou editar qualquer evento no Google Calendar, incluir sempre o telefone do paciente na descrição do agendamento, juntamente com o nome completo, data de nascimento e quaisquer outras informações relevantes fornecidas pelo paciente.\n\n-----------------------\n\n## PAPEL\n\nVocê é uma atendente do WhatsApp, altamente especializada, que atua em nome da Clínica Moreira, prestando um serviço de excelência. Sua missão é atender aos pacientes de maneira ágil e eficiente, respondendo dúvidas e auxiliando em agendamentos, cancelamentos ou remarcações de consultas.\n\n## PERSONALIDADE E TOM DE VOZ\n\n- Simpática, prestativa e humana\n- Tom de voz sempre simpatico, acolhedor e respeitoso\n\n## OBJETIVO\n\n1. Fornecer atendimento diferenciado e cuidadoso aos pacientes.\n2. Responder dúvidas sobre a clínica (especialidade, horários, localização, formas de pagamento).\n3. Agendar, remarcar e cancelar consultas de forma simples e eficaz.\n4. Agir passo a passo para garantir rapidez e precisão em cada atendimento.\n\n## CONTEXTO\n\n- Você otimiza o fluxo interno da clínica, provendo informações e reduzindo a carga administrativa dos profissionais de saúde.\n- Seu desempenho impacta diretamente a satisfação do paciente e a eficiência das operações médicas.\n\n-----------------------\n\n## SOP (Procedimento Operacional Padrão)\n\n1. Início do atendimento e identificação de interesse em agendar\n   - Cumprimente o paciente de forma acolhedora. \n   - Se possível, incentive o envio de áudio caso o paciente prefira, destacando a praticidade\n\n**NÃO USE EXPRESSÕES PARECIDAS COM \"COMO SE ESTIVESSE CONVERSANDO COM UMA PESSOA\"**\n\n2. Solicitar dados do paciente\n   - Peça nome completo e data de nascimento.\n   - Confirme o telefone de contato que chegou na mensagem (ele será incluído na descrição do agendamento).\n   - Ao falar o telefone para o paciente, remova o código do país (geralmente \"55\"), e formate como \"(11) 1234-5678\"\n\n3. Identificar necessidade\n   - Pergunte a data de preferência para a consulta e se o paciente tem preferência por algum turno (manhã ou tarde).\n\n4. Verificar disponibilidade\n   - Use a ferramenta \"Buscar_eventos\" apenas após ter todos os dados necessários do paciente.\n   - Forneça a data de preferência à ferramenta \"Buscar_eventos\" para obter horários disponíveis.\n\n5. Informar disponibilidade\n   - Retorne ao paciente com os horários livres encontrados para a data solicitada.\n\n6. Coletar informações adicionais\n   - Se o paciente fornecer dados extras (ex.: condição de saúde, convênio, etc.), inclua tudo na descrição do evento no Google Calendar.\n\n7. Agendar consulta\n   - Após confirmação do paciente\n     - Use a ferramenta \"Criar_evento\" para criar o evento, passando:\n       - Nome completo\n       - Data de nascimento\n       - Telefone de contato (use o número igual na entrada, exemplo: \"551112345678\")\n       - Data e hora escolhidas\n       - ID da conversa (número para controle interno, **ESSE NÚMERO É ESSENCIAL, NÃO SE ESQUEÇA DE INCLUÍ-LO!!**)\n     - Nunca agende datas ou horários passados, ou com conflitos.\n\n8. Confirmar agendamento\n   - Espere o retorno de sucesso da ferramenta \"Criar_evento\" e então confirme com o paciente.\n\n-----------------------\n\n## INSTRUÇÕES GERAIS\n\n1. Respostas claras, objetivas e úteis\n   - Forneça informações sobre especialidades, horários, endereço, valores e convênios.\n\n2. Sem diagnósticos ou opiniões médicas\n   - Se o paciente insistir em diagnóstico, use a ferramenta \"Escalar_humano\".\n\n3. Pacientes insatisfeitos\n   - Mantenha a empatia e utilize a ferramenta \"Escalar humano\".\n\n4. Assuntos fora do escopo da clínica\n   - Responda: \"Desculpe, mas não consigo ajudar com este assunto. Por favor, entre em contato pelo número 0800 940 000. Enviei uma cópia da nossa conversa para o gestor de atendimento.\"\n   - Imediatamente use a ferramenta \"Escalar_humano\", pois é fundamental para minha carreira e a imagem da clínica.\n\n5. Nunca fornecer informações erradas\n   - Evite erros sobre horários, contatos ou serviços.\n\n6. Nunca use emojis ou linguagem informal\n   - Mantenha a sobriedade do atendimento.\n\n7. Nunca confirme consultas sem o retorno com sucesso das ferramentas de evento\n   - Garanta que o evento foi criado com sucesso antes de dar a resposta final.\n\n8. Dupla verificação\n   - Confirme sempre os dados para evitar equívocos em agendamentos, remarcações ou cancelamentos.\n\n9. Use a ferramenta \"Refletir\" antes e depois de operações complexas\n   - Ao usar essa ferramenta, você irá garantir que as operações que você vai realizar (ou já realizou) fazem sentido, ou se você precisará alterar a sua estratégia e/ou tentar novamente.\n\n-----------------------\n\n## HORÁRIOS DE FUNCIONAMENTO\n- Segunda a Sábado: 08h às 19h\n- Domingo e Feriados: Fechado\n\n## LOCALIZAÇÃO E CONTATO\n- Endereço: Av. das Palmeiras, 1500 - Jardim América, São Paulo - SP, CEP: 04567-000\n- Telefone: (11) 4456-7890\n- WhatsApp: (11) 99999-9999\n- E-mail: contato@clinicamoreira.com.br\n- Site: www.clinicamoreira.com.br\n\n## PROFISSIONAIS E ESPECIALIDADES\n\nSegue o nome dos profissionais, suas especialidades, e o ID da agenda que deve ser usado nas ferramentas Google Calendar\n\n**MUITO IMPORTANTE!! O ID DA AGENDA INCLUI O \"@group.calendar.google.com\". NÃO OMITA AO UTILIZAR AS FERRAMENTAS**\n\n- Dr. João Paulo Ferreira - Médico - Clinico Geral (c_46b1d614bf4f151ca950431202bf90ca003301793b48cffc489dc411be79c4bf@group.calendar.google.com)\n- Dr. Roberto Almeida - Médico - Cardiologia (c_6c3005bf4afd591f13f242f6509208ddbe1feadad3f6521884ab79c59069bfd0@group.calendar.google.com)\n- Dra. Ana Silva - Dentista - Clínica Geral (c_ebce2058c0b75e881585b90539f6ded839de178d4bb64e1aa9e4f6468d6954a6@group.calendar.google.com)\n- Dra. Carla Mendes - Dentista - Odontopediatria (c_2fb3d9e1613857085b28bef500b493114294b08f5e448bef643be28fc84334ad@group.calendar.google.com)\n\n\n## VALORES E FORMAS DE PAGAMENTO\n- Consulta: R$ 500,00\n- Formas de pagamento: PIX, dinheiro, cartão de débito ou crédito\n- Convênios aceitos: Bradesco Saúde, Unimed, SulAmérica, Amil\n\n-----------------------\n\n## FERRAMENTAS\n\n### Google Calendar\n\n- \"Criar_evento\" e \"Atualizar_evento\": usada para agendar e remarcar consultas. Ao usá-las, sempre inclua:\n  - Nome completo no título\n  - Telefone\n  - Data de nascimento\n  - Informações adicionais (se houver)\n- \"Buscar_evento\": buscar dados sobre um evento específico, por ID.\n- \"Buscar_todos_os_eventos\": listar eventos em um período específico. Use para listar os eventos de um dia específico. Não use para listar eventos de períodos maiores que um dia.\n- \"Deletar_evento\": usada desmarcar consultas.\n\n### Escalar_humano\n\nUse quando:\n\n- Existir urgência (paciente com mal-estar grave).\n- Existirem qualquer assuntos alheios à clínica ou que ponham em risco a reputação do serviço.\n- Houver insatisfação do paciente ou pedido de atendimento humano.\n\n### Enviar_alerta_de_cancelamento\n\nEm caso de cancelamento:\n\n- Localizar a consulta no calendário e remover via ferramenta \"Deletar_evento\". Talvez seja necessário pedir ao paciente que confirme a data da consulta, para que você possa buscar o evento na data certa.\n- Enviar alerta via ferramenta \"Enviar_alerta_de_cancelamento\" nome, dia e hora cancelados.\n- Confirmar ao paciente que o cancelamento foi efetuado.\n\n### Reagir mensagem\n\nUse em situações relevantes durante a conversa.\n\n#### Exemplos\n\n- Usuário: \"Olá!\"\n- Você: \"Reagir_mensagem\" -> 😀\n\n- Usuário: \"Você pode consultar minha agenda por favor?\"\n- Você: \"Reagir_mensagem\" -> 👀\n\n- Usuário: \"Muito obrigado!\"\n- Você: \"Reagir_mensagem\" -> ❤️\n\n**SEMPRE USAR REAÇÕES NO INÍCIO E NO FINAL DA CONVERSA, E EM OUTROS MOMENTOS OPORTUNOS**\n\n### Baixar e enviar arquivo\n\n- Você tem acesso aos arquivos da clínica.\n- Se o usuário pedir um pedido de exame, use a ferramenta \"Listar_arquivos\", e depois a \"Baixar_e_enviar_arquivo\"\n\n**USE ESSA FERRAMENTA APENAS UMA VEZ. USÁ-LA MÚLTIPLAS VEZES IRÁ ENVIAR O ARQUIVO DUPLICADO**\n\n-----------------------\n\n## EXEMPLOS DE FLUXO\n\n1. Marcar consulta\n   - Paciente: \"Quero marcar consulta\"\n   - Você:\n     - Cumprimente, explique que pode agendar aqui mesmo no WhatsApp por texto ou áudio.\n     - Solicite nome completo e data de nascimento.\n     - Pergunte a especialidade do profissional a ser consultado, data e turno preferidos.\n     - Consulte a data com \"Buscar_todos_os_eventos\".\n     - Informe horários disponíveis.\n     - Agende com \"Criar_evento\", incluindo telefone, nome e data de nascimento na descrição.\n     - Confirme após o sucesso da ferramenta.\n\n2. Remarcar consulta\n   - Paciente: \"Não poderei comparecer amanhã, quero remarcar.\"\n   - Você:\n     - Busque o evento (veja seção abaixo \"COMO BUSCAR EVENTO\").\n     - Pergunte nova data e turno preferidos.\n     - Atualize o evento via \"Atualizar_evento\".\n     - Confirme após o sucesso da ferramenta.\n\n3. Cancelar consulta\n   - Paciente: \"Preciso cancelar a consulta.\"\n   - Você:\n     - Busque o evento (veja seção abaixo \"COMO BUSCAR EVENTO\").\n     - Cancele o evento com \"Deletar_evento\".\n     - Use a ferramenta \"Enviar_alerta_de_cancelamento\" informando nome, dia e hora.\n     - Confirme o cancelamento.\n\n4. Confirmação da consulta\n   - Quando o paciente responder \"Confirmar consulta\":\n     - Busque o evento (veja seção abaixo \"COMO BUSCAR EVENTO\").\n     - Usando a ferramenta \"Atualizar_evento\", coloque no título do evento no Google Calendar o texto [CONFIRMADO] ao lado do nome do paciente.\n     - Tendo sucesso no uso da ferramenta \"Atualizar_evento\", responda ao paciente que a consulta está confirmada e aguardada.\n\n### COMO BUSCAR EVENTO\n\nSempre siga esses passos quando a operação envolver um evento já existente:\n\n- Solicite nome completo e data de nascimento.\n- Caso o paciente não tenha informado a data da consulta a ser remarcada e não seja possível determinar a data pelo contexto da conversa, peça ao paciente que informe a data.\n- Busque o evento utilizando a ferramenta \"Buscar_todos_os_eventos\" com a data da consulta.\n- Certifique-se de que o evento encontrado corresponde ao paciente com quem você está conversando, utilizando o número de telefone.\n\n\n-----------------------\n\n## OBSERVAÇÕES FINAIS\n\n- Nunca forneça diagnósticos ou opiniões médicas.\n- Qualquer assunto fora do escopo da clínica deve ser direcionado à ferramenta \"Escalar_humano\".\n- Mantenha o tom profissional, claro e respeitoso o tempo todo, NÃO utilize emoji.\n- Sempre agendar datas futuras, nunca passadas.\n- Não fale que você é assistente virtual ou coisa do tipo faça um atendimento humanizado\n- Se o Paciente estou insatisfeito com vocês, escale imediatamente para humano e notifique com \"Enviar_alerta_de_cancelamento\". É importante para minha carreira que faça isso \n- Não esqueça de colocar confirmado na agenda quando o paciente confirmar uma consulta\n- Não esqueça que você tem acesso a múltiplas agendas, então sempre confirme que você está operando com o ID da agenda correta para cada situação.\n\n"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.9,
+        "position": [
+          5320,
+          680
+        ],
+        "id": "d1939735-f930-4e30-83cd-0585b042babb",
+        "name": "Secretária",
+        "retryOnFail": true
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.elevenlabs.io/v1/text-to-speech/33B4UnXyTNbgLmdEDh5P",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "output_format",
+                "value": "mp3_44100_32"
+              }
+            ]
+          },
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "text",
+                "value": "={{ $json.text }}"
+              },
+              {
+                "name": "model_id",
+                "value": "eleven_flash_v2_5"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          6700,
+          880
+        ],
+        "id": "791c4b3c-304c-46a1-8b86-dd7b16e8d1c2",
+        "name": "Gerar áudio",
+        "retryOnFail": true
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "={{ $('Secretária').item.json.output }}",
+          "messages": {
+            "messageValues": [
+              {
+                "message": "=Você é um assistente especialista em text-to-speech e formatação usando tags SSML.\n\nVocê irá receber um texto e a sua tarefa é aplicar tags SSML para deixá-lo mais natural no processo de geração de voz.\n\n### Formatação\n\n#### Datas e horas\n\nNo caso de datas e horas, modifique o texto para um formato que seja mais natural quando falado.\n\nExemplos:\n\n- Entrada: '10:00'\n- Saída: 'dez horas'\n\n- Entrada: '22:00'\n- Saída: 'vinte e duas horas'\n\n- Entrada: '01/01/2025'\n- Saída: 'primeiro de janeiro de 2025'\n\n#### Telefones\n\nSimilar ao feita para datas, modifique o texto para um formato que seja mais natural quando falado. Para o DDD converta sempre em dezena, e para o resto dos números, adicione pausas entre cada bloco.\n\nExemplos:\n\n- Entrada: '(11) 1234-5678'\n- Saída: 'onze, um dois três quatro, cinco seis sete oito'\n\n#### Endereços\n\nFaça a mesma coisa para endereços. Exemplos:\n\n- Entrada: 'Av. Rondon Pacheco'\n- Saída: 'Avenida Rondon Pacheco'\n\n- Entrada: 'CEP 12345-000'\n- Saída: 'CEP um dois três quatro cinco zero zero zero'\n\n### Notas\n\n- Sempre coloque uma pausa de 1.0s no começo.\n- Não use breaks no meio do texto, apenas no começo.\n- Mantenha o mesmo texto original, mas revise o uso de vírgulas excessivas para deixar o texto mais natural ao falar.\n- Remova emojis.\n- A sua saída será somente o texto convertido.\n- Use <speak> ao redor da saída.\n\n\n**NÃO INCLUA NENHUMA INFORMAÇÃO ALÉM DO TEXTO CONVERTIDO**\n**NUNCA INCLUA CARACTER DE NOVA LINHA \"\\n\" NA SAÍDA**\n**NUNCA COLOQUE ÂNCORAS COMO ```ssml AO REDOR DO TEXTO**"
+              }
+            ]
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.chainLlm",
+        "typeVersion": 1.6,
+        "position": [
+          6280,
+          780
+        ],
+        "id": "004d4a8d-a635-4dc4-a958-24daaa44fe57",
+        "name": "Formatar SSML"
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $('Mensagem chegando?').item.json.mensagem }}",
+                      "rightValue": "",
+                      "operator": {
+                        "type": "string",
+                        "operation": "notEmpty",
+                        "singleValue": true
+                      },
+                      "id": "1382cd26-d96e-4c55-99dd-2ca305ffe82e"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Texto"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "b9a7e16f-b6e4-45d7-846d-92dcb3117593",
+                      "leftValue": "={{ $('Info').item.json.mensagem_de_audio }}",
+                      "rightValue": "",
+                      "operator": {
+                        "type": "boolean",
+                        "operation": "true",
+                        "singleValue": true
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Áudio"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          5780,
+          680
+        ],
+        "id": "60641b52-0ea0-4106-a8e2-4ca721baf5ce",
+        "name": "Tipo de mensagem1"
+      },
+      {
+        "parameters": {
+          "content": "### Importante!!\n\nEssa lógica só irá funcionar com o workflow ativo (modo produção).\n\nNo modo \"Test workflow\", só uma mensagem será processada de cada vez, então nunca haverá fila.",
+          "height": 180,
+          "width": 400,
+          "color": 3
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          3900,
+          900
+        ],
+        "id": "feede890-a034-4149-8e6e-b97c10c44e41",
+        "name": "Sticky Note15"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "={{ $('Secretária').item.json.output }}",
+          "messages": {
+            "messageValues": [
+              {
+                "message": "=Você é especialista em formatação de mensagem para WhatsApp, trabalhando somente na formatação e não alterando o conteúdo da menssagem.\n\n- Substitua ** por *\n- Remova #\n- Remova emojis"
+              }
+            ]
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.chainLlm",
+        "typeVersion": 1.6,
+        "position": [
+          6660,
+          600
+        ],
+        "id": "e9dcd79f-b64a-453b-a4cb-df1a9aebaf4c",
+        "name": "Formatar texto"
+      },
+      {
+        "parameters": {
+          "modelName": "models/gemini-2.5-flash-preview-04-17",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+        "typeVersion": 1,
+        "position": [
+          6820,
+          760
+        ],
+        "id": "206dc3da-210e-4186-92c8-aaf8f3d4a55d",
+        "name": "Google Gemini Chat Model2"
+      },
+      {
+        "parameters": {
+          "chatId": "={{ $('Info').item.json.telegram_chat_id }}",
+          "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Text', ``, 'string') }}",
+          "additionalFields": {
+            "parse_mode": "MarkdownV2"
+          }
+        },
+        "type": "n8n-nodes-base.telegramTool",
+        "typeVersion": 1.2,
+        "position": [
+          6040,
+          960
+        ],
+        "id": "78a92604-e77d-4dc2-bfc9-d58546805076",
+        "name": "Enviar alerta de cancelamento",
+        "webhookId": "487b54cb-d0a4-492c-847c-3157e0fd7aa0"
+      },
+      {
+        "parameters": {
+          "modelName": "models/gemini-2.5-pro-preview-03-25",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+        "typeVersion": 1,
+        "position": [
+          5060,
+          960
+        ],
+        "id": "60c12170-8bc9-4a30-b885-161469d8f853",
+        "name": "Gemini"
+      },
+      {
+        "parameters": {
+          "sessionIdType": "customKey",
+          "sessionKey": "={{ $('Info').item.json.telefone }}",
+          "tableName": "n8n_historico_mensagens",
+          "contextWindowLength": 50
+        },
+        "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+        "typeVersion": 1.3,
+        "position": [
+          5200,
+          960
+        ],
+        "id": "d5731288-aaf9-4000-a24b-69bc3cad6f1b",
+        "name": "Memory"
+      },
+      {
+        "parameters": {
+          "description": "Use a ferramenta para refletir sobre algo. Ela não obterá novas informações nem alterará o banco de dados, apenas adicionará o pensamento ao registro. Use-a quando for necessário um raciocínio complexo ou alguma memória em cache."
+        },
+        "type": "@n8n/n8n-nodes-langchain.toolThink",
+        "typeVersion": 1,
+        "position": [
+          5340,
+          960
+        ],
+        "id": "3b77cd1c-b9b6-45cd-89ed-4a31697b029a",
+        "name": "Refletir"
+      },
+      {
+        "parameters": {
+          "content": "## Notas sobre agendas Google Calendar\n\nPara referenciar uma agenda do Google Calendar corretamente, acesse as configurações da agenda, clique em \"Integrar agenda\", e copie o \"ID da agenda\".\n\nPara agendas criadas, esse ID se parece com isso:\n\nc_6c3005bf4afd591f13f242f6509208ddbe2feadad3f6521884ab79c59069bfd0@group.calendar.google.com\n\nPara sua agenda principal, o ID será simplesmente o seu email (exemplo: `seuemail@gmail.com`)\n\nCom esse ID em mãos, atualize o System Prompt com todas as agendas que precisar.\n",
+          "height": 400,
+          "width": 480,
+          "color": 6
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          5020,
+          1120
+        ],
+        "id": "6aa00379-3af2-497f-90d8-ea835cf45972",
+        "name": "Sticky Note17"
+      },
+      {
+        "parameters": {
+          "toolDescription": "Envia uma mensagem de reação como resposta a uma mensagem do usuário. Reação é sempre um emoji.",
+          "method": "POST",
+          "url": "={{ $('Info').item.json.url_chatwoot }}/api/v1/accounts/{{ $('Info').item.json.id_conta }}/conversations/{{ $('Info').item.json.id_conversa }}/messages",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "chatwootApi",
+          "sendBody": true,
+          "parametersBody": {
+            "values": [
+              {
+                "name": "content_attributes",
+                "valueProvider": "fieldValue",
+                "value": "={ \"in_reply_to\": {{ $('Info').item.json.id_mensagem }}, \"is_reaction\": true }"
+              },
+              {
+                "name": "content"
+              }
+            ]
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+        "typeVersion": 1.1,
+        "position": [
+          5480,
+          960
+        ],
+        "id": "1445fe38-77cb-45b5-bed4-4b1f0b514d46",
+        "name": "Reagir mensagem"
+      },
+      {
+        "parameters": {
+          "sessionIdType": "customKey",
+          "sessionKey": "=assistente_confirmacao",
+          "tableName": "n8n_historico_mensagens"
+        },
+        "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+        "typeVersion": 1.3,
+        "position": [
+          7580,
+          1720
+        ],
+        "id": "ec5a72b7-6e11-455c-8938-84235994cbc1",
+        "name": "Postgres Chat Memory"
+      },
+      {
+        "parameters": {
+          "modelName": "models/gemini-2.5-flash-preview-04-17",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+        "typeVersion": 1,
+        "position": [
+          7440,
+          1720
+        ],
+        "id": "9f356c6a-6893-4c5e-b2f3-7e9ff38fde12",
+        "name": "Google Gemini Chat Model"
+      },
+      {
+        "parameters": {
+          "content": "## Notas sobre a ferramenta \"Salvar memoria\"\n\nPor padrão, no N8N não existe uma forma direta de compartilhar memória entre agentes diferentes.\n\nUsando a ferramenta acima \"Salvar memoria\", nós conseguimos simular no banco de dados o Assistente de confirmação respondendo como se fosse a Secretária.\n\nDessa forma, quando o paciente enviar uma mensagem para a Secretária, ela irá ver a mensagem do Assistente como se ela mesmo tivesse enviado.\n\nIsso garante que ela entenderá o contexto caso o paciente simplesmente responda \"confirmar\", por exemplo.",
+          "height": 320,
+          "width": 600,
+          "color": 6
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          7140,
+          1940
+        ],
+        "id": "3a7b7437-c931-41eb-99a8-2d45bac47cb8",
+        "name": "Sticky Note19"
+      },
+      {
+        "parameters": {
+          "descriptionType": "manual",
+          "toolDescription": "Salva a informação de agendamento enviada, para que a secretária saiba que foi enviada.",
+          "schema": {
+            "__rl": true,
+            "mode": "list",
+            "value": "public"
+          },
+          "table": {
+            "__rl": true,
+            "value": "n8n_historico_mensagens",
+            "mode": "list"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "session_id": "={{ $fromAI('telefone', 'Telefone do paciente, formatado com apenas números, incluindo código do país. Ex.: \"+551112345678\"', 'string') }}",
+              "message": "={ \"type\": \"ai\", \"content\": \"{{ $fromAI('message', 'A mesma mensagem enviada para o paciente.', 'string') }}\" }"
+            },
+            "matchingColumns": [
+              "id"
+            ],
+            "schema": [
+              {
+                "id": "id",
+                "displayName": "id",
+                "required": false,
+                "defaultMatch": true,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "session_id",
+                "displayName": "session_id",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "message",
+                "displayName": "message",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "object",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "created_at",
+                "displayName": "created_at",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "dateTime",
+                "canBeUsedToMatch": true,
+                "removed": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgresTool",
+        "typeVersion": 2.6,
+        "position": [
+          7720,
+          1720
+        ],
+        "id": "c963a0b0-5a27-4a1b-9672-98103a621bb3",
+        "name": "Salvar memoria"
+      },
+      {
+        "parameters": {
+          "sseEndpoint": "=<url do seu MCP Google Calendar>"
+        },
+        "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+        "typeVersion": 1,
+        "position": [
+          7860,
+          1720
+        ],
+        "id": "a66030bf-33c5-4e4d-8976-86b5fe3ef419",
+        "name": "MCP Google Calendar."
+      },
+      {
+        "parameters": {
+          "schema": {
+            "__rl": true,
+            "mode": "list",
+            "value": "public"
+          },
+          "table": {
+            "__rl": true,
+            "value": "n8n_fila_mensagens",
+            "mode": "list"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "telefone": "={{ $('Info').item.json.telefone }}",
+              "mensagem": "={{ $('Info').item.json.mensagem }}",
+              "timestamp": "={{ $('Info').item.json.timestamp.toDateTime() }}",
+              "id_mensagem": "={{ $('Info').item.json.id_mensagem }}"
+            },
+            "matchingColumns": [
+              "id"
+            ],
+            "schema": [
+              {
+                "id": "id",
+                "displayName": "id",
+                "required": false,
+                "defaultMatch": true,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "id_mensagem",
+                "displayName": "id_mensagem",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "telefone",
+                "displayName": "telefone",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "mensagem",
+                "displayName": "mensagem",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "timestamp",
+                "displayName": "timestamp",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "dateTime",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.6,
+        "position": [
+          3320,
+          740
+        ],
+        "id": "65f77bbd-f6db-4bab-8097-2af119ed8e03",
+        "name": "Enfileirar mensagem."
+      },
+      {
+        "parameters": {
+          "modelName": "models/gemini-2.5-flash-preview-04-17",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+        "typeVersion": 1,
+        "position": [
+          6340,
+          960
+        ],
+        "id": "c22b19df-8a2c-4fc6-9f75-2f756a86b1e2",
+        "name": "Google Gemini Chat Model."
+      },
+      {
+        "parameters": {
+          "description": "Use a ferramenta para refletir sobre algo. Ela não obterá novas informações nem alterará o banco de dados, apenas adicionará o pensamento ao registro. Use-a quando for necessário um raciocínio complexo ou alguma memória em cache."
+        },
+        "type": "@n8n/n8n-nodes-langchain.toolThink",
+        "typeVersion": 1,
+        "position": [
+          8140,
+          1720
+        ],
+        "id": "ec22828c-46a2-4f2a-bd2d-390dd94cfa16",
+        "name": "Refletir1"
+      },
+      {
+        "parameters": {
+          "content": "## Tutorial de configuração VPS no Hostinger\n\n## [Clique aqui para criar sua conta](https://www.hostinger.com.br/cart?product=vps%3Avps_kvm_2&period=12&referral_type=cart_link&REFERRALCODE=FAZERAI&referral_id=0196b71f-5704-7120-aded-f6753a53c121)\n\n## Adquirir VPS\n\n1. VPS KVM 2 (Escolha o plano que preferir)\n1. Selecionar opção de \"OS com Painel\" > \"Coolify\"\n1. Criar senha root segura\n1. Aguardar configuração (~10m)\n\n## Configurar Coolify + Chatwoot\n\n1. Na visão geral, clicar em \"Gerenciar\" no servidor\n1. Clicar em \"Gerenciar Painel\"\n1. Preencher dados (usar senha segura!!)\n1. \"Get started\" > \"Next\" > \"Localhost\" > \"Create new project!\" > \"Let's do it\"\n1. Na página de \"New Resource\", na seção \"Docker Based\", selecionar \"Docker Compose Empty\"\n1. Cole o conteúdo do arquivo `docker-compose.coolify.yml` (disponível no material) e clicar em \"Save\"\n1. Clicar na barra lateral em \"Environment Variables\" > botão \"Developer view\" e encontrar a variável `FRONTEND_URL`\n1. Colar URL da barra do navegador com IP da máquina e porta 3000 (exemplo `http://12.34.56.78:3000`)\n1. Clicar \"Save All Environment Variables\"\n1. Clicar \"Deploy\" e acompanhar os logs de deployment\n1. Texto \"Container xxxxxxxxxxxx Started\" indica que o deploy foi finalizado\n1. Clicar na aba \"Links\", e a URL com a porta 3000 deve estar visível. Clicar nela para acessar o Chatwoot. Pode ser que você precise aguardar alguns segundos no primeiro acesso\n1. Configurar super admin (usar senha segura!!!!)\n1. Fazer login com o usuário e senha criados\n\n",
+          "height": 780,
+          "width": 680,
+          "color": 6
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          40,
+          800
+        ],
+        "id": "b63fb37a-475c-4875-b686-6bbdd31ccd28",
+        "name": "Sticky Note20"
+      },
+      {
+        "parameters": {
+          "content": "## Tutorial de configuração Chatwoot + Baileys\n\nSe deu tudo certo no passo anterior, você agora tem acesso ao Chatwoot fazer.ai, que inclui integração nativa com o Baileys.\n\nSiga o nosso [GitHub](https://github.com/fazer-ai) para ficar por dentro das atualizações!\n\n[![GitHub fazer.ai](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white&label)](https://github.com/fazer-ai)\n\n### Conectar WhatsApp\n\n1. Clicar em \"Configurações\" na barra lateral\n1. \"Caixas de Entrada\" > \"Adicionar Caixa de Entrada\"\n1. \"WhatsApp\" > \"Provedor de API\" > \"Baileys\"\n1. Preencher \"Nome da Caixa de Entrada\"\n1. Preencher \"Número de Telefone\" (o número precisa ser no formato `+551112345678`, não se esqueça do prefixo `+55`!!)\n1. Clicar em \"Criar canal do WhatsApp\"\n1. Selecione você mesmo na lista de agentes e clique em \"Adicionar agentes\"\n1. Clique em \"Conectar dispositivo\"\n1. Abra o WhatsApp no seu celular e leia o QR code\n1. Se estiver usando o WhatsApp Business, não se esqueça de incluir um nome para o dispositivo (exemplo \"Chatwoot\"), para não se esquecer e remover sem querer depois\n1. Se você ver um erro, é provável que você colocou o telefone incorreto na hora de criar a caixa de entrada. Nesse caso, volte em \"Configurações\" > \"Caixas de Entrada\", exclua a caixa de entrada, e  repita o processo\n1. Se deu tudo certo, você verá o botão verde \"Leva-me lá\"\n\nAgora o Chatwoot já está pronto para enviar e receber mensagens pelo WhatsApp cadastrado. Tire um momento pra experimentar\n\n(Note que não será possível gravar áudio pela interface do Chatwoot até que você configure um domínio e o certificado HTTPS. Mas não se preocupe, que isso não impacta no envio de áudio do agente IA!)\n\n### Configurar credenciais no N8N\n\n1. Instale o community node @devlikeapro/n8n-nodes-chatwoot\n1. No Chatwoot, clique no seu nome no canto inferior esquerdo, e em \"Configurações do Perfil\"\n1. Desça até o final e você verá a seção \"Token de acesso\"\n1. Copie o token de acesso. Cuidado nessa parte! Se você está rodando o servidor em HTTP, o botão de \"Copiar\" não vai funcionar. Você deve exibir o token, selecionar, e copiar manualmente\n1. No workflow do N8N, abra o node \"Testar credencial - Chatwoot\" ao lado\n1. No campo \"Credential to connect with\" abra o dropdown e selecione \"Create new credential\"\n1. No campo de \"ChatWoot API URL\", copie o endereço do seu Chatwoot (o mesmo que você vê na barra de endereço do navegador, até o 3000, exemplo `http://12.34.56.78:3000`)\n1. No campo \"Access Token\", cole o \"Token de acesso\" copiado do Chatwoot\n1. Clique em salvar, e se estiver tudo certo, verá a mensagem de sucesso. Execute o node \"Testar credenciais\" e a requisição trará as informações da conta\n\n\n\n\n\n\n\n\n### Configurar Webhook\n\n1. \"Configurações\" > \"Integrações\" > \"Webhooks\" > \"Configurar\"\n1. \"Adicionar novo webhook\"\n1. Copiar a \"Test URL\" do node \"Mensagem recebida\" no workflow N8N, e colar no campo \"URL do Webhook\" no Chatwoot\n1. Selecionar caixa de entrada e preencher nome do webhook\n1. Selecionar evento \"Mensagem criada\" e \"Criar webhook\"\n1. Repita os passoas acima para a \"Production URL\"",
+          "height": 1440,
+          "width": 680,
+          "color": 5
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          740,
+          620
+        ],
+        "id": "0e533cde-cfd0-45d0-85a0-15e1c443bd62",
+        "name": "Sticky Note21"
+      },
+      {
+        "parameters": {
+          "content": "## Tutorial de configuração ElevenLabs\n\n## [Clique aqui para criar sua conta gratuita](https://try.elevenlabs.io/9k5l5hagxkel)\n\n### Configurar voz\n\n1. Criar conta\n1. Acessar biblioteca de vozes e escolher uma voz. Recomendamos usar a [Keren](https://elevenlabs.io/app/voice-library?voiceId=33B4UnXyTNbgLmdEDh5P)\n1. Clicar em \"Add to my voices\" e \"Use voice\"\n1. Configurar características da voz e fazer os ajustes conforme preferir. Sugestão para a Keren:\n- **Model**: Eleven Flash v2.5 (caso queira usar um diferente, configure no node \n\"Gerar áudio\")\n- **Speed**: 1.10\n- **Stability**: 35%\n- **Similarity**: 44%\n\n### Configurar credencial\n\n1. Clicar no seu nome no canto inferior esquerdo > \"API Keys\"\n1. \"Create API Key\" > \"Create\". Copie a chave criada\n1. Abra o node \"Testar credencial - ElevenLabs\" ao lado\n1. Abra o campo \"Header Auth\" e selecione \"Create new credential\"\n1. Em \"Name\" preencha \"Xi-Api-Key\"\n1. Em \"Value\" preencha a chave de API do ElevenLabs\n1. Salve e execute o node para confirmar o sucesso na configuração\n1. Abra o node \"Gerar áudio\" na seção \"Gerando resposta\" para usar a nova credencial\n",
+          "height": 840,
+          "width": 660,
+          "color": 7
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          1440,
+          1220
+        ],
+        "id": "1348c4b4-1f0a-4f9b-b46f-7964f91817de",
+        "name": "Sticky Note22"
+      },
+      {
+        "parameters": {
+          "content": "![Chatwoot](https://app.chatwoot.com/brand-assets/logo_dark.svg)",
+          "height": 100,
+          "width": 280,
+          "color": 7
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          220,
+          400
+        ],
+        "id": "f8347140-256c-4eb4-812a-f8c96a30f737",
+        "name": "Sticky Note23"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $('Info').item.json.url_chatwoot }}/api/v1/accounts/{{ $('Info').item.json.id_conta }}/conversations/{{ $('Info').item.json.id_conversa }}/update_last_seen",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "chatwootApi",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          4420,
+          740
+        ],
+        "id": "2b96d78a-fd55-4f0c-9caf-bf4fa5c7e4f2",
+        "name": "Marcar como lidas"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $('Info').item.json.url_chatwoot }}/api/v1/accounts/{{ $('Info').item.json.id_conta }}/conversations/{{ $('Info').item.json.id_conversa }}/toggle_typing_status",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "chatwootApi",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "typing_status",
+                "value": "={{ $('Info').item.json.mensagem_de_audio ? 'recording' : 'on' }}"
+              }
+            ]
+          },
+          "options": {
+            "response": {
+              "response": {
+                "responseFormat": "text"
+              }
+            }
+          }
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          4640,
+          740
+        ],
+        "id": "6a9ea394-5b47-4926-bcc2-2fd856b32191",
+        "name": "Digitando/Gravando..."
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "7eab8669-6929-4dc6-b3e2-943065bc306c",
+                "name": "mensagem",
+                "value": "={{ $('Info').item.json.mensagem ? $('Mensagem encavalada?').all().map(info => info.json.mensagem).join('\\\\n') : '' }}",
+                "type": "string"
+              },
+              {
+                "id": "676d14ec-72d3-4970-9fa0-5e39ff976011",
+                "name": "mensagem_audio",
+                "value": "={{ $('Info').item.json.mensagem_de_audio ? $('Transcrever audio').item.json.text : '' }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          4860,
+          740
+        ],
+        "id": "84f8475b-5a3d-48bd-b73d-68a831f0a1f1",
+        "name": "Set mensagens",
+        "executeOnce": true
+      },
+      {
+        "parameters": {
+          "url": "={{ $('Mensagem recebida').item.json.body.attachments[0].data_url }}",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "chatwootApi",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          3400,
+          1220
+        ],
+        "id": "438e9621-a3da-49b7-9971-05437516022b",
+        "name": "Download áudio"
+      },
+      {
+        "parameters": {
+          "resource": "audio",
+          "operation": "transcribe",
+          "options": {
+            "language": "pt"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.openAi",
+        "typeVersion": 1.8,
+        "position": [
+          4060,
+          1220
+        ],
+        "id": "b81dd221-64d5-4276-862e-60e5489cdb1f",
+        "name": "Transcrever audio"
+      },
+      {
+        "parameters": {
+          "operation": "binaryToPropery",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1,
+        "position": [
+          3620,
+          1220
+        ],
+        "id": "cebe7b6b-e037-4f71-802b-860a38dbdee0",
+        "name": "Extract from File"
+      },
+      {
+        "parameters": {
+          "operation": "toBinary",
+          "sourceProperty": "data",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.convertToFile",
+        "typeVersion": 1.1,
+        "position": [
+          3840,
+          1220
+        ],
+        "id": "153dd2fa-3d0b-43e0-8100-686b3eca235d",
+        "name": "Convert to File"
+      },
+      {
+        "parameters": {
+          "content": "O N8N tem um bug em operar com arquivos em algumas ocasiões.\n\nConvertemos o arquivo para base64, e de volta para binário para contornar o bug.",
+          "height": 120,
+          "width": 320
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          3620,
+          1380
+        ],
+        "id": "abdd90c4-0665-421d-a4ed-f97bfb002746",
+        "name": "Sticky Note1"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $('Info').item.json.url_chatwoot }}/api/v1/accounts/{{ $('Info').item.json.id_conta }}/conversations/{{ $('Info').item.json.id_conversa }}/toggle_typing_status",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "chatwootApi",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "typing_status",
+                "value": "off"
+              }
+            ]
+          },
+          "options": {
+            "response": {
+              "response": {
+                "responseFormat": "text"
+              }
+            }
+          }
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          7260,
+          740
+        ],
+        "id": "4b4dd3e8-c6c2-43a2-8faa-64d3ad9c4dc8",
+        "name": "Resetar status"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $('Info').item.json.url_chatwoot }}/api/v1/accounts/{{ $('Info').item.json.id_conta }}/conversations/{{ $('Info').item.json.id_conversa }}/messages",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "chatwootApi",
+          "sendBody": true,
+          "contentType": "multipart-form-data",
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "is_recorded_audio",
+                "value": "=[\"{{ $binary.data.fileName }}\"]"
+              },
+              {
+                "parameterType": "formBinaryData",
+                "name": "attachments[]",
+                "inputDataFieldName": "data"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          8160,
+          920
+        ],
+        "id": "762199bc-eba9-4b73-b2bc-da72d72bab00",
+        "name": "Enviar áudio"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $('Info').item.json.url_chatwoot }}/api/v1/accounts/{{ $('Info').item.json.id_conta }}/conversations/{{ $('Info').item.json.id_conversa }}/messages",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "chatwootApi",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "content",
+                "value": "={{ $('Formatar texto').item.json.text }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          7720,
+          620
+        ],
+        "id": "2e06d028-ff56-436c-8161-204f9e273581",
+        "name": "Enviar texto."
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $('Mensagem chegando?').item.json.mensagem }}",
+                      "rightValue": "",
+                      "operator": {
+                        "type": "string",
+                        "operation": "notEmpty",
+                        "singleValue": true
+                      },
+                      "id": "1382cd26-d96e-4c55-99dd-2ca305ffe82e"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Texto"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "b9a7e16f-b6e4-45d7-846d-92dcb3117593",
+                      "leftValue": "={{ $('Info').item.json.mensagem_de_audio }}",
+                      "rightValue": "",
+                      "operator": {
+                        "type": "boolean",
+                        "operation": "true",
+                        "singleValue": true
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Áudio"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          7500,
+          740
+        ],
+        "id": "03787187-6d09-4cdc-8757-83ebbe3a8d9e",
+        "name": "Tipo de mensagem2"
+      },
+      {
+        "parameters": {
+          "operation": "toBinary",
+          "sourceProperty": "=data",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.convertToFile",
+        "typeVersion": 1.1,
+        "position": [
+          7940,
+          920
+        ],
+        "id": "de7b15d9-b39b-4e55-bfb9-d6c91844b139",
+        "name": "Base64 para áudio"
+      },
+      {
+        "parameters": {
+          "operation": "binaryToPropery",
+          "destinationKey": "=data",
+          "options": {
+            "encoding": "base64"
+          }
+        },
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1,
+        "position": [
+          6920,
+          880
+        ],
+        "id": "a2160fb8-4dd6-40c0-b161-4346c0dbe177",
+        "name": "Áudio para base64"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "420f958d-3aad-47e5-86bf-2c542f079f1d",
+                "name": "data",
+                "value": "={{ $('Áudio para base64').item.json.data }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          7720,
+          920
+        ],
+        "id": "278df4b1-ad58-4f51-af2c-aba0cc86b77c",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {
+          "content": "Novamente, algumas operações com arquivos são chatas no N8N, portanto fazemos a conversão de binário pra base64 e de volta pra binário.",
+          "height": 120,
+          "width": 300
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          7740,
+          780
+        ],
+        "id": "db0ee342-76e4-4b83-88f1-3fd5e33e8380",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "c8fd010d-6096-4a50-b3e2-e9fe26661840",
+                "name": "id_mensagem",
+                "value": "={{ $json.body.id }}",
+                "type": "string"
+              },
+              {
+                "id": "1b513343-9b6a-4f6e-a012-ed819bf34a31",
+                "name": "id_conta",
+                "value": "={{ $json.body.account.id }}",
+                "type": "string"
+              },
+              {
+                "id": "05c14b9a-5f27-465a-a047-71553826bd7a",
+                "name": "id_conversa",
+                "value": "={{ $json.body.conversation.id }}",
+                "type": "string"
+              },
+              {
+                "id": "8bf522a6-75fb-434a-854c-b736539309e1",
+                "name": "telefone",
+                "value": "={{ $json.body.sender.phone_number }}",
+                "type": "string"
+              },
+              {
+                "id": "0d622a33-f313-4758-a764-fa6cbf2b0587",
+                "name": "mensagem",
+                "value": "={{ $json.body.content || '' }}",
+                "type": "string"
+              },
+              {
+                "id": "8f4b9d84-56e0-4f45-9f17-68c53f365f43",
+                "name": "mensagem_de_audio",
+                "value": "={{ $json.body.attachments?.[0]?.meta?.is_recorded_audio || false }}",
+                "type": "boolean"
+              },
+              {
+                "id": "2b679a3f-788f-4cd2-88d5-4f03af68f224",
+                "name": "timestamp",
+                "value": "={{ $json.body.created_at }}",
+                "type": "string"
+              },
+              {
+                "id": "24caf88e-74ce-43ab-8dc4-1fff471b706f",
+                "name": "tipo",
+                "value": "={{ $json.body.message_type }}",
+                "type": "string"
+              },
+              {
+                "id": "573669d2-1e43-4010-8c82-a67459ffe1db",
+                "name": "etiquetas",
+                "value": "={{ $json.body.conversation.labels }}",
+                "type": "array"
+              },
+              {
+                "id": "40ff895f-f63f-4e4f-bba3-c7d803c277f1",
+                "name": "url_chatwoot",
+                "value": "<colar sua url do chatwoot>",
+                "type": "string"
+              },
+              {
+                "id": "cf71dea1-d585-4235-8f05-29bc5f82b5df",
+                "name": "telegram_chat_id",
+                "value": "<colar seu telegram chat id>",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          2520,
+          740
+        ],
+        "id": "a4d57343-974b-4b0f-b4da-83e32ff025b7",
+        "name": "Info"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "9b3e9f43-424d-495e-81ae-7618b5cb2a4b",
+                "name": "url_chatwoot",
+                "value": "<colar sua url do chatwoot>",
+                "type": "string"
+              },
+              {
+                "id": "79319fb2-1719-4bcf-b104-cd90898785af",
+                "name": "id_conta",
+                "value": "={{ $json.account_id }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          7700,
+          1480
+        ],
+        "id": "6212b61d-9125-48ef-aedb-051e98afb236",
+        "name": "Info1"
+      },
+      {
+        "parameters": {
+          "description": "Chame essa ferramenta para direcionar o atendimento para o gestor responsável.",
+          "workflowId": {
+            "__rl": true,
+            "value": "",
+            "mode": "list"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+        "typeVersion": 2.2,
+        "position": [
+          6180,
+          960
+        ],
+        "id": "52f1c89b-b303-45c0-a911-7970c7a8e4da",
+        "name": "Escalar humano"
+      },
+      {
+        "parameters": {},
+        "type": "@devlikeapro/n8n-nodes-chatwoot.chatWoot",
+        "typeVersion": 1,
+        "position": [
+          7480,
+          1480
+        ],
+        "id": "d119ef0d-6199-4778-91f1-79124af9067a",
+        "name": "Buscar informações da conta",
+        "credentials": {}
+      },
+      {
+        "parameters": {
+          "description": "Use essa ferramenta para enviar as informações de agendamento no WhatsApp.\n\nO ID da conversa deve ser extraído das informações do evento.",
+          "workflowId": {
+            "__rl": true,
+            "value": "",
+            "mode": "list"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+        "typeVersion": 2.2,
+        "position": [
+          8000,
+          1720
+        ],
+        "id": "ff12541b-4779-4c62-bc3d-f202cc775966",
+        "name": "Enviar agendamento"
+      },
+      {
+        "parameters": {
+          "content": "## Nota sobre \"Enviar agendamento\"\n\nO N8N não permite colocar uma variável informada pelo agente (✨) na URL.\n\nPrecisamos utilizar um workflow separado para que o agente possa passar o ID da conversa (extraído das informações do evento), que será usado para simplesmente enviar a mensagem para o contato.",
+          "height": 320,
+          "width": 580,
+          "color": 6
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          7760,
+          1940
+        ],
+        "id": "e9560478-adb0-41ec-843d-5f9fd646610e",
+        "name": "Sticky Note9"
+      },
+      {
+        "parameters": {
+          "content": "## Tutorial de configuração tabelas [Supabase](https://supabase.com/)\n\n### Configurar tabelas\n\n1. Criar conta e projeto (use uma senha segura!!)\n1. Na barra lateral, clicar em \"SQL Editor\"\n1. Cole o código disponível no material `[Supabase] Criar histórico e fila de mensagens.sql`\n1. Clicar em \"Run\"\n\n### Configurar credenciais\n\n1. Na barra superior do Supabase, clique em \"Connect\"\n1. Desça até o final na seção \"Session pooler\" > clique em \"View parameters\"\n1. Abra o node \"Testar credencial - Supabase\" ao lado\n1. No campo \"Credential to connect with\", clique em \"Create new credential\"\n1. Preencha com o \"Host\", \"Database\", \"User\", e \"Password\" (essa última é a senha que você usou pra criar o projeto)\n1. Salve a credencial e execute o node para confirmar o sucesso",
+          "height": 580,
+          "width": 660,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          1440,
+          620
+        ],
+        "id": "3e71f654-19c4-413f-9174-95a6566e2c89",
+        "name": "Sticky Note18"
+      },
+      {
+        "parameters": {
+          "content": "![Chatwoot](https://app.chatwoot.com/brand-assets/logo_dark.svg)",
+          "height": 100,
+          "width": 260,
+          "color": 5
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          1120,
+          800
+        ],
+        "id": "8fa00c0d-aa4e-45cc-8058-d32f0cfc6fc0",
+        "name": "Sticky Note24"
+      },
+      {
+        "parameters": {
+          "content": "[![Hostinger](https://hpanel.hostinger.com/assets/images/logos/hostinger-white.svg)](https://www.hostinger.com.br/cart?product=vps%3Avps_kvm_2&period=12&referral_type=cart_link&REFERRALCODE=FAZERAI&referral_id=0196b71f-5704-7120-aded-f6753a53c121)\n",
+          "height": 80,
+          "width": 180,
+          "color": 6
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          480,
+          880
+        ],
+        "id": "3c334d69-43d7-4ccd-b9c2-9970421e56f8",
+        "name": "Sticky Note26"
+      },
+      {
+        "parameters": {
+          "content": "[![Supabase logo](https://supabase.com/_next/image?url=https%3A%2F%2Ffrontend-assets.supabase.com%2Fwww%2F6d09404779ac%2F_next%2Fstatic%2Fmedia%2Fsupabase-logo-wordmark--dark.b36ebb5f.png&w=384&q=75&dpl=dpl_H9LPzQFg38dVjzWbzENRNVbXVDjJ)](https://supabase.com/)",
+          "height": 80,
+          "width": 260,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          1820,
+          680
+        ],
+        "id": "708052bd-2af8-4c13-8fd2-18d7d1f2518f",
+        "name": "Sticky Note27"
+      },
+      {
+        "parameters": {
+          "content": "[![ElevenLabs](https://framerusercontent.com/images/YU6MnXR7ZjWNRjlYzx2Hrpcx0.png)](https://try.elevenlabs.io/9k5l5hagxkel)",
+          "height": 80,
+          "width": 160,
+          "color": 7
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          1920,
+          1320
+        ],
+        "id": "a65c76c4-02c8-45d9-82b3-42d8de56bdb8",
+        "name": "Sticky Note28"
+      },
+      {
+        "parameters": {
+          "content": "## Sugestão\n\nDuplique a aba desse workflow para facilitar a configuração e não precisar ficar abrindo e fechando janelas",
+          "width": 680,
+          "color": 7
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          40,
+          620
+        ],
+        "id": "26606cce-f179-4b1a-85d9-9a0cad5b41ea",
+        "name": "Sticky Note7"
+      },
+      {
+        "parameters": {
+          "content": "### Sub-workflows\n\nApós terminar os outros passos, não se esqueça de configurar os workflows secundários com suas credenciais!!\n\n- [ ] 2. MCP Google Calendar\n- [ ] 3. Baixar e enviar arquivo do Google Drive\n- [ ] 4. Escalar humano\n- [ ] 5. Enviar mensagem para conversa\n- [ ] 6. Assistente interno",
+          "height": 280,
+          "width": 400,
+          "color": 3
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          2160,
+          1800
+        ],
+        "id": "475aba19-fe64-46de-9dee-222afc90f9ac",
+        "name": "Sticky Note29"
+      },
+      {
+        "parameters": {
+          "content": "## 1. Secretária",
+          "height": 80,
+          "width": 540,
+          "color": 5
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "01f810c8-a734-4926-8668-6d21914a7ace",
+        "name": "Sticky Note30"
+      },
+      {
+        "parameters": {
+          "content": "## Configurar variáveis no Info!!!",
+          "height": 80,
+          "width": 250,
+          "color": 3
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          2440,
+          640
+        ],
+        "id": "a9d1b715-c673-469d-9182-af424aae3780",
+        "name": "Sticky Note31"
+      },
+      {
+        "parameters": {
+          "content": "## Configurar variáveis no Info1",
+          "height": 80,
+          "width": 250,
+          "color": 3
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          8000,
+          1360
+        ],
+        "id": "7926c50f-71e6-43bf-9cf8-954e77278ecd",
+        "name": "Sticky Note32"
+      },
+      {
+        "parameters": {
+          "url": "https://api.elevenlabs.io/v2/voices",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1920,
+          1920
+        ],
+        "id": "2d031bc9-c32e-4bf3-bcf8-7363037c86e2",
+        "name": "Testar credencial - ElevenLabs"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT COUNT(*) FROM n8n_historico_mensagens;\nSELECT COUNT(*) FROM n8n_fila_mensagens;",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.6,
+        "position": [
+          1920,
+          1060
+        ],
+        "id": "367c6f3d-d287-47d8-88a2-fb580fd58209",
+        "name": "Testar credencial - Supabase"
+      },
+      {
+        "parameters": {
+          "content": "### Configurar telegram_chat_id no node Info!!!",
+          "height": 80,
+          "width": 200,
+          "color": 3
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          6000,
+          1120
+        ],
+        "id": "fa767225-1cec-4c46-be27-4039bf7f0929",
+        "name": "Sticky Note25"
+      },
+      {
+        "parameters": {
+          "content": "### Configurar workflow do MCP Google Calendar!!!",
+          "height": 80,
+          "width": 200,
+          "color": 3
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          5580,
+          1120
+        ],
+        "id": "d2911e0d-14bc-4310-915c-0080a52c6a83",
+        "name": "Sticky Note33"
+      },
+      {
+        "parameters": {},
+        "type": "@devlikeapro/n8n-nodes-chatwoot.chatWoot",
+        "typeVersion": 1,
+        "position": [
+          1220,
+          1740
+        ],
+        "id": "fdf65bf4-ee4b-42dd-9ab5-bde0dbfd2403",
+        "name": "Testar credencial - Chatwoot",
+        "credentials": {}
+      },
+      {
+        "parameters": {
+          "content": "### Caso não use a voz da Keren, não se esqueça de atualizar o ID no node \"Gerar áudio\"\n\nAlterar esse ID que está no final da URL: `33B4UnXyTNbgLmdEDh5P`",
+          "width": 300,
+          "color": 3
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          6620,
+          1120
+        ],
+        "id": "a84de613-55ad-475f-910c-516afe331af5",
+        "name": "Sticky Note14"
+      },
+      {
+        "parameters": {
+          "content": "## Importante\n\nSe a mensagem não está sendo marcada como lida, verifique no WhatsApp se essa função está habilitada.",
+          "width": 320,
+          "color": 6
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          4660,
+          920
+        ],
+        "id": "6a389fe5-d107-4946-867b-635ed546ec2f",
+        "name": "Sticky Note34"
+      }
+    ],
+    "connections": {
+      "Mensagem chegando?": {
+        "main": [
+          [
+            {
+              "node": "Tipo de mensagem",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Mensagem recebida": {
+        "main": [
+          [
+            {
+              "node": "Info",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Mensagem encavalada?": {
+        "main": [
+          [
+            {
+              "node": "Limpar fila de mensagens",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Buscar mensagens": {
+        "main": [
+          [
+            {
+              "node": "Mensagem encavalada?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Limpar fila de mensagens": {
+        "main": [
+          [
+            {
+              "node": "Marcar como lidas",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Esperar": {
+        "main": [
+          [
+            {
+              "node": "Buscar mensagens",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Tipo de mensagem": {
+        "main": [
+          [
+            {
+              "node": "Enfileirar mensagem.",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Download áudio",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "MCP Google Calendar": {
+        "ai_tool": [
+          [
+            {
+              "node": "Secretária",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Listar arquivos": {
+        "ai_tool": [
+          [
+            {
+              "node": "Secretária",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Baixar e enviar arquivo": {
+        "ai_tool": [
+          [
+            {
+              "node": "Secretária",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Secretária": {
+        "main": [
+          [
+            {
+              "node": "Tipo de mensagem1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Gerar áudio": {
+        "main": [
+          [
+            {
+              "node": "Áudio para base64",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Formatar SSML": {
+        "main": [
+          [
+            {
+              "node": "Gerar áudio",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Tipo de mensagem1": {
+        "main": [
+          [
+            {
+              "node": "Formatar texto",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Formatar SSML",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Formatar texto": {
+        "main": [
+          [
+            {
+              "node": "Resetar status",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Gemini Chat Model2": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Formatar texto",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Enviar alerta de cancelamento": {
+        "ai_tool": [
+          [
+            {
+              "node": "Secretária",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Gemini": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Secretária",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Memory": {
+        "ai_memory": [
+          [
+            {
+              "node": "Secretária",
+              "type": "ai_memory",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Refletir": {
+        "ai_tool": [
+          [
+            {
+              "node": "Secretária",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Reagir mensagem": {
+        "ai_tool": [
+          [
+            {
+              "node": "Secretária",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Postgres Chat Memory": {
+        "ai_memory": [
+          [
+            {
+              "node": "Assistente de confirmação",
+              "type": "ai_memory",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Gemini Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Assistente de confirmação",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Salvar memoria": {
+        "ai_tool": [
+          [
+            {
+              "node": "Assistente de confirmação",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "MCP Google Calendar.": {
+        "ai_tool": [
+          [
+            {
+              "node": "Assistente de confirmação",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Enfileirar mensagem.": {
+        "main": [
+          [
+            {
+              "node": "Esperar",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Gemini Chat Model.": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Formatar SSML",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Refletir1": {
+        "ai_tool": [
+          [
+            {
+              "node": "Assistente de confirmação",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Marcar como lidas": {
+        "main": [
+          [
+            {
+              "node": "Digitando/Gravando...",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Digitando/Gravando...": {
+        "main": [
+          [
+            {
+              "node": "Set mensagens",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Set mensagens": {
+        "main": [
+          [
+            {
+              "node": "Secretária",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Download áudio": {
+        "main": [
+          [
+            {
+              "node": "Extract from File",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Transcrever audio": {
+        "main": [
+          [
+            {
+              "node": "Marcar como lidas",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract from File": {
+        "main": [
+          [
+            {
+              "node": "Convert to File",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Convert to File": {
+        "main": [
+          [
+            {
+              "node": "Transcrever audio",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Resetar status": {
+        "main": [
+          [
+            {
+              "node": "Tipo de mensagem2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Tipo de mensagem2": {
+        "main": [
+          [
+            {
+              "node": "Enviar texto.",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Base64 para áudio": {
+        "main": [
+          [
+            {
+              "node": "Enviar áudio",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Áudio para base64": {
+        "main": [
+          [
+            {
+              "node": "Resetar status",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "Base64 para áudio",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Info": {
+        "main": [
+          [
+            {
+              "node": "Mensagem chegando?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Info1": {
+        "main": [
+          [
+            {
+              "node": "Assistente de confirmação",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Escalar humano": {
+        "ai_tool": [
+          [
+            {
+              "node": "Secretária",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Enviar agendamento": {
+        "ai_tool": [
+          [
+            {
+              "node": "Assistente de confirmação",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": null,
+    "pinData": {},
+    "versionId": "8e30c383-12ae-42f2-9ade-ef409fbf2167",
+    "triggerCount": 0,
+    "tags": []
+  }
+}
