@@ -1,0 +1,1532 @@
+{
+  "data": {
+    "createdAt": "2025-05-22T02:56:55.836Z",
+    "updatedAt": "2025-05-22T02:56:55.836Z",
+    "id": "l8rq3zb0oT45uC42",
+    "name": "My workflow",
+    "active": false,
+    "nodes": [
+      {
+        "parameters": {
+          "mode": "raw",
+          "jsonOutput": "{\n  \"instagram_id\": \"0000\",\n  \"youtube_id\": \"0000\",\n  \"threads_id\": \"0000\",\n  \"tiktok_id\": \"0000\",\n  \"facebook_id\": \"0000\",\n  \"facebook_page_id\": \"000000000000\",\n  \"twitter_id\": \"0000\",\n  \"linkedin_id\": \"0000\",\n  \"pinterest_id\": \"0000\",\n  \"pinterest_board_id\": \"00000000000000000000\",\n  \"bluesky_id\": \"0000\"\n}\n",
+          "options": {}
+        },
+        "id": "6073fcc3-7311-42c2-b6aa-6f6ba82fdcbc",
+        "name": "Assign Social Media IDs",
+        "type": "n8n-nodes-base.set",
+        "position": [
+          660,
+          1300
+        ],
+        "typeVersion": 3.4
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://backend.blotato.com/v2/media",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "blotato-api-key",
+                "value": "YOUR_API_KEY"
+              }
+            ]
+          },
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "url",
+                "value": "={{ $('Update Final Video URL in Sheet').item.json['URL de la vidéo'] }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "b64ad45e-1cf6-4810-9cd8-b904cf414d97",
+        "name": "Upload Video to Blotato",
+        "type": "n8n-nodes-base.httpRequest",
+        "position": [
+          880,
+          1300
+        ],
+        "typeVersion": 4.2
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://backend.blotato.com/v2/posts",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "blotato-api-key",
+                "value": "=YOUR_API_KEY"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"post\": {\n    \"accountId\": \"{{ $('Assign Social Media IDs').item.json.instagram_id }}\",\n    \"target\": {\n      \"targetType\": \"instagram\"\n    },\n    \"content\": {\n      \"text\": \"{{ $('Save Rewritten Video to Google Sheets').item.json.Caption }}\",\n      \"platform\": \"instagram\",\n      \"mediaUrls\": [\n        \"{{ $json.url }}\"\n      ]\n    }\n  }\n}\n\n",
+          "options": {}
+        },
+        "id": "466bb6ad-9693-44b0-a5e2-fb7776f6d5db",
+        "name": "INSTAGRAM",
+        "type": "n8n-nodes-base.httpRequest",
+        "position": [
+          1160,
+          1060
+        ],
+        "typeVersion": 4.2
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://backend.blotato.com/v2/posts",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "blotato-api-key",
+                "value": "YOUR_API_KEY"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"post\": {\n    \"accountId\": \"{{ $('Assign Social Media IDs').item.json.youtube_id }}\",\n    \"target\": {\n      \"targetType\": \"youtube\",\n      \"title\": \"{{ $('Save Rewritten Video to Google Sheets').item.json['Texte superposé'] }}\",\n      \"privacyStatus\": \"unlisted\",\n      \"shouldNotifySubscribers\": \"false\"\n    },\n    \"content\": {\n      \"text\": \"{{ $('Save Rewritten Video to Google Sheets').item.json.Caption }}\",\n      \"platform\": \"youtube\",\n      \"mediaUrls\": [\n        \"{{ $json.url }}\"\n      ]\n    }\n  }\n}\n",
+          "options": {}
+        },
+        "id": "1a1b0fbd-ede5-4b66-87b2-6d65337af99a",
+        "name": "YOUTUBE",
+        "type": "n8n-nodes-base.httpRequest",
+        "position": [
+          1380,
+          1060
+        ],
+        "typeVersion": 4.2
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://backend.blotato.com/v2/posts",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "blotato-api-key",
+                "value": "YOUR_API_KEY"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"post\": {\n    \"accountId\": \"{{ $('Assign Social Media IDs').item.json.tiktok_id }}\",\n    \"target\": {\n      \"targetType\": \"tiktok\",\n      \"isYourBrand\": \"false\", \n      \"disabledDuet\": \"false\",\n      \"privacyLevel\": \"PUBLIC_TO_EVERYONE\",\n      \"isAiGenerated\": \"true\",\n      \"disabledStitch\": \"false\",\n      \"disabledComments\": \"false\",\n      \"isBrandedContent\": \"false\"\n      \n    },\n    \"content\": {\n      \"text\": \"{{ $('Save Rewritten Video to Google Sheets').item.json.Caption }}\",\n      \"platform\": \"tiktok\",\n      \"mediaUrls\": [\n        \"{{ $json.url }}\"\n      ]\n    }\n  }\n}\n",
+          "options": {}
+        },
+        "id": "7a8bf125-8bb2-4e5e-ad92-f0fa0692eec5",
+        "name": "TIKTOK",
+        "type": "n8n-nodes-base.httpRequest",
+        "position": [
+          1580,
+          1060
+        ],
+        "typeVersion": 4.2
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://backend.blotato.com/v2/posts",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "blotato-api-key",
+                "value": "YOUR_API_KEY"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"post\": {\n    \"accountId\": \"{{ $('Assign Social Media IDs').item.json.facebook_id }}\",\n    \"target\": {\n      \"targetType\": \"facebook\",\n      \"pageId\": \"{{ $('Assign Social Media IDs').item.json.facebook_page_id }}\"\n\n      \n    },\n    \"content\": {\n      \"text\": \"{{ $('Save Rewritten Video to Google Sheets').item.json.Caption }}\",\n      \"platform\": \"facebook\",\n      \"mediaUrls\": [\n        \"{{ $json.url }}\"\n      ]\n    }\n  }\n}",
+          "options": {}
+        },
+        "id": "56a05a9e-b822-4088-88c2-d3681f3c1a92",
+        "name": "FACEBOOK",
+        "type": "n8n-nodes-base.httpRequest",
+        "position": [
+          1160,
+          1300
+        ],
+        "typeVersion": 4.2
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://backend.blotato.com/v2/posts",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "blotato-api-key",
+                "value": "YOUR_API_KEY"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"post\": {\n    \"accountId\": \"{{ $('Assign Social Media IDs').item.json.threads_id }}\",\n    \"target\": {\n      \"targetType\": \"threads\"\n      \n    },\n    \"content\": {\n      \"text\": \"{{ $('Save Rewritten Video to Google Sheets').item.json.Caption }}\",\n      \"platform\": \"threads\",\n      \"mediaUrls\": [\n        \"{{ $json.url }}\"\n      ]\n    }\n  }\n}\n",
+          "options": {}
+        },
+        "id": "e06d1eba-edb8-40a8-a3ba-070236752f5c",
+        "name": "THREADS",
+        "type": "n8n-nodes-base.httpRequest",
+        "position": [
+          1380,
+          1300
+        ],
+        "typeVersion": 4.2
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://backend.blotato.com/v2/posts",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "blotato-api-key",
+                "value": "=YOUR_API_KEY"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"post\": {\n    \"accountId\": \"{{ $('Assign Social Media IDs').item.json.twitter_id }}\",\n    \"target\": {\n      \"targetType\": \"twitter\"\n      \n    },\n    \"content\": {\n      \"text\": \"{{ $('Save Rewritten Video to Google Sheets').item.json.Caption }}\",\n      \"platform\": \"twitter\",\n      \"mediaUrls\": [\n        \"{{ $json.url }}\"\n      ]\n    }\n  }\n}\n",
+          "options": {}
+        },
+        "id": "85092901-40cf-4e31-a239-d1f70c5a1957",
+        "name": "TWETTER",
+        "type": "n8n-nodes-base.httpRequest",
+        "position": [
+          1580,
+          1300
+        ],
+        "typeVersion": 4.2
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://backend.blotato.com/v2/posts",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "blotato-api-key",
+                "value": "YOUR_API_KEY"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"post\": {\n    \"accountId\": \"{{ $('Assign Social Media IDs').item.json.linkedin_id }}\",\n    \"target\": {\n      \"targetType\": \"linkedin\"\n      \n    },\n    \"content\": {\n      \"text\": \"{{ $('Save Rewritten Video to Google Sheets').item.json.Caption }}\",\n      \"platform\": \"linkedin\",\n      \"mediaUrls\": [\n        \"{{ $json.url }}\"\n      ]\n    }\n  }\n}\n",
+          "options": {}
+        },
+        "id": "8e114dbd-79d5-4336-a579-45cbd16f1d72",
+        "name": "LINKEDIN",
+        "type": "n8n-nodes-base.httpRequest",
+        "position": [
+          1160,
+          1540
+        ],
+        "typeVersion": 4.2
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://backend.blotato.com/v2/posts",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "blotato-api-key",
+                "value": "YOUR_API_KEY"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "= {\n  \"post\": {\n    \"accountId\": \"{{ $('Assign Social Media IDs').item.json.bluesky_id }}\",\n    \"target\": {\n      \"targetType\": \"bluesky\"\n      \n    },\n    \"content\": {\n      \"text\": \"{{ $('Save Rewritten Video to Google Sheets').item.json.Caption }}\",\n      \"platform\": \"bluesky\",\n      \"mediaUrls\": [\n        \"https://pbs.twimg.com/media/GE8MgIiWEAAfsK3.jpg\"\n      ]\n    }\n  }\n}\n",
+          "options": {}
+        },
+        "id": "41b5be1c-d7a7-4f43-9e58-f61a632011af",
+        "name": "BLUESKY",
+        "type": "n8n-nodes-base.httpRequest",
+        "position": [
+          1380,
+          1540
+        ],
+        "typeVersion": 4.2
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://backend.blotato.com/v2/posts",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "blotato-api-key",
+                "value": "YOUR_API_KEY"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"post\": {\n    \"accountId\": \"{{ $('Assign Social Media IDs').item.json.pinterest_id }}\",\n    \"target\": {\n      \"targetType\": \"pinterest\",\n      \"boardId\": \"{{ $('Assign Social Media IDs').item.json.pinterest_board_id }}\"      \n    },\n    \"content\": {\n      \"text\": \"{{ $('Save Rewritten Video to Google Sheets').item.json.Caption }}\",\n      \"platform\": \"pinterest\",\n      \"mediaUrls\": [\n        \"https://pbs.twimg.com/media/GE8MgIiWEAAfsK3.jpg\"\n      ]\n    }\n  }\n}\n\n",
+          "options": {}
+        },
+        "id": "c3d87c55-07c1-4923-800f-40bbef1af9df",
+        "name": "PINTEREST",
+        "type": "n8n-nodes-base.httpRequest",
+        "position": [
+          1580,
+          1540
+        ],
+        "typeVersion": 4.2
+      },
+      {
+        "parameters": {
+          "content": "# 🟫 STEP 1 — Clone a viral TikTok video",
+          "height": 300,
+          "width": 2460
+        },
+        "id": "5ea72b4c-c898-448f-a755-f91b4b2ab72f",
+        "name": "Sticky Note",
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          0,
+          0
+        ],
+        "typeVersion": 1
+      },
+      {
+        "parameters": {
+          "content": "# 🟦 STEP 2 — Suggest new content idea\n",
+          "height": 320,
+          "width": 1920,
+          "color": 4
+        },
+        "id": "aad323f5-2938-4d5f-a83f-606351a364cf",
+        "name": "Sticky Note1",
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          0,
+          360
+        ],
+        "typeVersion": 1
+      },
+      {
+        "parameters": {
+          "content": "# 🟪 STEP 3 — Create the new video with your avatar\n\n",
+          "height": 300,
+          "width": 1920
+        },
+        "id": "af710797-5915-4b86-8f68-c1c5bdd5fa06",
+        "name": "Sticky Note2",
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          0,
+          720
+        ],
+        "typeVersion": 1
+      },
+      {
+        "parameters": {
+          "content": "# 🟥 STEP 4 — Publish to 9 platforms\n",
+          "height": 680,
+          "width": 1920,
+          "color": 3
+        },
+        "id": "4426dbef-5fcf-4ba1-bc09-52d8a02c3c3b",
+        "name": "Sticky Note3",
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          0,
+          1040
+        ],
+        "typeVersion": 1
+      },
+      {
+        "parameters": {
+          "updates": [
+            "message"
+          ],
+          "additionalFields": {}
+        },
+        "id": "3c1eaec6-e534-4ada-9722-932c9e5e29e3",
+        "name": "Trigger: Get TikTok URL via Telegram",
+        "type": "n8n-nodes-base.telegramTrigger",
+        "position": [
+          120,
+          100
+        ],
+        "webhookId": "9a749f58-0f17-45ef-80a9-0e8d17bde5b5",
+        "typeVersion": 1.1
+      },
+      {
+        "parameters": {
+          "url": "=https://tiktok-download-video1.p.rapidapi.com/getVideo?url={{ $json.message.text }}",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "x-rapidapi-host",
+                "value": "tiktok-download-video1.p.rapidapi.com"
+              },
+              {
+                "name": "x-rapidapi-key",
+                "value": "YOUR_API_KEY"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "26144b80-0281-44c7-977e-80f1d8285dff",
+        "name": "Download TikTok Video (RapidAPI)",
+        "type": "n8n-nodes-base.httpRequest",
+        "position": [
+          340,
+          100
+        ],
+        "typeVersion": 4.2
+      },
+      {
+        "parameters": {
+          "url": "={{ $json.data.origin_cover }}",
+          "options": {}
+        },
+        "id": "1b4683cf-696f-4826-9ae8-ddaf76503b78",
+        "name": "Extract Video Thumbnail",
+        "type": "n8n-nodes-base.httpRequest",
+        "position": [
+          560,
+          100
+        ],
+        "typeVersion": 4.2
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.cloudinary.com/v1_1/YOUR_ID/image/upload",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBasicAuth",
+          "sendBody": true,
+          "contentType": "multipart-form-data",
+          "bodyParameters": {
+            "parameters": [
+              {
+                "parameterType": "formBinaryData",
+                "name": "file",
+                "inputDataFieldName": "data"
+              },
+              {
+                "name": "upload_preset",
+                "value": "n8n_clone"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "7b487ae1-3e9c-4684-b05e-ade35fd13055",
+        "name": "Upload Thumbnail to Cloudinary",
+        "type": "n8n-nodes-base.httpRequest",
+        "position": [
+          780,
+          100
+        ],
+        "typeVersion": 4.2
+      },
+      {
+        "parameters": {
+          "resource": "image",
+          "operation": "analyze",
+          "modelId": {
+            "__rl": true,
+            "mode": "list",
+            "value": "gpt-4o",
+            "cachedResultName": "GPT-4O"
+          },
+          "imageUrls": "={{ $json.url }}",
+          "options": {}
+        },
+        "id": "dc8ed6fa-75d4-4ed0-85b4-8c54600b6105",
+        "name": "Analyze Thumbnail (GPT-4o Vision)",
+        "type": "@n8n/n8n-nodes-langchain.openAi",
+        "position": [
+          1000,
+          100
+        ],
+        "typeVersion": 1.8
+      },
+      {
+        "parameters": {
+          "modelId": {
+            "__rl": true,
+            "mode": "list",
+            "value": "gpt-4o",
+            "cachedResultName": "GPT-4O"
+          },
+          "messages": {
+            "values": [
+              {
+                "content": "=Identify the primary text located at the top of the image described above:\n{{ $json.content }}\n\nReturn only that specific top text as the output.\n\nDo not include any quotation marks.\n\nFocus only on the top section's text in the image and disregard any other content."
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "204b86a2-49a0-4046-8851-ce6747c227bd",
+        "name": "Extract Overlay Text (GPT-4o)",
+        "type": "@n8n/n8n-nodes-langchain.openAi",
+        "position": [
+          1220,
+          100
+        ],
+        "typeVersion": 1.8
+      },
+      {
+        "parameters": {
+          "url": "={{ $('Download TikTok Video (RapidAPI)').item.json.data.music }}",
+          "options": {}
+        },
+        "id": "5c8bd69c-2513-4e2f-a025-b09e0b26b11b",
+        "name": "Download TikTok Audio",
+        "type": "n8n-nodes-base.httpRequest",
+        "position": [
+          1580,
+          100
+        ],
+        "typeVersion": 4.2
+      },
+      {
+        "parameters": {
+          "resource": "audio",
+          "operation": "transcribe",
+          "options": {}
+        },
+        "id": "f2b70b9d-4a99-4e4a-956e-accb4cf86117",
+        "name": "Transcribe Audio to Script (GPT)",
+        "type": "@n8n/n8n-nodes-langchain.openAi",
+        "position": [
+          1800,
+          100
+        ],
+        "typeVersion": 1.8
+      },
+      {
+        "parameters": {
+          "jsCode": "// Utility to create a random alphanumeric ID\nfunction createUniqueId(length = 12) {\n  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';\n  let id = '';\n  for (let i = 0; i < length; i++) {\n    const randomIndex = Math.floor(Math.random() * characters.length);\n    id += characters[randomIndex];\n  }\n  return id;\n}\n\n// Return the ID in the expected output structure\nreturn [\n  {\n    json: {\n      code: createUniqueId()\n    }\n  }\n];"
+        },
+        "id": "9f297cd5-4f58-4598-a89a-4ac523e2a365",
+        "name": "Generate Unique Template ID",
+        "type": "n8n-nodes-base.code",
+        "position": [
+          2020,
+          100
+        ],
+        "typeVersion": 2
+      },
+      {
+        "parameters": {
+          "operation": "append",
+          "documentId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "="
+          },
+          "sheetName": {
+            "__rl": true,
+            "mode": "list",
+            "value": "gid=0",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1SoYJvZbVNn4L1FNfk9eFqx_vGlCsMxgw8bx0DVFgBLY/edit#gid=0",
+            "cachedResultName": "Template"
+          },
+          "columns": {
+            "value": {
+              "Caption": "={{ $('Download TikTok Video (RapidAPI)').item.json.data.title }}",
+              "ID du modèle": "={{ $json.code }}",
+              "Lien de la vidéo": "={{ $('Trigger: Get TikTok URL via Telegram').item.json.message.text }}",
+              "Modèle de script vidéo": "={{ $('Transcribe Audio to Script (GPT)').item.json.text }}",
+              "Modèle de texte superposé": "={{ $('Download TikTok Audio').item.json.message.content }}"
+            },
+            "schema": [
+              {
+                "id": "ID du modèle",
+                "type": "string",
+                "display": true,
+                "required": false,
+                "displayName": "ID du modèle",
+                "defaultMatch": false,
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Lien de la vidéo",
+                "type": "string",
+                "display": true,
+                "required": false,
+                "displayName": "Lien de la vidéo",
+                "defaultMatch": false,
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Modèle de texte superposé",
+                "type": "string",
+                "display": true,
+                "required": false,
+                "displayName": "Modèle de texte superposé",
+                "defaultMatch": false,
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Modèle de script vidéo",
+                "type": "string",
+                "display": true,
+                "required": false,
+                "displayName": "Modèle de script vidéo",
+                "defaultMatch": false,
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Caption",
+                "type": "string",
+                "display": true,
+                "required": false,
+                "displayName": "Caption",
+                "defaultMatch": false,
+                "canBeUsedToMatch": true
+              }
+            ],
+            "mappingMode": "defineBelow",
+            "matchingColumns": [],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "id": "69388f9e-442d-4f85-89e7-679a698f9777",
+        "name": "Save Original Video to Google Sheets",
+        "type": "n8n-nodes-base.googleSheets",
+        "position": [
+          2240,
+          100
+        ],
+        "typeVersion": 4.5
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.perplexity.ai/chat/completions",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Authorization",
+                "value": "Bearer YOUR_API_KEY"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"model\": \"sonar-reasoning\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Suggest a content idea different from this video script: \\\"{{ $json['Modèle de script vidéo'] }}\\\". It should be in the same niche and on the exact same topic or content idea but offer fresh value. You must pick one idea from your research that matches the topic idea of the video script exactly but is also different and unique from it so it would stand out on social media. Example: if the video script contains a list of tools, your topic must also be a list of tools in that video script topic but slightly different, maybe different tools etc. If the video's script is about a plan, strategies, or whatever, you must also make your topic about that. So you must maintain the nature of the topic in the video script. You absolutely must be specific as the original video script. You can't just mention generic tools or strategies if the original video script contains specific tools. Etc. That is the level of accuracy and perfect matching of the video script original topic. Make sure it appeals to a broad audience like the example.\"\n    }\n  ]\n}\n",
+          "options": {}
+        },
+        "id": "59ddab46-987b-4d5f-b751-9d9df24931dc",
+        "name": "Suggest Similar Idea (Perplexity)",
+        "type": "n8n-nodes-base.httpRequest",
+        "position": [
+          120,
+          440
+        ],
+        "typeVersion": 4.2
+      },
+      {
+        "parameters": {
+          "jsCode": "// Step 1: Pull raw input\nlet raw = $input.first().json.choices[0].message.content;\n// Step 2: Forcefully remove anything between <think> and </think>\nlet cleaned = raw.replace(/<think>(.|\\n)*?<\\/think>/gi,\n'').trim();\n// Optional cleanup: remove leading/trailing blank lines\ncleaned = cleaned.replace(/^\\s+|\\s+$/g, '');\n// Done\nreturn [\n{\njson: {\ncleanedResponse: cleaned\n}\n}\n];\n"
+        },
+        "id": "18175bbd-f950-429a-9de8-584870311332",
+        "name": "Clean Perplexity Response",
+        "type": "n8n-nodes-base.code",
+        "position": [
+          360,
+          440
+        ],
+        "typeVersion": 2
+      },
+      {
+        "parameters": {
+          "modelId": {
+            "__rl": true,
+            "mode": "list",
+            "value": "gpt-4o",
+            "cachedResultName": "GPT-4O"
+          },
+          "messages": {
+            "values": [
+              {
+                "content": "=You are rewriting a TikTok video script, caption, and overlay —\nnot inventing a new one. You must follow this format and obey\nthese rules strictly.\n---\n### CONTEXT:\nHere is the content idea to use:\n{{ $json.cleanedResponse }}\n\n---\n### STEP 1: Rewrite the original video script BELOW using the new\ntopic/context above but maintaiin as stubbornly as possible the\noriginal script structure and style:\nOriginal script: {{ $('Save Original Video to Google Sheets').item.json['Modèle de script vidéo'] }}\n\n\n🛑 DO NOT CHANGE the original structure or style but\nThis includes:\n- Numbered list\n- Sentence breaks\n- \"I\" or first-person narration\n- Colloquial/informal tone (like “you're gonna wanna...”)\n✂️ You MUST keep:\n- first person narration of the orignal script at all costs\n- MUST be under 700 characters (yes \"Characters\" not wordcount)\nthis is an absolute MUST, no more than 700 characters!!! But never\nchange the structure or narration style of the original script. It\nmust be an exact imitation.\n✏️ You MAY change:\n- Tool names\n- Use cases\n- Descriptions\n- Niche-specific keywords\n\n#Rule: never use any characers like \"\" in your generated video\nscript as this will yeild syntax errors.\n---\n### STEP 2: Rewrite the caption text using the new topic.\nKeep:\n- Same structure and tone\n- Same use of #hashtags but space between each hashtag\n- Similar sentence count and layout\nCaption:\n{{ $('Save Original Video to Google Sheets').item.json.Caption }}\n\n---\n### STEP 3: Rewrite the text overlay (short version for the\nthumbnail or first screen)\nKeep:\n- EXACT Same length format, case, structure\n- Do NOT invent new words unless absolutely necessary\nOverlay:\n{{ $('Save Original Video to Google Sheets').item.json['Modèle de texte superposé'] }}\n---\n### FINAL OUTPUT FORMAT (no markdown formatting):\nText Overlay: [REWRITTEN TEXT OVERLAY]\nVideo Script: [REWRITTEN SCRIPT]\nCaption Text: [REWRITTEN CAPTION TEXT]\nDO NOT return any explanations. Only return the rewritten\nsections."
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "502fd805-14fb-431e-ac4f-ff748ad4900a",
+        "name": "Rewrite Script, Caption, Overlay (GPT-4o)",
+        "type": "@n8n/n8n-nodes-langchain.openAi",
+        "position": [
+          680,
+          440
+        ],
+        "typeVersion": 1.8
+      },
+      {
+        "parameters": {
+          "jsCode": "// Récupère le contenu du premier item\nconst input = $input.first().json.message.content;\n\n// On tolère les retours à la ligne réels (\\n) ou échappés (\\\\n)\n\n// Text Overlay\nconst textOverlayMatch = input.match(\n  /Text\\s*Overlay:\\s*(.+?)(?:\\r?\\n|\\\\n)/s\n);\n\n// Video Script\nconst videoScriptMatch = input.match(\n  /Video\\s*Script:\\s*(.+?)(?:\\r?\\n|\\\\n)Caption\\s*Text:/s\n);\n\n// Caption Text (jusqu'à la fin)\nconst captionTextMatch = input.match(\n  /Caption\\s*Text:\\s*(.+)/s\n);\n\nreturn [\n  {\n    json: {\n      textOverlay:   textOverlayMatch   ? textOverlayMatch[1].trim()   : null,\n      videoScript:   videoScriptMatch   ? videoScriptMatch[1].trim()   : null,\n      captionText:   captionTextMatch   ? captionTextMatch[1].trim()   : null,\n    }\n  }\n];\n"
+        },
+        "id": "f7c66401-4453-406a-92ce-97242ec36f0f",
+        "name": "Split Rewritten Content into Sections",
+        "type": "n8n-nodes-base.code",
+        "position": [
+          1160,
+          440
+        ],
+        "typeVersion": 2
+      },
+      {
+        "parameters": {
+          "jsCode": "// Utility to create a random alphanumeric ID\nfunction createUniqueId(length = 12) {\n  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';\n  let id = '';\n  for (let i = 0; i < length; i++) {\n    const randomIndex = Math.floor(Math.random() * characters.length);\n    id += characters[randomIndex];\n  }\n  return id;\n}\n\n// Return the ID in the expected output structure\nreturn [\n  {\n    json: {\n      code: createUniqueId()\n    }\n  }\n];"
+        },
+        "id": "7d1890ee-b7f6-4d3b-a31c-ca7fe0f5dd98",
+        "name": "Generate New Video ID",
+        "type": "n8n-nodes-base.code",
+        "position": [
+          1380,
+          440
+        ],
+        "typeVersion": 2
+      },
+      {
+        "parameters": {
+          "operation": "append",
+          "documentId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "="
+          },
+          "sheetName": {
+            "__rl": true,
+            "mode": "id",
+            "value": "=52679157"
+          },
+          "columns": {
+            "value": {
+              "Sujet": "={{ $('Clean Perplexity Response').first().json.cleanedResponse }}",
+              "Script": "={{ $('Split Rewritten Content into Sections').item.json.videoScript }}",
+              "Caption": "={{ $('Split Rewritten Content into Sections').item.json.captionText }}",
+              "ID du modèle": "={{ $('Generate Unique Template ID').first().json.code }}",
+              "ID de la vidéo": "={{ $json.code }}",
+              "Texte superposé": "={{ $('Split Rewritten Content into Sections').item.json.textOverlay }}"
+            },
+            "schema": [
+              {
+                "id": "ID du modèle",
+                "type": "string",
+                "display": true,
+                "required": false,
+                "displayName": "ID du modèle",
+                "defaultMatch": false,
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "ID de la vidéo",
+                "type": "string",
+                "display": true,
+                "removed": false,
+                "required": false,
+                "displayName": "ID de la vidéo",
+                "defaultMatch": false,
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Sujet",
+                "type": "string",
+                "display": true,
+                "removed": false,
+                "required": false,
+                "displayName": "Sujet",
+                "defaultMatch": false,
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Texte superposé",
+                "type": "string",
+                "display": true,
+                "removed": false,
+                "required": false,
+                "displayName": "Texte superposé",
+                "defaultMatch": false,
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Script",
+                "type": "string",
+                "display": true,
+                "removed": false,
+                "required": false,
+                "displayName": "Script",
+                "defaultMatch": false,
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Caption",
+                "type": "string",
+                "display": true,
+                "required": false,
+                "displayName": "Caption",
+                "defaultMatch": false,
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "URL de la vidéo",
+                "type": "string",
+                "display": true,
+                "removed": true,
+                "required": false,
+                "displayName": "URL de la vidéo",
+                "defaultMatch": false,
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Date de publication",
+                "type": "string",
+                "display": true,
+                "removed": true,
+                "required": false,
+                "displayName": "Date de publication",
+                "defaultMatch": false,
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Statut",
+                "type": "string",
+                "display": true,
+                "removed": true,
+                "required": false,
+                "displayName": "Statut",
+                "defaultMatch": false,
+                "canBeUsedToMatch": true
+              }
+            ],
+            "mappingMode": "defineBelow",
+            "matchingColumns": [],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "id": "47851843-2781-4ad9-ba10-a6d92547462e",
+        "name": "Save Rewritten Video to Google Sheets",
+        "type": "n8n-nodes-base.googleSheets",
+        "position": [
+          1560,
+          440
+        ],
+        "typeVersion": 4.5
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.captions.ai/api/creator/list",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "x-api-key",
+                "value": "YOUR_API_KEY"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "6f9417e4-a29b-4a57-9b92-4d9c7ba086b8",
+        "name": "Fetch Available Avatars",
+        "type": "n8n-nodes-base.httpRequest",
+        "position": [
+          120,
+          820
+        ],
+        "typeVersion": 4.2
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.captions.ai/api/creator/submit",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "x-api-key",
+                "value": "YOUR_API_KEY"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n\"script\": \"{{ $('Save Rewritten Video to Google Sheets').item.json.Script }}\",\n\"creatorName\": \"{{ $json.supportedCreators[0] }}\",\n\"resolution\": \"fhd\"\n}",
+          "options": {}
+        },
+        "id": "14f0015e-1748-4e22-9134-c2dc08a23dcf",
+        "name": "Generate Video with Avatar",
+        "type": "n8n-nodes-base.httpRequest",
+        "position": [
+          360,
+          820
+        ],
+        "typeVersion": 4.2
+      },
+      {
+        "parameters": {
+          "amount": 3,
+          "unit": "minutes"
+        },
+        "id": "a07cf776-7aa6-4c06-845f-ee905d9852df",
+        "name": "Wait for Avatar Rendering (3 min)",
+        "type": "n8n-nodes-base.wait",
+        "position": [
+          560,
+          820
+        ],
+        "webhookId": "779e4676-d28f-4be9-9118-c90c688e805a",
+        "typeVersion": 1.1
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.captions.ai/api/creator/poll",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "x-api-key",
+                "value": "YOUR_API_KEY"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n \"operationId\": \"{{ $json[\"operationId\"] }}\"\n}",
+          "options": {}
+        },
+        "id": "d3d694f3-983d-4755-ba90-a4232e225cfd",
+        "name": "Fetch Avatar Video URL",
+        "type": "n8n-nodes-base.httpRequest",
+        "position": [
+          760,
+          820
+        ],
+        "typeVersion": 4.2
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.json2video.com/v2/movies",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpCustomAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "=\n{\n\"id\": \"qbaasr7s\",\n\"resolution\": \"instagram-story\",\n\"quality\": \"high\",\n\"scenes\": [\n{\n\"id\": \"qyjh9lwj\",\n\"comment\": \"Scene 1\",\n\"elements\": []\n}\n],\n\"elements\": [\n{\n\"id\": \"q6dznzcv\",\n\"type\": \"video\",\n\"src\": \"{{ $json.url }}\",\n\"resize\": \"cover\"\n},\n{\n\"id\": \"top-text\",\n\"type\": \"text\",\n\"text\": \"{{ $('Save Rewritten Video to Google Sheets').item.json['Texte superposé'] }}\",\n\"settings\": {\n\"font-family\": \"Arial\",\n\"font-size\": \"60px\",\n\"color\": \"#000000\",\n\"background-color\": \"#FFFFFF\",\n\"horizontal-position\": \"center\",\n\"vertical-position\": \"top\",\n\"margin-top\": \"100px\",\n\"word-break\": \"break-word\",\n\"overflow-wrap\": \"break-word\",\n\"font-weight\": \"bold\",\n\"text-align\": \"center\",\n\"width\": \"80%\",\n\"padding\": \"0px\",\n\"line-height\": \"1.2\",\n\"margin\": \"50px 0 0 0\",\n\"padding\": \"0 10px 0 10px\",\n\"border-radius\": \"15px\"\n}\n},\n{\n\"id\": \"q41n9kxp\",\n\"type\": \"subtitles\",\n\"settings\": {\n\"style\": \"classic\",\n\"position\": \"bottom\",\n\"font-family\": \"Arial\",\n\"font-size\": \"100px\",\n\"word-color\": \"#ffd700\",\n\"shadow-color\": \"#260B1B\",\n\"line-color\": \"#F1E7F4\",\n\"shadow-offset\": 0,\n\"box-color\": \"#260B1B\",\n\"outline-color\": \"#000000\",\n\"outline-width\": 8\n},\n\"language\": \"en\"\n}\n]\n}",
+          "options": {}
+        },
+        "id": "f4e6ff59-d775-4bd3-b3a3-6c693552b4a7",
+        "name": "Add Overlay Text with JSON2Video",
+        "type": "n8n-nodes-base.httpRequest",
+        "position": [
+          960,
+          820
+        ],
+        "typeVersion": 4.2
+      },
+      {
+        "parameters": {
+          "amount": 2,
+          "unit": "minutes"
+        },
+        "id": "6a428854-0c08-40c7-a409-7a2977244f0e",
+        "name": "Wait for Caption Rendering",
+        "type": "n8n-nodes-base.wait",
+        "position": [
+          1160,
+          820
+        ],
+        "webhookId": "67093c5d-34fa-44e8-9dfd-e25ca5f99ac2",
+        "typeVersion": 1.1
+      },
+      {
+        "parameters": {
+          "url": "=https://api.json2video.com/v2/movies?id={{ $json.project }}",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpCustomAuth",
+          "options": {}
+        },
+        "id": "6d9cd2ee-9ee3-419d-bd4c-1ad3cab1d952",
+        "name": "Fetch Final Video from JSON2Video",
+        "type": "n8n-nodes-base.httpRequest",
+        "position": [
+          1360,
+          820
+        ],
+        "typeVersion": 4.2
+      },
+      {
+        "parameters": {
+          "operation": "appendOrUpdate",
+          "documentId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "="
+          },
+          "sheetName": {
+            "__rl": true,
+            "mode": "list",
+            "value": 52679157,
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1SoYJvZbVNn4L1FNfk9eFqx_vGlCsMxgw8bx0DVFgBLY/edit#gid=52679157",
+            "cachedResultName": "MA VIDEO"
+          },
+          "columns": {
+            "value": {
+              "ID de la vidéo": "={{ $('Save Rewritten Video to Google Sheets').item.json['ID de la vidéo'] }}",
+              "URL de la vidéo": "={{ $json.movie.url }}"
+            },
+            "schema": [
+              {
+                "id": "ID du modèle",
+                "type": "string",
+                "display": true,
+                "removed": true,
+                "required": false,
+                "displayName": "ID du modèle",
+                "defaultMatch": false,
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "ID de la vidéo",
+                "type": "string",
+                "display": true,
+                "removed": false,
+                "required": false,
+                "displayName": "ID de la vidéo",
+                "defaultMatch": false,
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Sujet",
+                "type": "string",
+                "display": true,
+                "removed": true,
+                "required": false,
+                "displayName": "Sujet",
+                "defaultMatch": false,
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Texte superposé",
+                "type": "string",
+                "display": true,
+                "removed": true,
+                "required": false,
+                "displayName": "Texte superposé",
+                "defaultMatch": false,
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Script",
+                "type": "string",
+                "display": true,
+                "removed": true,
+                "required": false,
+                "displayName": "Script",
+                "defaultMatch": false,
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Caption",
+                "type": "string",
+                "display": true,
+                "removed": true,
+                "required": false,
+                "displayName": "Caption",
+                "defaultMatch": false,
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "URL de la vidéo",
+                "type": "string",
+                "display": true,
+                "removed": false,
+                "required": false,
+                "displayName": "URL de la vidéo",
+                "defaultMatch": false,
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Date de publication",
+                "type": "string",
+                "display": true,
+                "removed": true,
+                "required": false,
+                "displayName": "Date de publication",
+                "defaultMatch": false,
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Statut",
+                "type": "string",
+                "display": true,
+                "removed": true,
+                "required": false,
+                "displayName": "Statut",
+                "defaultMatch": false,
+                "canBeUsedToMatch": true
+              }
+            ],
+            "mappingMode": "defineBelow",
+            "matchingColumns": [
+              "ID de la vidéo"
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "id": "bf8d1302-f2c3-4073-afc5-73585fef3b89",
+        "name": "Update Final Video URL in Sheet",
+        "type": "n8n-nodes-base.googleSheets",
+        "position": [
+          1560,
+          820
+        ],
+        "typeVersion": 4.5
+      },
+      {
+        "parameters": {
+          "chatId": "={{ $('Trigger: Get TikTok URL via Telegram').item.json.message.chat.id }}",
+          "text": "=Url VIDEO : {{ $json['URL de la vidéo'] }}",
+          "additionalFields": {}
+        },
+        "id": "72494278-1cc7-438e-a841-1329de01d0a5",
+        "name": "Send Video URL via Telegram",
+        "type": "n8n-nodes-base.telegram",
+        "position": [
+          140,
+          1300
+        ],
+        "webhookId": "37975672-4633-4c65-a8d8-4d101bff5f84",
+        "typeVersion": 1.2
+      },
+      {
+        "parameters": {
+          "operation": "sendVideo",
+          "chatId": "={{ $json.result.chat.id }}",
+          "file": "={{ $('Update Final Video URL in Sheet').item.json['URL de la vidéo'] }}",
+          "additionalFields": {}
+        },
+        "id": "073bdc09-6dfc-4052-be33-cd3c94c4e8fa",
+        "name": "Send Final Video Preview",
+        "type": "n8n-nodes-base.telegram",
+        "position": [
+          340,
+          1300
+        ],
+        "webhookId": "ee91d7ee-1c35-41fa-b8f0-f153b8776369",
+        "typeVersion": 1.2
+      }
+    ],
+    "connections": {
+      "Download TikTok Audio": {
+        "main": [
+          [
+            {
+              "node": "Transcribe Audio to Script (GPT)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Generate New Video ID": {
+        "main": [
+          [
+            {
+              "node": "Save Rewritten Video to Google Sheets",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Avatar Video URL": {
+        "main": [
+          [
+            {
+              "node": "Add Overlay Text with JSON2Video",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Assign Social Media IDs": {
+        "main": [
+          [
+            {
+              "node": "Upload Video to Blotato",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract Video Thumbnail": {
+        "main": [
+          [
+            {
+              "node": "Upload Thumbnail to Cloudinary",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Available Avatars": {
+        "main": [
+          [
+            {
+              "node": "Generate Video with Avatar",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Upload Video to Blotato": {
+        "main": [
+          [
+            {
+              "node": "INSTAGRAM",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "YOUTUBE",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "TIKTOK",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "FACEBOOK",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "THREADS",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "TWETTER",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "LINKEDIN",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "BLUESKY",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "PINTEREST",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send Final Video Preview": {
+        "main": [
+          [
+            {
+              "node": "Assign Social Media IDs",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Clean Perplexity Response": {
+        "main": [
+          [
+            {
+              "node": "Rewrite Script, Caption, Overlay (GPT-4o)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Generate Video with Avatar": {
+        "main": [
+          [
+            {
+              "node": "Wait for Avatar Rendering (3 min)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait for Caption Rendering": {
+        "main": [
+          [
+            {
+              "node": "Fetch Final Video from JSON2Video",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Generate Unique Template ID": {
+        "main": [
+          [
+            {
+              "node": "Save Original Video to Google Sheets",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send Video URL via Telegram": {
+        "main": [
+          [
+            {
+              "node": "Send Final Video Preview",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract Overlay Text (GPT-4o)": {
+        "main": [
+          [
+            {
+              "node": "Download TikTok Audio",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Upload Thumbnail to Cloudinary": {
+        "main": [
+          [
+            {
+              "node": "Analyze Thumbnail (GPT-4o Vision)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update Final Video URL in Sheet": {
+        "main": [
+          [
+            {
+              "node": "Send Video URL via Telegram",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Add Overlay Text with JSON2Video": {
+        "main": [
+          [
+            {
+              "node": "Wait for Caption Rendering",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Download TikTok Video (RapidAPI)": {
+        "main": [
+          [
+            {
+              "node": "Extract Video Thumbnail",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Transcribe Audio to Script (GPT)": {
+        "main": [
+          [
+            {
+              "node": "Generate Unique Template ID",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Analyze Thumbnail (GPT-4o Vision)": {
+        "main": [
+          [
+            {
+              "node": "Extract Overlay Text (GPT-4o)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Final Video from JSON2Video": {
+        "main": [
+          [
+            {
+              "node": "Update Final Video URL in Sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Suggest Similar Idea (Perplexity)": {
+        "main": [
+          [
+            {
+              "node": "Clean Perplexity Response",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait for Avatar Rendering (3 min)": {
+        "main": [
+          [
+            {
+              "node": "Fetch Avatar Video URL",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Save Original Video to Google Sheets": {
+        "main": [
+          [
+            {
+              "node": "Suggest Similar Idea (Perplexity)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Trigger: Get TikTok URL via Telegram": {
+        "main": [
+          [
+            {
+              "node": "Download TikTok Video (RapidAPI)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Save Rewritten Video to Google Sheets": {
+        "main": [
+          [
+            {
+              "node": "Fetch Available Avatars",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Split Rewritten Content into Sections": {
+        "main": [
+          [
+            {
+              "node": "Generate New Video ID",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Rewrite Script, Caption, Overlay (GPT-4o)": {
+        "main": [
+          [
+            {
+              "node": "Split Rewritten Content into Sections",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": null,
+    "pinData": {},
+    "versionId": "8e1c6c0b-2b53-47b0-8fbd-66c332a051ea",
+    "triggerCount": 0,
+    "tags": []
+  }
+}
