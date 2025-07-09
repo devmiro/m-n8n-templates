@@ -1,0 +1,123 @@
+{
+  "data": {
+    "createdAt": "2025-05-26T22:51:45.671Z",
+    "updatedAt": "2025-05-26T22:54:06.604Z",
+    "id": "LQmEwYgrkEq0NAEV",
+    "name": "Atualizar Presença Digitando",
+    "active": false,
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "e56e25c6-d00e-40aa-83b6-4985aea910f1",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          320,
+          520
+        ],
+        "id": "d4826012-b76d-48d6-8014-c553ca4854a0",
+        "name": " Webhook Digitando...",
+        "webhookId": "e56e25c6-d00e-40aa-83b6-4985aea910f1"
+      },
+      {
+        "parameters": {
+          "resource": "chat-api",
+          "operation": "send-presence",
+          "instanceName": "={{ $json.body.instancia }}",
+          "remoteJid": "={{ $json.body.telefone }}",
+          "presence": "={{ $json.body.status }}",
+          "delay": 20000
+        },
+        "type": "n8n-nodes-evolution-api.evolutionApi",
+        "typeVersion": 1,
+        "position": [
+          560,
+          520
+        ],
+        "id": "b6f65846-3b3f-4072-982b-3e236aab2471",
+        "name": "Atualizar status",
+        "credentials": {
+          "evolutionApi": {
+            "id": "RDu8ahCLwjqAnfGE",
+            "name": "Evolution account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "[![fazer.ai](https://framerusercontent.com/images/HqY9djLTzyutSKnuLLqBr92KbM.png?scale-down-to=256)](https://fazer.ai?utm_source=n8n&utm_campaign=sec-ep2&utm_medium=evo-4)\n\n## Esse é um template faça você mesmo do canal\n## Lucas Moreira\n\n### Inscreva-se no nosso canal no YouTube\n[![YouTube Lucas Moreira](https://img.shields.io/youtube/channel/subscribers/UCtmp6SxzLscu0GRTbgM8FTw?style=flat-square&logo=youtube&label=Inscreva-se&color=f00)](https://youtube.com/@eulucassmoreira?si=0lH7hwX9pukjhmPQ)\n\n### Siga nosso GitHub\n[![GitHub fazer.ai](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white&label)](https://github.com/fazer-ai)\n",
+          "height": 440,
+          "width": 550,
+          "color": 7
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "3c76840d-8304-4680-b563-b4192f10234f",
+        "name": "Sticky Note10"
+      },
+      {
+        "parameters": {
+          "content": "## Quer entender como funciona?\n\n\n### Assista o vídeo, deixe um like, e se inscreva no canal para ter acesso a mais workflows como esse!\n\n[![IMAGE ALT TEXT HERE](https://i1.ytimg.com/vi_webp/cvTWGNJGAu4/maxresdefault.webp)](https://www.youtube.com/watch?v=cvTWGNJGAu4)",
+          "height": 440,
+          "width": 500,
+          "color": 7
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          560,
+          0
+        ],
+        "id": "aa8d7d22-2758-4cf6-8320-c3cab83f43d4",
+        "name": "Sticky Note13"
+      },
+      {
+        "parameters": {
+          "content": "![Evolution API](https://mintlify.s3.us-west-1.amazonaws.com/evolution/logo/dark.svg)",
+          "height": 100,
+          "width": 280,
+          "color": 7
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          220,
+          300
+        ],
+        "id": "784135ae-a0ed-4e19-a1bd-e83e23b6375e",
+        "name": "Sticky Note20"
+      }
+    ],
+    "connections": {
+      " Webhook Digitando...": {
+        "main": [
+          [
+            {
+              "node": "Atualizar status",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "54533bad-71b7-490a-a43d-322f7efccf58",
+    "triggerCount": 0,
+    "tags": []
+  }
+}
