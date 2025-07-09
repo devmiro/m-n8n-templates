@@ -1,0 +1,339 @@
+{
+  "data": {
+    "createdAt": "2025-05-26T22:52:51.849Z",
+    "updatedAt": "2025-05-26T22:53:48.883Z",
+    "id": "VHBibmLiIWA242j3",
+    "name": "Envia Imagem - GDrive",
+    "active": false,
+    "nodes": [
+      {
+        "parameters": {
+          "workflowInputs": {
+            "values": [
+              {
+                "name": "file_id"
+              },
+              {
+                "name": "instancia"
+              },
+              {
+                "name": "telefone"
+              },
+              {
+                "name": "tipo"
+              },
+              {
+                "name": "nome_documento"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          -120,
+          580
+        ],
+        "id": "8e93dc64-70b0-4994-a5a8-91eeab98944b",
+        "name": "When Executed by Another Workflow"
+      },
+      {
+        "parameters": {
+          "resource": "messages-api",
+          "operation": "send-image",
+          "instanceName": "={{ $('When Executed by Another Workflow').item.json.instancia }}",
+          "remoteJid": "={{ $('When Executed by Another Workflow').item.json.telefone }}",
+          "media": "={{ $json.data }}",
+          "options_message": {}
+        },
+        "type": "n8n-nodes-evolution-api.evolutionApi",
+        "typeVersion": 1,
+        "position": [
+          840,
+          480
+        ],
+        "id": "b308a382-311f-41ec-9d61-e1e04901a713",
+        "name": "Enviar imagem"
+      },
+      {
+        "parameters": {
+          "resource": "messages-api",
+          "operation": "send-document",
+          "instanceName": "={{ $('When Executed by Another Workflow').item.json.instancia }}",
+          "remoteJid": "={{ $('When Executed by Another Workflow').item.json.telefone }}",
+          "media": "={{ $json.data }}",
+          "fileName": "={{ $('When Executed by Another Workflow').item.json.nome_documento || '' }}",
+          "options_message": {}
+        },
+        "type": "n8n-nodes-evolution-api.evolutionApi",
+        "typeVersion": 1,
+        "position": [
+          840,
+          660
+        ],
+        "id": "2efdf67f-083c-4211-99df-7477acc0fbac",
+        "name": "Enviar documento"
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $('When Executed by Another Workflow').item.json.tipo }}",
+                      "rightValue": "imagem",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "id": "de580b52-c344-4832-ba99-e4453d158173"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Imagem"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "1cff2119-c28d-43a2-9715-0ff5b944f743",
+                      "leftValue": "={{ $('When Executed by Another Workflow').item.json.tipo }}",
+                      "rightValue": "documento",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Documento"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          540,
+          580
+        ],
+        "id": "0aab80e7-21a3-4a33-a65a-6a61d00a4665",
+        "name": "Imagem ou documento"
+      },
+      {
+        "parameters": {
+          "operation": "binaryToPropery",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1,
+        "position": [
+          320,
+          580
+        ],
+        "id": "eaf0db3d-d8a8-406a-9f5d-379a43228fc0",
+        "name": "Converter arquivo"
+      },
+      {
+        "parameters": {
+          "operation": "download",
+          "fileId": {
+            "__rl": true,
+            "value": "={{ $json.file_id }}",
+            "mode": "id"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          100,
+          580
+        ],
+        "id": "06982837-c7d9-4548-9206-e5e52278bcbe",
+        "name": "Baixar arquivo",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "bqcslHcwO4l3cqbJ",
+            "name": "Base Account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "71dda3d7-4505-4d03-b70f-63f5c005c0c3",
+                "name": "sucesso",
+                "value": "={{ $json.success }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1100,
+          580
+        ],
+        "id": "77fccc47-c7b5-41b7-88f6-7eaf16317e14",
+        "name": "Output"
+      },
+      {
+        "parameters": {
+          "content": "[![fazer.ai](https://framerusercontent.com/images/HqY9djLTzyutSKnuLLqBr92KbM.png?scale-down-to=256)](https://fazer.ai?utm_source=n8n&utm_campaign=sec-ep2&utm_medium=evo-3)\n\n## Esse é um template faça você mesmo do canal\n## Lucas Moreira\n\n### Inscreva-se no nosso canal no YouTube\n[![YouTube Lucas Moreira](https://img.shields.io/youtube/channel/subscribers/UCtmp6SxzLscu0GRTbgM8FTw?style=flat-square&logo=youtube&label=Inscreva-se&color=f00)](https://youtube.com/@eulucassmoreira?si=0lH7hwX9pukjhmPQ)\n\n### Siga nosso GitHub\n[![GitHub fazer.ai](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white&label)](https://github.com/fazer-ai)\n",
+          "height": 440,
+          "width": 550,
+          "color": 7
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "f8eb8b95-7b3e-429b-9b34-114451b7a09c",
+        "name": "Sticky Note10"
+      },
+      {
+        "parameters": {
+          "content": "## Quer entender como funciona?\n\n\n### Assista o vídeo, deixe um like, e se inscreva no canal para ter acesso a mais workflows como esse!\n\n[![IMAGE ALT TEXT HERE](https://i1.ytimg.com/vi_webp/cvTWGNJGAu4/maxresdefault.webp)](https://www.youtube.com/watch?v=cvTWGNJGAu4)",
+          "height": 440,
+          "width": 500,
+          "color": 7
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          560,
+          0
+        ],
+        "id": "1938597d-8798-4c20-8075-788f20472e76",
+        "name": "Sticky Note13"
+      },
+      {
+        "parameters": {
+          "content": "![Evolution API](https://mintlify.s3.us-west-1.amazonaws.com/evolution/logo/dark.svg)",
+          "height": 100,
+          "width": 280,
+          "color": 7
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          220,
+          300
+        ],
+        "id": "8fa3cab5-c9f9-4d8b-885e-95cf3cc7bc0a",
+        "name": "Sticky Note20"
+      }
+    ],
+    "connections": {
+      "When Executed by Another Workflow": {
+        "main": [
+          [
+            {
+              "node": "Baixar arquivo",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Enviar imagem": {
+        "main": [
+          [
+            {
+              "node": "Output",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Enviar documento": {
+        "main": [
+          [
+            {
+              "node": "Output",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Imagem ou documento": {
+        "main": [
+          [
+            {
+              "node": "Enviar imagem",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Enviar documento",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Converter arquivo": {
+        "main": [
+          [
+            {
+              "node": "Imagem ou documento",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Baixar arquivo": {
+        "main": [
+          [
+            {
+              "node": "Converter arquivo",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": null,
+    "pinData": {},
+    "versionId": "9c0f28a2-5b55-4d25-b972-9ed6cdbf10f7",
+    "triggerCount": 0,
+    "tags": []
+  }
+}
