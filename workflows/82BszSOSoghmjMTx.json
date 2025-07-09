@@ -1,0 +1,809 @@
+{
+  "data": {
+    "createdAt": "2025-04-25T10:56:57.742Z",
+    "updatedAt": "2025-04-26T02:50:24.430Z",
+    "id": "82BszSOSoghmjMTx",
+    "name": "Criador de Empresa - Fleto",
+    "active": false,
+    "nodes": [
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $('Info Base1').item.json[\"UrlChatwoot\"] }}/platform/api/v1/accounts",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "api_access_token",
+                "value": "={{ $('Info Base1').item.json[\"api_access_token\"] }}"
+              }
+            ]
+          },
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "name",
+                "value": "={{ $json.NomeEmpresa }}"
+              },
+              {
+                "name": "locale",
+                "value": "pt_BR"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "0d8456a1-90e8-4a69-b83d-6839f1cf0b9c",
+        "name": "Cria Conta1",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 3,
+        "position": [
+          720,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $('Info Base1').item.json[\"UrlChatwoot\"] }}/platform/api/v1/users",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "api_access_token",
+                "value": "={{ $('Info Base1').item.json[\"api_access_token\"] }}"
+              }
+            ]
+          },
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "name",
+                "value": "={{ $('Info Base1').item.json.nomeAdministrador }}"
+              },
+              {
+                "name": "email",
+                "value": "={{ $('Info Base1').item.json[\"email\"] }}"
+              },
+              {
+                "name": "password",
+                "value": "={{ $('Info Base1').item.json[\"password\"] }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "0f28777c-972c-4bfa-a616-28f7fdf665f8",
+        "name": "Cria Usuario1",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 3,
+        "position": [
+          880,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $('Info Base1').item.json[\"UrlChatwoot\"] }}/platform/api/v1/accounts/{{ $node[\"Cria Conta1\"].json[\"id\"] }}/account_users",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "api_access_token",
+                "value": "={{ $('Info Base1').item.json[\"api_access_token\"] }}"
+              }
+            ]
+          },
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "user_id",
+                "value": "={{ $node[\"Cria Usuario1\"].json[\"id\"] }}"
+              },
+              {
+                "name": "role",
+                "value": "administrator"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "f88c576c-efa2-46d0-980e-ebc518a17dbc",
+        "name": "Add Usuario a Conta1",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 3,
+        "position": [
+          20,
+          220
+        ]
+      },
+      {
+        "parameters": {
+          "fromEmail": "samir@robotizze.us",
+          "toEmail": "={{ $('LimpaDados1').item.json.email }}",
+          "subject": "Bem vindo ao Astra Online",
+          "text": "=Olá seja bem vindo:\n\nAbaixo segue seus dados de acesso iniciais ao Painel Atendimento Fleto:\n\nURL: {{ $('Info Base1').item.json[\"UrlChatwoot\"] }}\n\nLoging: {{ $('LimpaDados1').item.json[\"email\"] }}\n\nSenha: {{ $('LimpaDados1').item.json[\"senha\"] }}\n\nKey de acesso do Painel QR: {{ $('Cria Usuario1').item.json.access_token }}",
+          "options": {}
+        },
+        "id": "5cfbdfe1-741f-4e29-a0e0-7fc5f6c3544a",
+        "name": "Send Email1",
+        "type": "n8n-nodes-base.emailSend",
+        "typeVersion": 2,
+        "position": [
+          380,
+          620
+        ],
+        "webhookId": "dde5bb34-4dd7-4637-bc38-a5cda9e7bfcd",
+        "credentials": {
+          "smtp": {
+            "id": "UOwV4bvySmjTnWSa",
+            "name": "SMTP account"
+          }
+        },
+        "continueOnFail": true
+      },
+      {
+        "parameters": {
+          "values": {
+            "string": [
+              {
+                "name": "UrlChatwoot",
+                "value": "atendimento.robotizze.us"
+              },
+              {
+                "name": "api_access_token",
+                "value": "iGEg5C9vzAQYaTT7C4PtV2ff"
+              },
+              {
+                "name": "UrlPortainer",
+                "value": "portainer.robotizze.us"
+              },
+              {
+                "name": "LoginPortainer",
+                "value": "robotizze"
+              },
+              {
+                "name": "SenhaPortainer",
+                "value": "1og@tekK1819"
+              },
+              {
+                "name": "UrlDominioPrincipal",
+                "value": "robotizze.us"
+              },
+              {
+                "name": "nome",
+                "value": "={{ $json.NomeEmpresa }}"
+              },
+              {
+                "name": "email",
+                "value": "={{ $json.email }}"
+              },
+              {
+                "name": "password",
+                "value": "={{ $json.senha }}"
+              },
+              {
+                "name": "NomeEmpresa",
+                "value": "={{ $json.NomeEmpresa }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "de4a67b4-34ab-467c-8d4e-a8df097bcc4f",
+        "name": "Info Base1",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 2,
+        "position": [
+          540,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "keepOnlySet": true,
+          "values": {
+            "string": [
+              {
+                "name": "nomeAdministrador",
+                "value": "={{$node[\"Webhook1\"].json[\"body\"][\"messages\"][0][\"content\"].match(/Nome Usuario Administrador: ([^\\s]+)/)[1];}}"
+              },
+              {
+                "name": "NomeEmpresa",
+                "value": "={{$node[\"Webhook1\"].json[\"body\"][\"messages\"][0][\"content\"].match(/Nome da Empresa: ([^\\s]+)/)[1];}}"
+              },
+              {
+                "name": "email",
+                "value": "={{$node[\"Webhook1\"].json[\"body\"][\"messages\"][0][\"content\"].match(/Email: ([^\\s]+)/)[1];}}"
+              },
+              {
+                "name": "senha",
+                "value": "={{$node[\"Webhook1\"].json[\"body\"][\"messages\"][0][\"content\"].match(/Senha: ([^\\s]+)/)[1];}}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "a38ea2e4-7105-4ae4-8604-2c98354b7c3f",
+        "name": "LimpaDados1",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 2,
+        "position": [
+          360,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "const length = 10;  // Você pode ajustar isso conforme necessário\nconst charset = \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\";\nlet result = \"\";\n\nfor (let i = 0; i < length; i++) {\n    result += charset.charAt(Math.floor(Math.random() * charset.length));\n}\n\nreturn [\n    {\n        json: {\n            idsessao: result\n        }\n    }\n];\n"
+        },
+        "id": "911f60da-7d90-44fe-b509-2413220cb7a1",
+        "name": "Gerador de ID Sessão",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 1,
+        "position": [
+          360,
+          420
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "=https://{{ $('Gerador de ID Aleatorio').item.json.idaleatorio }}.{{ $('Info Base1').item.json.UrlDominioPrincipal }}/instance/create",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "apikey",
+                "value": "={{ $('Cria Usuario1').item.json.access_token }}"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n    \"instanceName\": \"{{ $('Gerador de ID Sessão').item.json[\"idsessao\"] }}_Whatsapp_IdCW_{{ $('Cria Conta1').item.json[\"id\"] }}\",\n    \"token\": \"\",\n    \"qrcode\": true,\n    \"integration\": \"WHATSAPP-BAILEYS\",\n    \"rejectCall\": true,\n    \"msgCall\": \"Infelizmente não aceitamos ligações\",\n    \"groupsIgnore\": false,\n    \"alwaysOnline\": false,\n    \"readMessages\": true,\n    \"readStatus\": true,\n    \"syncFullHistory\": false,\n    \"chatwootAccountId\": \"{{ $('Cria Conta1').item.json[\"id\"] }}\",\n    \"chatwootToken\": \"{{ $('Cria Usuario1').item.json[\"access_token\"] }}\",\n    \"chatwootUrl\": \"{{ $('Info Base1').item.json[\"UrlChatwoot\"] }}\",\n    \"chatwootSignMsg\": true,\n    \"chatwootReopenConversation\": false,\n    \"chatwootConversationPending\": false,\n    \"chatwootImportContacts\": true,\n    \"chatwootNameInbox\": \"WhatsApp\",\n    \"chatwootMergeBrazilContacts\": true,\n    \"chatwootImportMessages\": true,\n    \"chatwootDaysLimitImportMessages\": 30,\n    \"chatwootOrganization\": \"Gerador de QR\",\n    \"chatwootLogo\": \"https://astraonline.com.br/wp-content/uploads/2024/08/qr.png\"\n}",
+          "options": {}
+        },
+        "id": "e8a75d42-cdfb-4c62-bab2-9a2654d8a976",
+        "name": "Cria API Whatsapp",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          540,
+          420
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "select",
+          "schema": {
+            "__rl": true,
+            "mode": "list",
+            "value": "public"
+          },
+          "table": {
+            "__rl": true,
+            "value": "access_tokens",
+            "mode": "list",
+            "cachedResultName": "access_tokens"
+          },
+          "returnAll": true,
+          "where": {
+            "values": [
+              {
+                "column": "owner_id",
+                "value": "={{ $('Webhook1').item.json[\"body\"][\"messages\"][0][\"sender\"][\"id\"] }}"
+              },
+              {
+                "column": "owner_type",
+                "value": "User"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "7c3ae59b-dd56-43b7-b65b-e19c6191ba1d",
+        "name": "Pega Token Usuario",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.4,
+        "position": [
+          20,
+          620
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "8eS9juJMR7UV1EAn",
+            "name": "Chatwoot"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $('Info Base1').item.json[\"UrlChatwoot\"] }}/api/v1/accounts/{{ $('Webhook1').item.json[\"body\"][\"messages\"][0][\"account_id\"] }}/conversations/{{ $('Webhook1').item.json[\"body\"][\"messages\"][0][\"conversation_id\"] }}/messages",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "api_access_token",
+                "value": "={{ $('Pega Token Usuario').item.json[\"token\"] }}"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n\"content\": \"✅Empresa Criada✅\\nEmpresa criada com sucesso\",\n\"message_type\": \"outgoing\",\n\"private\": true\n}",
+          "options": {}
+        },
+        "id": "ae771683-9e08-429d-8f1e-5bbc3dd0966f",
+        "name": "Notifica a Criação",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 3,
+        "position": [
+          200,
+          620
+        ],
+        "executeOnce": true
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $('Info Base1').item.json.UrlPortainer }}/api/auth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"username\": \"{{ $('Info Base1').item.json.LoginPortainer }}\",\n  \"password\": \"{{ $('Info Base1').item.json.SenhaPortainer }}\"\n}\n",
+          "options": {}
+        },
+        "id": "802877dd-03b1-4c13-b65a-172654c21beb",
+        "name": "Paga Token",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          540,
+          220
+        ]
+      },
+      {
+        "parameters": {
+          "url": "={{ $('Info Base1').item.json.UrlPortainer }}/api/endpoints/{{ $json.Id }}/docker/swarm",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Authorization",
+                "value": "=Bearer {{ $('Paga Token').item.json.jwt }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "b8e61c41-2d7c-4ea1-a176-fb8a6c18f3e8",
+        "name": "Paga ID Swarm",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          880,
+          220
+        ]
+      },
+      {
+        "parameters": {
+          "url": "={{ $('Info Base1').item.json.UrlPortainer }}/api/endpoints",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Authorization",
+                "value": "=Bearer {{ $json.jwt }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "3c0ad174-d9da-49c0-b1a8-44987eac10d4",
+        "name": "Paga ID Portainer",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          720,
+          220
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $('Info Base1').item.json.UrlPortainer }}/api/stacks?type=1&method=string&endpointId={{ $('Paga ID Portainer').item.json.Id }}",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Authorization",
+                "value": "=Bearer {{ $('Paga Token').item.json.jwt }}"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"Name\": \"evolution_astrav2{{ $('Gerador de ID Aleatorio').item.json.idaleatorio }}_cwid_{{ $('Cria Conta1').item.json.id }}\",\n  \"SwarmID\": \"{{ $json.ID }}\",\n  \"StackFileContent\": \"{{ $('Converte e Stack').item.json.stackfinal.replace(/\"/g, '\\\\\"') }}\",\n  \"Env\": []\n}",
+          "options": {}
+        },
+        "id": "7a4fe053-5bdb-41fc-9846-eb5fab6117bb",
+        "name": "Cria nova Stack",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          20,
+          420
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "4afcd244-c61d-434b-921d-f9b066cff7ee",
+                "name": "stackfinal",
+                "value": "={{ $json.suastack.replace(/\\n/g, '\\\\n') }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "be168198-a1ea-4b92-b2bd-b8cd263d9e21",
+        "name": "Converte e Stack",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          360,
+          220
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "const length = 10;  // Você pode ajustar isso conforme necessário\nconst charset = \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\";\nlet result = \"\";\n\nfor (let i = 0; i < length; i++) {\n    result += charset.charAt(Math.floor(Math.random() * charset.length));\n}\n\nreturn [\n    {\n        json: {\n            idaleatorio: result\n        }\n    }\n];\n"
+        },
+        "id": "0415f47e-d982-4d63-a9fe-1349766b5879",
+        "name": "Gerador de ID Aleatorio",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 1,
+        "position": [
+          180,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "amount": 20
+        },
+        "id": "67d4d23f-99ad-4634-b6df-a668105582e0",
+        "name": "Wait",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          200,
+          420
+        ],
+        "webhookId": "1eca136f-1391-4c4c-bf0f-41e3d89ffd1d"
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "criarempresaplus",
+          "options": {}
+        },
+        "id": "7175e96f-7c51-417f-85d0-517d369748ca",
+        "name": "Webhook1",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "webhookId": "6fe428e3-1752-453c-9358-abf18b793387"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "INSERT INTO dashboard_apps (title, content, account_id, user_id, created_at, updated_at)\nVALUES (\n    'Painel QR', \n    '{{ $json.urlpainelfinal }}', \n    {{ $('Cria Conta1').item.json.id }},\n    {{ $('Cria Usuario1').item.json.id }}, \n    '{{ $now }}',\n    '{{ $now }}' \n);\n",
+          "options": {}
+        },
+        "id": "dfc570bc-9e7a-43ce-9b4e-1a2eccfa67db",
+        "name": "Cadastra App Dashboard",
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.4,
+        "position": [
+          880,
+          420
+        ],
+        "credentials": {
+          "postgres": {
+            "id": "8eS9juJMR7UV1EAn",
+            "name": "Chatwoot"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "values": {
+            "string": [
+              {
+                "name": "suastack",
+                "value": "=version: \"3.7\"\n\nservices:\n  evolution_v2{{ $('Gerador de ID Aleatorio').item.json.idaleatorio }}:  \n    image: atendai/evolution-api:v2.1.0 ## Versão da Evolution API\n    volumes:\n      - evolution_instancesv2{{ $('Gerador de ID Aleatorio').item.json.idaleatorio }}:/evolution/instances\n    networks:\n      - network_public\n    environment:\n    ## Url da Evolution API\n    - SERVER_URL=https://{{ $('Gerador de ID Aleatorio').item.json.idaleatorio }}.{{ $('Info Base1').item.json.UrlDominioPrincipal }}\n    ## Dados de Autenticação\n    - AUTHENTICATION_TYPE=apikey\n    - AUTHENTICATION_API_KEY={{ $('Cria Usuario1').item.json.access_token }} ## GLOBAL API KEY\n    - AUTHENTICATION_EXPOSE_IN_FETCH_INSTANCES=true\n    ## Configurações\n    - LANGUAGE=pt-BR\n    - CONFIG_SESSION_PHONE_CLIENT=WhatsAPI ## Nome que aparece no celular\n    - CONFIG_SESSION_PHONE_NAME=chrome    \n    ## Definir versão do Whatsapp Web\n    ## pegue a versão em: https://web.whatsapp.com/check-update?version=0&platform=web\n    - CONFIG_SESSION_PHONE_VERSION=2.3000.1015901307\n    ## Configurações do Whatsapp Business Cloud (Api Oficial)\n    - WA_BUSINESS_TOKEN_WEBHOOK=evolution\n    - WA_BUSINESS_URL=https://graph.facebook.com\n    - WA_BUSINESS_VERSION=v20.0\n    - WA_BUSINESS_LANGUAGE=pt_BR\n    ## Sobre o QR-Code\n    - QRCODE_LIMIT=9999999999\n    - QRCODE_COLOR=#47A7F6\n    ## Aivar Banco de Dados Postgres\n    - DATABASE_ENABLED=true\n    - DATABASE_PROVIDER=postgresql\n    - DATABASE_CONNECTION_URI=postgresql://postgres:Mfcd62!!Mfcd62!!@postgres:5432/evolution{{ $('Gerador de ID Aleatorio').item.json.idaleatorio }}\n    - DATABASE_CONNECTION_CLIENT_NAME=evolution\n    - DATABASE_SAVE_DATA_INSTANCE=true\n    - DATABASE_SAVE_DATA_NEW_MESSAGE=true\n    - DATABASE_SAVE_MESSAGE_UPDATE=true\n    - DATABASE_SAVE_DATA_CONTACTS=true\n    - DATABASE_SAVE_DATA_CHATS=true\n    # OpenAI\n    - OPENAI_ENABLED=true\n    # Dify\n    - DIFY_ENABLED=true\n    ## Ativar Banco de dados MinIO ou S3\n    - S3_ENABLED=false\n    - S3_ACCESS_KEY=\n    - S3_SECRET_KEY=\n    - S3_BUCKET=evolution\n    - S3_PORT=443\n    - S3_ENDPOINT=\n    - S3_USE_SSL=true    \n    ## Ativar o Cache Redis\n    - CACHE_REDIS_ENABLED=true\n    - CACHE_REDIS_URI=redis://redis:6379/2\n    - CACHE_REDIS_PREFIX_KEY=evolution\n    - CACHE_REDIS_SAVE_INSTANCES=false\n    - CACHE_LOCAL_ENABLED=false\n    ## Configurações das instancias\n    - DEL_INSTANCE=false\n    - DEL_TEMP_INSTANCES=false\n    ## Carregar módulo Typebot\n    - TYPEBOT_ENABLED=true\n    - TYPEBOT_API_VERSION=latest\n    ## Carregar módulo Chatwoot\n    - CHATWOOT_ENABLED=true\n    - CHATWOOT_MESSAGE_READ=true\n    - CHATWOOT_MESSAGE_DELETE=true\n    - CHATWOOT_IMPORT_DATABASE_CONNECTION_URI=postgresql://postgres:Mfcd62!!Mfcd62!!@postgres:5432/chatwoot?sslmode=disable\n    - CHATWOOT_IMPORT_PLACEHOLDER_MEDIA_MESSAGE=false ## true = Importar midia | false = Não importar midia     \n    ## Dados do RabbitMQ\n    - RABBITMQ_ENABLED=false\n    - RABBITMQ_URI=amqp://admin:admin@rabbitmq:5672/default\n    - RABBITMQ_EXCHANGE_NAME=evolution\n    - RABBITMQ_GLOBAL_ENABLED=false\n    - RABBITMQ_EVENTS_APPLICATION_STARTUP=false\n    - RABBITMQ_EVENTS_INSTANCE_CREATE=false\n    - RABBITMQ_EVENTS_INSTANCE_DELETE=false\n    - RABBITMQ_EVENTS_QRCODE_UPDATED=false\n    - RABBITMQ_EVENTS_MESSAGES_SET=false\n    - RABBITMQ_EVENTS_MESSAGES_UPSERT=true\n    - RABBITMQ_EVENTS_MESSAGES_EDITED=false\n    - RABBITMQ_EVENTS_MESSAGES_UPDATE=false\n    - RABBITMQ_EVENTS_MESSAGES_DELETE=false\n    - RABBITMQ_EVENTS_SEND_MESSAGE=false\n    - RABBITMQ_EVENTS_CONTACTS_SET=false\n    - RABBITMQ_EVENTS_CONTACTS_UPSERT=false\n    - RABBITMQ_EVENTS_CONTACTS_UPDATE=false\n    - RABBITMQ_EVENTS_PRESENCE_UPDATE=false\n    - RABBITMQ_EVENTS_CHATS_SET=false\n    - RABBITMQ_EVENTS_CHATS_UPSERT=false\n    - RABBITMQ_EVENTS_CHATS_UPDATE=false\n    - RABBITMQ_EVENTS_CHATS_DELETE=false\n    - RABBITMQ_EVENTS_GROUPS_UPSERT=false\n    - RABBITMQ_EVENTS_GROUP_UPDATE=false\n    - RABBITMQ_EVENTS_GROUP_PARTICIPANTS_UPDATE=false\n    - RABBITMQ_EVENTS_CONNECTION_UPDATE=true\n    - RABBITMQ_EVENTS_CALL=false\n    - RABBITMQ_EVENTS_TYPEBOT_START=false\n    - RABBITMQ_EVENTS_TYPEBOT_CHANGE_STATUS=false\n    ## Informações do Webhook\n    - WEBHOOK_GLOBAL_ENABLED=false\n    - WEBHOOK_GLOBAL_URL=\n    - WEBHOOK_GLOBAL_WEBHOOK_BY_EVENTS=false\n    - WEBHOOK_EVENTS_APPLICATION_STARTUP=false\n    - WEBHOOK_EVENTS_QRCODE_UPDATED=true\n    - WEBHOOK_EVENTS_MESSAGES_SET=true\n    - WEBHOOK_EVENTS_MESSAGES_UPSERT=true\n    - WEBHOOK_EVENTS_MESSAGES_EDITED=true\n    - WEBHOOK_EVENTS_MESSAGES_UPDATE=true\n    - WEBHOOK_EVENTS_MESSAGES_DELETE=true\n    - WEBHOOK_EVENTS_SEND_MESSAGE=true\n    - WEBHOOK_EVENTS_CONTACTS_SET=true\n    - WEBHOOK_EVENTS_CONTACTS_UPSERT=true\n    - WEBHOOK_EVENTS_CONTACTS_UPDATE=true\n    - WEBHOOK_EVENTS_PRESENCE_UPDATE=true\n    - WEBHOOK_EVENTS_CHATS_SET=true\n    - WEBHOOK_EVENTS_CHATS_UPSERT=true\n    - WEBHOOK_EVENTS_CHATS_UPDATE=true\n    - WEBHOOK_EVENTS_CHATS_DELETE=true\n    - WEBHOOK_EVENTS_GROUPS_UPSERT=true\n    - WEBHOOK_EVENTS_GROUPS_UPDATE=true\n    - WEBHOOK_EVENTS_GROUP_PARTICIPANTS_UPDATE=true\n    - WEBHOOK_EVENTS_CONNECTION_UPDATE=true\n    - WEBHOOK_EVENTS_LABELS_EDIT=true\n    - WEBHOOK_EVENTS_LABELS_ASSOCIATION=true\n    - WEBHOOK_EVENTS_CALL=true\n    - WEBHOOK_EVENTS_TYPEBOT_START=false\n    - WEBHOOK_EVENTS_TYPEBOT_CHANGE_STATUS=false\n    - WEBHOOK_EVENTS_ERRORS=false\n    - WEBHOOK_EVENTS_ERRORS_WEBHOOK=\n\n    deploy:\n      mode: replicated\n      replicas: 1\n      placement:\n        constraints:\n        - node.role == manager\n      labels:\n      - traefik.enable=1\n      - traefik.http.routers.evolution_v2{{ $('Gerador de ID Aleatorio').item.json.idaleatorio }}.rule=Host(`{{ $('Gerador de ID Aleatorio').item.json.idaleatorio }}.{{ $('Info Base1').item.json.UrlDominioPrincipal }}`) ## Url da aplicação\n      - traefik.http.routers.evolution_v2{{ $('Gerador de ID Aleatorio').item.json.idaleatorio }}.entrypoints=websecure\n      - traefik.http.routers.evolution_v2{{ $('Gerador de ID Aleatorio').item.json.idaleatorio }}.priority=1\n      - traefik.http.routers.evolution_v2{{ $('Gerador de ID Aleatorio').item.json.idaleatorio }}.tls.certresolver=letsencryptresolver\n      - traefik.http.routers.evolution_v2{{ $('Gerador de ID Aleatorio').item.json.idaleatorio }}.service=evolution_v2{{ $('Gerador de ID Aleatorio').item.json.idaleatorio }}\n      - traefik.http.services.evolution_v2{{ $('Gerador de ID Aleatorio').item.json.idaleatorio }}.loadbalancer.server.port=8080\n      - traefik.http.services.evolution_v2{{ $('Gerador de ID Aleatorio').item.json.idaleatorio }}.loadbalancer.passHostHeader=true\n\n\nvolumes:\n  evolution_instancesv2{{ $('Gerador de ID Aleatorio').item.json.idaleatorio }}:\n    external: true\n    name: evolution_instancesv2{{ $('Gerador de ID Aleatorio').item.json.idaleatorio }}\n\nnetworks:\n  network_public:\n    name: network_public\n    external: true"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "7a777d96-93b7-40a5-a126-96161b08c2d5",
+        "name": "Stack",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 2,
+        "position": [
+          200,
+          220
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "3a82c87c-ede2-41d0-84b7-14f09419b38b",
+                "name": "urlpainelfinal",
+                "value": "=[{\"url\": \"https://{{ $('Gerador de ID Aleatorio').item.json.idaleatorio }}.{{ $('Info Base1').item.json.UrlDominioPrincipal }}/manager\", \"type\": \"frame\"}]",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "7d1e261d-71c8-4fa0-8701-ca86a808ccb7",
+        "name": "UrlPainelFinal",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          720,
+          420
+        ]
+      }
+    ],
+    "connections": {
+      "Cria Conta1": {
+        "main": [
+          [
+            {
+              "node": "Cria Usuario1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Cria Usuario1": {
+        "main": [
+          [
+            {
+              "node": "Add Usuario a Conta1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Info Base1": {
+        "main": [
+          [
+            {
+              "node": "Cria Conta1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "LimpaDados1": {
+        "main": [
+          [
+            {
+              "node": "Info Base1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Gerador de ID Sessão": {
+        "main": [
+          [
+            {
+              "node": "Cria API Whatsapp",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Cria API Whatsapp": {
+        "main": [
+          [
+            {
+              "node": "UrlPainelFinal",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Pega Token Usuario": {
+        "main": [
+          [
+            {
+              "node": "Notifica a Criação",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Notifica a Criação": {
+        "main": [
+          [
+            {
+              "node": "Send Email1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Paga Token": {
+        "main": [
+          [
+            {
+              "node": "Paga ID Portainer",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Paga ID Swarm": {
+        "main": [
+          [
+            {
+              "node": "Cria nova Stack",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Paga ID Portainer": {
+        "main": [
+          [
+            {
+              "node": "Paga ID Swarm",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Converte e Stack": {
+        "main": [
+          [
+            {
+              "node": "Paga Token",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Gerador de ID Aleatorio": {
+        "main": [
+          [
+            {
+              "node": "LimpaDados1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Cria nova Stack": {
+        "main": [
+          [
+            {
+              "node": "Wait",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait": {
+        "main": [
+          [
+            {
+              "node": "Gerador de ID Sessão",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Webhook1": {
+        "main": [
+          [
+            {
+              "node": "Gerador de ID Aleatorio",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Stack": {
+        "main": [
+          [
+            {
+              "node": "Converte e Stack",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Add Usuario a Conta1": {
+        "main": [
+          [
+            {
+              "node": "Stack",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "UrlPainelFinal": {
+        "main": [
+          [
+            {
+              "node": "Cadastra App Dashboard",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Cadastra App Dashboard": {
+        "main": [
+          [
+            {
+              "node": "Pega Token Usuario",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "84d87a43-061e-44e6-a88c-637922cae46b",
+    "triggerCount": 0,
+    "tags": []
+  }
+}
