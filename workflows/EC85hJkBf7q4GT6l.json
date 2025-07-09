@@ -1,0 +1,570 @@
+{
+  "data": {
+    "createdAt": "2025-05-29T17:46:19.299Z",
+    "updatedAt": "2025-05-29T18:48:17.262Z",
+    "id": "EC85hJkBf7q4GT6l",
+    "name": "Malibu",
+    "active": true,
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "malibu-catalogo",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          0,
+          0
+        ],
+        "id": "60c64109-8c82-41c1-b926-d5629c48c886",
+        "name": "Webhook",
+        "webhookId": "56a6fbb4-f473-42d6-ac84-50d7c63451df"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://whatsapi.robotizze.us/message/sendMedia/Odonto",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "number",
+                "value": "={{ $json.telefone }}"
+              },
+              {
+                "name": "mediatype",
+                "value": "document"
+              },
+              {
+                "name": "mimetype",
+                "value": "pdf"
+              },
+              {
+                "name": "caption",
+                "value": "Catalogo Malibu Manaus"
+              },
+              {
+                "name": "media",
+                "value": "https://minio.robotizze.us/api/v1/download-shared-object/aHR0cHM6Ly9zMy5yb2JvdGl6emUudXMvbWFsaWJ1L21hbGlidV9wcm9wb3N0YV9jb21lcmNpYWwucGRmP1gtQW16LUFsZ29yaXRobT1BV1M0LUhNQUMtU0hBMjU2JlgtQW16LUNyZWRlbnRpYWw9VjRUTkhESko5UUw3ODJLR05SVTQlMkYyMDI1MDUyOSUyRnVzLWVhc3QtMSUyRnMzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyNTA1MjlUMTgwMTQzWiZYLUFtei1FeHBpcmVzPTQzMjAwJlgtQW16LVNlY3VyaXR5LVRva2VuPWV5SmhiR2NpT2lKSVV6VXhNaUlzSW5SNWNDSTZJa3BYVkNKOS5leUpoWTJObGMzTkxaWGtpT2lKV05GUk9TRVJLU2psUlREYzRNa3RIVGxKVk5DSXNJbVY0Y0NJNk1UYzBPRFU0TkRNNU1Td2ljR0Z5Wlc1MElqb2ljbTlpYjNScGVucGxJbjAuSmU4V2w0QWtfTmxMT3gzZlVDMkpzYkpVUHlObXlWUWUxZFFaOUlDSEVtanZocVZkRFBxQnZuU3l3WXo0WjZueVgwTGYtaGo2QV9mZjhIcm5jN0JjUEEmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JnZlcnNpb25JZD1udWxsJlgtQW16LVNpZ25hdHVyZT0zYzg5YjRhY2QzNzE2MzdmNGI0ODE0N2Y0NGI5YWRmMzc3ODAwZmFjM2Y2OGQ5NjJjNzViOWRmOWNiODRkNjU5"
+              },
+              {
+                "name": "fileName",
+                "value": "PropostaComercial.pdf"
+              }
+            ]
+          },
+          "options": {
+            "redirect": {
+              "redirect": {}
+            }
+          }
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          420,
+          0
+        ],
+        "id": "356b4b21-9df9-4ee2-93be-a9f00192d03f",
+        "name": "Envia Catalogo",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "urEjS1As47zL5J62",
+            "name": "Robotizze Evo"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "respondWith": "text",
+          "responseBody": "Catalogo enviado",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.2,
+        "position": [
+          640,
+          0
+        ],
+        "id": "c10e8b02-b613-43f6-b301-4cc6c548eeab",
+        "name": "Respond to Webhook"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "f095cc44-ec73-4916-97cf-77c5a651658d",
+                "name": "telefone",
+                "value": "={{ $json.body.message.toolCalls[0].function.arguments.telefone }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          220,
+          0
+        ],
+        "id": "fbb338d7-5862-4b62-beae-691ac15434a4",
+        "name": "Config"
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Config",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Envia Catalogo": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Config": {
+        "main": [
+          [
+            {
+              "node": "Envia Catalogo",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": null,
+    "pinData": {
+      "Webhook": [
+        {
+          "json": {
+            "headers": {
+              "host": "n8n-w.robotizze.us",
+              "user-agent": "axios/1.8.3",
+              "content-length": "14028",
+              "accept": "application/json, text/plain, */*",
+              "accept-encoding": "gzip, compress, deflate, br",
+              "baggage": "sentry-environment=production,sentry-public_key=a0021577936aec367b16615ad816c078,sentry-trace_id=d8cc4565e3a24e728ab4695d58ce6f6d",
+              "content-type": "application/json",
+              "cookie": "callId=a3d3e88a-ba08-4c2a-9903-6cc51e660817",
+              "sentry-trace": "d8cc4565e3a24e728ab4695d58ce6f6d-adc67035269761e1",
+              "traceparent": "00-64784688e1354fa3881d9a800aa4eca5-1c13275906019415-01",
+              "x-forwarded-for": "35.88.137.182",
+              "x-forwarded-host": "n8n-w.robotizze.us",
+              "x-forwarded-port": "443",
+              "x-forwarded-proto": "https",
+              "x-forwarded-server": "05341378beea",
+              "x-real-ip": "35.88.137.182",
+              "x-vapi-secret": ""
+            },
+            "params": {},
+            "query": {},
+            "body": {
+              "message": {
+                "timestamp": 1748544249926,
+                "type": "tool-calls",
+                "toolCalls": [
+                  {
+                    "id": "call_4hUfChch53yXfrQkhCiQi4Td",
+                    "type": "function",
+                    "function": {
+                      "name": "enviar_catalogo",
+                      "arguments": {
+                        "telefone": "5518981927977"
+                      }
+                    }
+                  }
+                ],
+                "toolCallList": [
+                  {
+                    "id": "call_4hUfChch53yXfrQkhCiQi4Td",
+                    "type": "function",
+                    "function": {
+                      "name": "enviar_catalogo",
+                      "arguments": {
+                        "telefone": "5518981927977"
+                      }
+                    }
+                  }
+                ],
+                "toolWithToolCallList": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "enviar_catalogo",
+                      "parameters": {
+                        "type": "object",
+                        "required": [
+                          "telefone"
+                        ],
+                        "properties": {
+                          "telefone": {
+                            "type": "string",
+                            "description": "telefone do cliente"
+                          }
+                        }
+                      },
+                      "description": "Utilize essa tool para enviar o catalogo de drinks."
+                    },
+                    "async": true,
+                    "server": {
+                      "url": "https://n8n-w.robotizze.us/webhook/malibu-catalogo",
+                      "headers": {}
+                    },
+                    "messages": [],
+                    "toolCall": {
+                      "id": "call_4hUfChch53yXfrQkhCiQi4Td",
+                      "type": "function",
+                      "function": {
+                        "name": "enviar_catalogo",
+                        "arguments": {
+                          "telefone": "5518981927977"
+                        }
+                      }
+                    }
+                  }
+                ],
+                "artifact": {
+                  "messages": [
+                    {
+                      "role": "system",
+                      "message": "Aqui é da nossa equipe de eventos Malibu, recebemos seu contato com interesse em criar um evento inesquecível, com quem eu falo?\nVocê já conhece nossos coquitéis?\ncliente: sim, participei de um evento que vocês estavam.\nQue legal, estamos presentes em muitos eventos aqui em Manaus.\nGostaria de receber nosso catálogo de drinks atualizado? Posso te enviar agora mesmo no whatsapp.\n\nUsamos ingredientes importados, temos uma equipe de bartenders certificados e criamos uma experiência única que faz com que muitos dos nossos clientes nos indiquem!\"\n\n2. Transição Suave para Degustação ou Proposta:\n\"Você acha que teria interesse em visitar nosso espaço no bairro V8 para uma degustação pessoal? Ou já gostaria de conhecer os valores e pacotes disponíveis pra planejar seu evento em uma ligação com nosso especialista Malibu?\"\n\n3. Realize o Envio Automático do Catálogo: [TOOL: enviar_catalogo] Para teste utilize o telefone 5518981927977\n\"Pronto. nosso catálogo tem todos os detalhes. Depois da uma ol...",
+                      "time": 1748544186130,
+                      "secondsFromStart": 0
+                    },
+                    {
+                      "role": "bot",
+                      "message": "Olá, você está falando com a Malu da franquia Malibu Manaus. Vamos preparar o bar da sua festa?",
+                      "time": 1748544188283,
+                      "endTime": 1748544192633,
+                      "secondsFromStart": 1.8399999,
+                      "duration": 3760,
+                      "source": ""
+                    },
+                    {
+                      "role": "user",
+                      "message": "Manu, tudo bom? Vamos,",
+                      "time": 1748544194103,
+                      "endTime": 1748544196763.001,
+                      "secondsFromStart": 7.66,
+                      "duration": 1280.0009765625
+                    },
+                    {
+                      "role": "bot",
+                      "message": "Tudo ótimo.",
+                      "time": 1748544196603,
+                      "endTime": 1748544197243,
+                      "secondsFromStart": 10.16,
+                      "duration": 640,
+                      "source": ""
+                    },
+                    {
+                      "role": "user",
+                      "message": "precisa?",
+                      "time": 1748544197542.999,
+                      "endTime": 1748544197943,
+                      "secondsFromStart": 11.099999,
+                      "duration": 400.0009765625
+                    },
+                    {
+                      "role": "bot",
+                      "message": "Sim, preciso de algumas informações para que possamos tornar seu evento incrível. Posso saber seu nome? E seria para alguma ocasião especial?",
+                      "time": 1748544199902.999,
+                      "endTime": 1748544207153.001,
+                      "secondsFromStart": 13.459999,
+                      "duration": 5760.0009765625,
+                      "source": ""
+                    },
+                    {
+                      "role": "user",
+                      "message": "Ai meu nome é Samir, sim, seria um aniversário de quarenta anos.",
+                      "time": 1748544209642.999,
+                      "endTime": 1748544213003,
+                      "secondsFromStart": 23.199999,
+                      "duration": 3360.0009765625
+                    },
+                    {
+                      "role": "bot",
+                      "message": "Ótimo Sami, parabéns adiantado pelo seu aniversário de quarenta anos. Você já tem uma data e horário em mente pra festa? Assim te ajudar com os detalhes da degustação ou pacotes disponíveis.",
+                      "time": 1748544214913.001,
+                      "endTime": 1748544224623,
+                      "secondsFromStart": 28.470001,
+                      "duration": 8399.9990234375,
+                      "source": ""
+                    },
+                    {
+                      "role": "user",
+                      "message": "Não, ainda não tenho não.",
+                      "time": 1748544227473,
+                      "endTime": 1748544228673,
+                      "secondsFromStart": 41.03,
+                      "duration": 1200
+                    },
+                    {
+                      "role": "bot",
+                      "message": "Sem problemas, Assim que você definir a data podemos agendar uma degustação ou uma ligação para discutir os pacotes disponíveis. Enquanto isso posso te enviar nosso catálogo de drinks atualizado pelo WhatsApp, que tal?",
+                      "time": 1748544230463,
+                      "endTime": 1748544242033,
+                      "secondsFromStart": 44.02,
+                      "duration": 9600,
+                      "source": ""
+                    },
+                    {
+                      "role": "user",
+                      "message": "Sim, pode enviar.",
+                      "time": 1748544243893,
+                      "endTime": 1748544244853,
+                      "secondsFromStart": 57.45,
+                      "duration": 960
+                    },
+                    {
+                      "toolCalls": [
+                        {
+                          "id": "call_4hUfChch53yXfrQkhCiQi4Td",
+                          "type": "function",
+                          "function": {
+                            "name": "enviar_catalogo",
+                            "arguments": "{\"telefone\": \"5518981927977\"}"
+                          }
+                        }
+                      ],
+                      "role": "tool_calls",
+                      "message": "",
+                      "time": 1748544249925,
+                      "secondsFromStart": 58.455
+                    }
+                  ],
+                  "messagesOpenAIFormatted": [
+                    {
+                      "role": "system",
+                      "content": "Aqui é da nossa equipe de eventos Malibu, recebemos seu contato com interesse em criar um evento inesquecível, com quem eu falo?\nVocê já conhece nossos coquitéis?\ncliente: sim, participei de um evento que vocês estavam.\nQue legal, estamos presentes em muitos eventos aqui em Manaus.\nGostaria de receber nosso catálogo de drinks atualizado? Posso te enviar agora mesmo no whatsapp.\n\nUsamos ingredientes importados, temos uma equipe de bartenders certificados e criamos uma experiência única que faz com que muitos dos nossos clientes nos indiquem!\"\n\n2. Transição Suave para Degustação ou Proposta:\n\"Você acha que teria interesse em visitar nosso espaço no bairro V8 para uma degustação pessoal? Ou já gostaria de conhecer os valores e pacotes disponíveis pra planejar seu evento em uma ligação com nosso especialista Malibu?\"\n\n3. Realize o Envio Automático do Catálogo: [TOOL: enviar_catalogo] Para teste utilize o telefone 5518981927977\n\"Pronto. nosso catálogo tem todos os detalhes. Depois da uma ol..."
+                    },
+                    {
+                      "role": "assistant",
+                      "content": "Olá, você está falando com a Malu da franquia Malibu Manaus. Vamos preparar o bar da sua festa?"
+                    },
+                    {
+                      "role": "user",
+                      "content": "Manu, tudo bom? Vamos,"
+                    },
+                    {
+                      "role": "assistant",
+                      "content": "Tudo ótimo."
+                    },
+                    {
+                      "role": "user",
+                      "content": "precisa?"
+                    },
+                    {
+                      "role": "assistant",
+                      "content": "Sim, preciso de algumas informações para que possamos tornar seu evento incrível. Posso saber seu nome? E seria para alguma ocasião especial?"
+                    },
+                    {
+                      "role": "user",
+                      "content": "Ai meu nome é Samir, sim, seria um aniversário de quarenta anos."
+                    },
+                    {
+                      "role": "assistant",
+                      "content": "Ótimo Sami, parabéns adiantado pelo seu aniversário de quarenta anos. Você já tem uma data e horário em mente pra festa? Assim te ajudar com os detalhes da degustação ou pacotes disponíveis."
+                    },
+                    {
+                      "role": "user",
+                      "content": "Não, ainda não tenho não."
+                    },
+                    {
+                      "role": "assistant",
+                      "content": "Sem problemas, Assim que você definir a data podemos agendar uma degustação ou uma ligação para discutir os pacotes disponíveis. Enquanto isso posso te enviar nosso catálogo de drinks atualizado pelo WhatsApp, que tal?"
+                    },
+                    {
+                      "role": "user",
+                      "content": "Sim, pode enviar."
+                    },
+                    {
+                      "role": "assistant",
+                      "tool_calls": [
+                        {
+                          "id": "call_4hUfChch53yXfrQkhCiQi4Td",
+                          "type": "function",
+                          "function": {
+                            "name": "enviar_catalogo",
+                            "arguments": "{\"telefone\": \"5518981927977\"}"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "role": "tool",
+                      "tool_call_id": "call_4hUfChch53yXfrQkhCiQi4Td",
+                      "content": "Tool Result Still Pending But Proceed Further If Possible."
+                    }
+                  ]
+                },
+                "call": {
+                  "id": "a3d3e88a-ba08-4c2a-9903-6cc51e660817",
+                  "orgId": "f21f5a9a-5242-4714-a633-aead33dc7f57",
+                  "createdAt": "2025-05-29T18:43:05.955Z",
+                  "updatedAt": "2025-05-29T18:43:05.955Z",
+                  "type": "webCall",
+                  "monitor": {
+                    "listenUrl": "wss://phone-call-websocket.aws-us-west-2-backend-production2.vapi.ai/a3d3e88a-ba08-4c2a-9903-6cc51e660817/listen",
+                    "controlUrl": "https://phone-call-websocket.aws-us-west-2-backend-production2.vapi.ai/a3d3e88a-ba08-4c2a-9903-6cc51e660817/control"
+                  },
+                  "transport": {
+                    "provider": "daily",
+                    "assistantVideoEnabled": false,
+                    "callUrl": "https://vapi.daily.co/lU2aX5Pu0PIZVg3E1IzJ"
+                  },
+                  "webCallUrl": "https://vapi.daily.co/lU2aX5Pu0PIZVg3E1IzJ",
+                  "status": "queued",
+                  "assistant": {
+                    "name": "Malibu",
+                    "transcriber": {
+                      "model": "nova-3",
+                      "language": "multi",
+                      "provider": "deepgram"
+                    },
+                    "model": {
+                      "model": "gpt-4o-mini",
+                      "messages": [
+                        {
+                          "content": "Aqui é da nossa equipe de eventos Malibu, recebemos seu contato com interesse em criar um evento inesquecível, com quem eu falo?\nVocê já conhece nossos coquitéis?\ncliente: sim, participei de um evento que vocês estavam.\nQue legal, estamos presentes em muitos eventos aqui em Manaus.\nGostaria de receber nosso catálogo de drinks atualizado? Posso te enviar agora mesmo no whatsapp.\n\nUsamos ingredientes importados, temos uma equipe de bartenders certificados e criamos uma experiência única que faz com que muitos dos nossos clientes nos indiquem!\"\n\n2. Transição Suave para Degustação ou Proposta:\n\"Você acha que teria interesse em visitar nosso espaço no bairro V8 para uma degustação pessoal? Ou já gostaria de conhecer os valores e pacotes disponíveis pra planejar seu evento em uma ligação com nosso especialista Malibu?\"\n\n3. Realize o Envio Automático do Catálogo: [TOOL: enviar_catalogo] Para teste utilize o telefone 5518981927977\n\"Pronto. nosso catálogo tem todos os detalhes. Depois da uma olhadinha.\"\n\n4. Coleta de Informações com Empatia:\n\"Pra deixar tudo anotadinho aqui, posso saber seu nome?\"\n\"Essa degustação seria para algum evento especial?\"\n\"Qual a dia e horario da festa?\"\n\n5. Confirmação do Agendamento:\nDegustação presencial: \"Perfeito! Então ficou assim: [Nome], degustação marcada para o dia [Data], às [Horário]. Lá você será recepcionado pelo Denilson ou a Thais que são nossos embaixadores Malibu em Manaus.\nLigação com especialista: Perfeito! O Denilson ou a Thais irá continuar seu atendimento. Obrigado.\"\n\n7. Respostas para Objeções (caso surjam):\nObjeção: “Não sei se vai agradar todo mundo...”\n\"Entendo totalmente! Por isso oferecemos uma degustação prévia com 3 drinks, incluindo 2 coquiteis sem álcool pra agradar todos os gostos. E mais: nossos bartenders ajustam o drink na hora, conforme o gosto do convidado. Satisfação garantida!\"\n\nObjeção: “Já tenho cerimonialista.”\n\"Que ótimo! Trabalhamos com mais de 30 cerimoniais em Manaus, e nosso serviço é totalmente white-label — ou seja, entra como parte do seu pacote, com a sua cara, sem complicações!\"",
+                          "role": "system"
+                        }
+                      ],
+                      "toolIds": [
+                        "5f298bdb-ee34-4736-88e8-220c077ecf74"
+                      ],
+                      "knowledgeBase": {
+                        "fileIds": [
+                          "6afc36e8-a07c-48a5-8e05-693e8aa5ce27"
+                        ],
+                        "provider": "google"
+                      },
+                      "provider": "openai"
+                    },
+                    "voice": {
+                      "model": "eleven_turbo_v2_5",
+                      "voiceId": "33B4UnXyTNbgLmdEDh5P",
+                      "provider": "11labs",
+                      "stability": 0.6,
+                      "similarityBoost": 0.7
+                    },
+                    "firstMessage": "Olá você está falando com a Malu, da franquia Malibu Manaus, vamos preparar o bar da sua festa?",
+                    "voicemailMessage": "Please call back when you're available.",
+                    "endCallMessage": "Goodbye."
+                  },
+                  "assistantOverrides": {
+                    "clientMessages": [
+                      "transfer-update",
+                      "transcript"
+                    ]
+                  }
+                },
+                "assistant": {
+                  "name": "Malibu",
+                  "transcriber": {
+                    "model": "nova-3",
+                    "language": "multi",
+                    "provider": "deepgram"
+                  },
+                  "model": {
+                    "model": "gpt-4o-mini",
+                    "messages": [
+                      {
+                        "content": "Aqui é da nossa equipe de eventos Malibu, recebemos seu contato com interesse em criar um evento inesquecível, com quem eu falo?\nVocê já conhece nossos coquitéis?\ncliente: sim, participei de um evento que vocês estavam.\nQue legal, estamos presentes em muitos eventos aqui em Manaus.\nGostaria de receber nosso catálogo de drinks atualizado? Posso te enviar agora mesmo no whatsapp.\n\nUsamos ingredientes importados, temos uma equipe de bartenders certificados e criamos uma experiência única que faz com que muitos dos nossos clientes nos indiquem!\"\n\n2. Transição Suave para Degustação ou Proposta:\n\"Você acha que teria interesse em visitar nosso espaço no bairro V8 para uma degustação pessoal? Ou já gostaria de conhecer os valores e pacotes disponíveis pra planejar seu evento em uma ligação com nosso especialista Malibu?\"\n\n3. Realize o Envio Automático do Catálogo: [TOOL: enviar_catalogo] Para teste utilize o telefone 5518981927977\n\"Pronto. nosso catálogo tem todos os detalhes. Depois da uma olhadinha.\"\n\n4. Coleta de Informações com Empatia:\n\"Pra deixar tudo anotadinho aqui, posso saber seu nome?\"\n\"Essa degustação seria para algum evento especial?\"\n\"Qual a dia e horario da festa?\"\n\n5. Confirmação do Agendamento:\nDegustação presencial: \"Perfeito! Então ficou assim: [Nome], degustação marcada para o dia [Data], às [Horário]. Lá você será recepcionado pelo Denilson ou a Thais que são nossos embaixadores Malibu em Manaus.\nLigação com especialista: Perfeito! O Denilson ou a Thais irá continuar seu atendimento. Obrigado.\"\n\n7. Respostas para Objeções (caso surjam):\nObjeção: “Não sei se vai agradar todo mundo...”\n\"Entendo totalmente! Por isso oferecemos uma degustação prévia com 3 drinks, incluindo 2 coquiteis sem álcool pra agradar todos os gostos. E mais: nossos bartenders ajustam o drink na hora, conforme o gosto do convidado. Satisfação garantida!\"\n\nObjeção: “Já tenho cerimonialista.”\n\"Que ótimo! Trabalhamos com mais de 30 cerimoniais em Manaus, e nosso serviço é totalmente white-label — ou seja, entra como parte do seu pacote, com a sua cara, sem complicações!\"",
+                        "role": "system"
+                      }
+                    ],
+                    "toolIds": [
+                      "5f298bdb-ee34-4736-88e8-220c077ecf74"
+                    ],
+                    "knowledgeBase": {
+                      "fileIds": [
+                        "6afc36e8-a07c-48a5-8e05-693e8aa5ce27"
+                      ],
+                      "provider": "google"
+                    },
+                    "provider": "openai",
+                    "tools": [
+                      {
+                        "id": "5f298bdb-ee34-4736-88e8-220c077ecf74",
+                        "createdAt": "2025-05-22T01:32:39.357Z",
+                        "updatedAt": "2025-05-29T18:13:59.588Z",
+                        "type": "function",
+                        "function": {
+                          "name": "enviar_catalogo",
+                          "parameters": {
+                            "type": "object",
+                            "required": [
+                              "telefone"
+                            ],
+                            "properties": {
+                              "telefone": {
+                                "type": "string",
+                                "description": "telefone do cliente"
+                              }
+                            }
+                          },
+                          "description": "Utilize essa tool para enviar o catalogo de drinks."
+                        },
+                        "orgId": "f21f5a9a-5242-4714-a633-aead33dc7f57",
+                        "server": {
+                          "url": "https://n8n-w.robotizze.us/webhook/malibu-catalogo",
+                          "headers": {}
+                        },
+                        "async": true
+                      }
+                    ]
+                  },
+                  "voice": {
+                    "model": "eleven_turbo_v2_5",
+                    "voiceId": "33B4UnXyTNbgLmdEDh5P",
+                    "provider": "11labs",
+                    "stability": 0.6,
+                    "similarityBoost": 0.7
+                  },
+                  "firstMessage": "Olá você está falando com a Malu, da franquia Malibu Manaus, vamos preparar o bar da sua festa?",
+                  "voicemailMessage": "Please call back when you're available.",
+                  "endCallMessage": "Goodbye.",
+                  "clientMessages": [
+                    "transfer-update",
+                    "transcript"
+                  ]
+                }
+              }
+            },
+            "webhookUrl": "https://n8n-w.robotizze.us/webhook/malibu-catalogo",
+            "executionMode": "production"
+          }
+        }
+      ]
+    },
+    "versionId": "5d19c208-4631-4c1d-b480-e00041e3eeec",
+    "triggerCount": 1,
+    "tags": []
+  }
+}
