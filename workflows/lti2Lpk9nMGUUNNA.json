@@ -1,0 +1,484 @@
+{
+  "data": {
+    "createdAt": "2025-05-26T22:33:18.306Z",
+    "updatedAt": "2025-06-04T02:48:16.731Z",
+    "id": "lti2Lpk9nMGUUNNA",
+    "name": "Assistente Interno",
+    "active": true,
+    "nodes": [
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "45efc554-3f74-4922-a2cf-f64d2ea084c0",
+                "name": "mensagem",
+                "value": "={{ $json.body.input }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          840,
+          660
+        ],
+        "id": "fd7fafe9-56fe-4c56-8e5d-b026e4dc0411",
+        "name": "Set mensagem texto"
+      },
+      {
+        "parameters": {
+          "content": "## Assistente interno\n",
+          "height": 560,
+          "width": 2120,
+          "color": 5
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          0,
+          460
+        ],
+        "id": "572b030e-2ba1-43ce-8cba-547043b1248f",
+        "name": "Sticky Note5"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "={{ $json.mensagem }}",
+          "options": {
+            "systemMessage": "=Agora são {{ $now.format('FFFF') }}.\n\n## PAPEL\n\nVocê é um assistente interno de agenda pessoal, acionado diretamente por mim via mensagem para gerenciar situações de remarcação de consultas, incluir lembretes na lista de compras ou agendar tarefas.\n\n## OBJETIVO GERAL\n\n1. Reagendar consultas a pedido do profissional.  \n2. Adicionar lembretes na lista de compras quando solicitado.  \n3. Agendar tarefas a pedido do profissional\n\n\n## RESUMO DE RESPONSABILIDADES\n\n1. Reagendamento de leads  \n   - Acesse o Google Calendar por meio das ferramentas de evento para identificar as consultas afetadas.\n   - Use o telefone 5518981927977 para enviar a confirmação da consulta.\n   - Use a ferramenta \"Enviar_reagendamento\" para enviar mensagens no telefone 5518981927977.\n   - Encaixe em qualquer horário válido caso não informado e retorne o horario escolhido.\n2. Lista de compras do escritório  \n   - Se o profissional solicitar a inclusão de um item na lista de compras, utilize a ferramenta \"Criar_tarefa\" para adicionar o lembrete.\n3. Agendamento de tarefas do escritório\n   - Se eu solicitar o agendamento de uma tarefa na agenda do Google Calendar, utilize a ferramenta \"Criar_tarefa\" para adicionar o lembrete.\n4. Ler e resumir lista de emails\n   - Se o profissional solicitar informação sobre os emails recebidos, use a ferramenta \"Ler_emails\" e resuma as informações\n\n## ORIENTAÇÕES DE LINGUAGEM E PROCEDIMENTO\n\n- Use uma abordagem empática, profissional e acolhedora.\n- Nunca envie mensagens para pacientes sem autorização explícita do profissional.\n- Quando listar eventos ou tarefas, seja objetivo e organizado.\n- Mantenha clareza e concisão em todas as interações.\n\n## PROFISSIONAIS E ESPECIALIDADES\n\nSegue meu calendario, e o ID da agenda que deve ser usado nas ferramentas Google Calendar\n\n**MUITO IMPORTANTE!! O ID DA AGENDA INCLUI O \"@group.calendar.google.com\". NÃO OMITA AO UTILIZAR AS FERRAMENTAS**\n\n- Agenda Samir (7468a9aa95339de27fdb786d7c3ea7709cc9c4bc0200ce7210b216d739096bcb@group.calendar.google.com)\n\n## IMPORTANTE\n\n- Use a ferramenta \"Refletir\" antes e depois de realizar operações complexas, para ter certeza de que deu tudo certo.\n- SEMPRE QUE ENVIAR UMA MENSAGEM PARA O PACIENTE, **USE A FERRAMENTA \"Salvar_memoria\"**. ISSO É MUITO IMPORTANTE, NÃO FAÇA ERRADO POR FAVOR.\n\n## INSTRUÇÕES FINAIS\n\n- Atenda exclusivamente às solicitações de reagendamento e inclusão de lembretes.\n- A remarcação de consultas ocorre somente quando o profissional pede, utilizando as ferramentas de evento para identificar os pacientes e a ferramenta \"Enviar_reagendamento\" para enviar a mensagem.\n- Para a lista de compras e lembretes, sempre use \"Criar_tarefa\".\n- Para a sua resposta que será enviada para o profissional que fez a soliticação, **NÃO UTILIZE FORMATAÇÃO MARKDOWN**.\n"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.8,
+        "position": [
+          1540,
+          620
+        ],
+        "id": "77cafebe-28c4-4402-bd50-fa00f9696823",
+        "name": "Assistente do escritório interno"
+      },
+      {
+        "parameters": {
+          "sessionIdType": "customKey",
+          "sessionKey": "assistente_interno",
+          "tableName": "n8n_personal",
+          "contextWindowLength": 10
+        },
+        "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+        "typeVersion": 1.3,
+        "position": [
+          1160,
+          860
+        ],
+        "id": "dc5f1e78-7eca-4523-9926-28c038f01333",
+        "name": "Postgres Chat Memory",
+        "credentials": {
+          "postgres": {
+            "id": "dgNEVox1XRDfhqoM",
+            "name": "EasyOdonto"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "descriptionType": "manual",
+          "toolDescription": "Salva a informação de agendamento enviada, para que a secretária saiba que foi enviada.",
+          "schema": {
+            "__rl": true,
+            "mode": "list",
+            "value": "public"
+          },
+          "table": {
+            "__rl": true,
+            "value": "=n8n_personal",
+            "mode": "name"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "session_id": "={{ $fromAI('telefone', 'Telefone do paciente, formatado com apenas números, incluindo código do país. Ex.: \"551112345678\"', 'string') }}",
+              "message": "={ \"type\": \"ai\", \"content\": \"{{ $fromAI('message', 'A mesma mensagem enviada para o paciente.', 'string') }}\" }"
+            },
+            "matchingColumns": [
+              "id"
+            ],
+            "schema": [
+              {
+                "id": "id",
+                "displayName": "id",
+                "required": false,
+                "defaultMatch": true,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "session_id",
+                "displayName": "session_id",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "message",
+                "displayName": "message",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "object",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "created_at",
+                "displayName": "created_at",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "dateTime",
+                "canBeUsedToMatch": true,
+                "removed": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgresTool",
+        "typeVersion": 2.6,
+        "position": [
+          1300,
+          860
+        ],
+        "id": "60807ada-1283-4a44-8869-9219a946f7d9",
+        "name": "Salvar memoria",
+        "credentials": {
+          "postgres": {
+            "id": "dgNEVox1XRDfhqoM",
+            "name": "EasyOdonto"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "sseEndpoint": "https://n8n-w.robotizze.us/mcp/a2b7a3ee-767c-4689-a8fa-765080bea169/sse"
+        },
+        "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+        "typeVersion": 1,
+        "position": [
+          1420,
+          860
+        ],
+        "id": "68503905-efbc-4600-bcc8-6042f1981099",
+        "name": "MCP Google Calendar"
+      },
+      {
+        "parameters": {
+          "task": "YXdwUHJaRVoxWDdudFNGNg",
+          "title": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Title', ``, 'string') }}",
+          "additionalFields": {
+            "dueDate": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Due_Date', ``, 'string') }}",
+            "notes": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Notes', ``, 'string') }}",
+            "status": "needsAction"
+          }
+        },
+        "type": "n8n-nodes-base.googleTasksTool",
+        "typeVersion": 1,
+        "position": [
+          1700,
+          860
+        ],
+        "id": "703f9c16-0ae6-40db-a450-a78c6662283e",
+        "name": "Criar tarefa",
+        "credentials": {
+          "googleTasksOAuth2Api": {
+            "id": "2jnIzHyGyoDFZRH3",
+            "name": "Google Tasks account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "getAll",
+          "limit": 5,
+          "filters": {}
+        },
+        "type": "n8n-nodes-base.gmailTool",
+        "typeVersion": 2.1,
+        "position": [
+          1840,
+          860
+        ],
+        "id": "dbc222e1-04aa-41a9-8b0f-79942ddbdacf",
+        "name": "Ler emails",
+        "webhookId": "dde17a90-60a1-42ad-9a09-06cf2fbb3105",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "mlzGIJGBhyJp0oZR",
+            "name": "Base Email"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "@n8n/n8n-nodes-langchain.toolThink",
+        "typeVersion": 1,
+        "position": [
+          1980,
+          860
+        ],
+        "id": "b0b52413-d98b-4dbe-9171-3a696b4a69c9",
+        "name": "Refletir"
+      },
+      {
+        "parameters": {
+          "toolDescription": "Use essa ferramenta para enviar as informações de agendamento no WhatsApp.\n\nO telefone deve ser formatado com apenas números, incluindo o código do país.\n\nExemplo: \"551112345678\"",
+          "method": "POST",
+          "url": "=https://whatsapi.robotizze.us/message/sendText/Odonto",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "evolutionApi",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"number\": \"{telefone}\",\n  \"text\": \"{mensagem}\"\n}"
+        },
+        "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+        "typeVersion": 1.1,
+        "position": [
+          1560,
+          860
+        ],
+        "id": "81c45218-7702-4859-b8f2-e99d207013ce",
+        "name": "Enviar reagendamento",
+        "credentials": {
+          "evolutionApi": {
+            "id": "RDu8ahCLwjqAnfGE",
+            "name": "Evolution account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "iphone",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          500,
+          660
+        ],
+        "id": "743114e3-0342-4210-ac7c-0d678488805e",
+        "name": "Webhook",
+        "webhookId": "77a9d787-ed78-4e29-af09-01d0ffc1a573"
+      },
+      {
+        "parameters": {
+          "modelName": "models/gemini-2.5-flash-preview-05-20",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+        "typeVersion": 1,
+        "position": [
+          1040,
+          860
+        ],
+        "id": "8b2ba26f-17c9-4f65-b201-a2191641591e",
+        "name": "Gemini",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "qPcDylM30nsz8OOu",
+            "name": "Gemini"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "respondWith": "text",
+          "responseBody": "={{ $json.output?.find(o => o.type === 'text')?.text || null }}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.2,
+        "position": [
+          1900,
+          620
+        ],
+        "id": "2fb6dbae-0921-4991-b475-3d220cf7d62b",
+        "name": "Respond to Webhook"
+      }
+    ],
+    "connections": {
+      "Set mensagem texto": {
+        "main": [
+          [
+            {
+              "node": "Assistente do escritório interno",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Assistente do escritório interno": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Postgres Chat Memory": {
+        "ai_memory": [
+          [
+            {
+              "node": "Assistente do escritório interno",
+              "type": "ai_memory",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Salvar memoria": {
+        "ai_tool": [
+          [
+            {
+              "node": "Assistente do escritório interno",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "MCP Google Calendar": {
+        "ai_tool": [
+          [
+            {
+              "node": "Assistente do escritório interno",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Criar tarefa": {
+        "ai_tool": [
+          [
+            {
+              "node": "Assistente do escritório interno",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Ler emails": {
+        "ai_tool": [
+          [
+            {
+              "node": "Assistente do escritório interno",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Refletir": {
+        "ai_tool": [
+          [
+            {
+              "node": "Assistente do escritório interno",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Enviar reagendamento": {
+        "ai_tool": [
+          [
+            {
+              "node": "Assistente do escritório interno",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Gemini": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Assistente do escritório interno",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Set mensagem texto",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {
+      "Webhook": [
+        {
+          "json": {
+            "headers": {
+              "host": "n8n-w.robotizze.us",
+              "user-agent": "BackgroundShortcutRunner/3607.0.2 CFNetwork/3826.500.131 Darwin/24.5.0",
+              "content-length": "44",
+              "accept": "*/*",
+              "accept-encoding": "gzip, deflate, br",
+              "accept-language": "pt-PT,pt;q=0.9",
+              "content-type": "application/json",
+              "x-forwarded-for": "190.2.68.34",
+              "x-forwarded-host": "n8n-w.robotizze.us",
+              "x-forwarded-port": "443",
+              "x-forwarded-proto": "https",
+              "x-forwarded-server": "05341378beea",
+              "x-real-ip": "190.2.68.34"
+            },
+            "params": {},
+            "query": {},
+            "body": {
+              "input": "agendar uma reunião com cesar pra amanhã as 9h"
+            },
+            "webhookUrl": "https://n8n-w.robotizze.us/webhook/iphone",
+            "executionMode": "production"
+          }
+        }
+      ]
+    },
+    "versionId": "711327e5-3b2c-4d9a-a609-ca642817e047",
+    "triggerCount": 1,
+    "tags": []
+  }
+}
