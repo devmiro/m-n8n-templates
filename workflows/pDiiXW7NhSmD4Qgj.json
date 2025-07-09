@@ -1,0 +1,3857 @@
+{
+  "data": {
+    "createdAt": "2025-05-13T17:39:48.582Z",
+    "updatedAt": "2025-05-14T14:38:33.182Z",
+    "id": "pDiiXW7NhSmD4Qgj",
+    "name": "ImobAI 3.8",
+    "active": true,
+    "nodes": [
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          3080,
+          60
+        ],
+        "id": "abdb865d-7da1-466d-934c-3db0179c6eeb",
+        "name": "Node8"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          2640,
+          60
+        ],
+        "id": "f6520f35-8709-490f-9118-6b9d3ae3e444",
+        "name": "Node7"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1820,
+          60
+        ],
+        "id": "ff5de85a-09bd-41f8-9add-4676fe69837b",
+        "name": "Node6"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1360,
+          60
+        ],
+        "id": "8ba5cc86-43cf-4606-906d-9120dc336c73",
+        "name": "Node5"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          880,
+          60
+        ],
+        "id": "360ddd6d-83b5-45ec-9b96-0ddc25badcdf",
+        "name": "Node4"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1920,
+          -220
+        ],
+        "id": "f46d12f8-4f24-4044-8b6a-290f775668c9",
+        "name": "Node3"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1500,
+          -220
+        ],
+        "id": "f37f84cf-439d-403e-be5b-0a206d54b059",
+        "name": "Node2"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1000,
+          -220
+        ],
+        "id": "96f81fe3-acdc-48ee-9e0f-ebbf9830bae4",
+        "name": "Node1"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $('config3').item.json.url_api_whatsapp }}/message/sendMedia/{{ $('config3').item.json.instance }}",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "number",
+                "value": "={{ $('enviar_imagens1').item.json.body.numero }}"
+              },
+              {
+                "name": "mediatype",
+                "value": "image"
+              },
+              {
+                "name": "media",
+                "value": "={{ $json['data.imagens'] }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          3440,
+          1540
+        ],
+        "id": "5cd1de2b-852c-44bb-84cb-4b1a1621e0e7",
+        "name": "WhatsApp Image",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "c0Kak94gnrcvGcCb",
+            "name": "Fleto Evo"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          4800,
+          500
+        ],
+        "id": "56313ce3-ffde-4c0d-8ff1-bcd096c9261a",
+        "name": "Node"
+      },
+      {
+        "parameters": {
+          "content": "## Split message + reply\n\nWe will split the model's output message and reply each individual chunk by delaying 1 second.",
+          "height": 820,
+          "width": 1060
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          4140,
+          260
+        ],
+        "id": "38c919eb-7b53-4f6d-af04-b97464958235",
+        "name": "Sticky Note19"
+      },
+      {
+        "parameters": {
+          "fieldToSplitOut": "output",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitOut",
+        "typeVersion": 1,
+        "position": [
+          4440,
+          580
+        ],
+        "id": "be1f36b2-a3cf-4893-a3cc-285145eeb5ab",
+        "name": "msgs1"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          4620,
+          580
+        ],
+        "id": "459feeac-ed0a-4fa8-be2a-acf338c8ba5a",
+        "name": "single_msg"
+      },
+      {
+        "parameters": {
+          "jsCode": "for (const item of $input.all()) {\n  item.json.output = item.json.output\n    .replace(/\\*\\*/g, '*') // substitui ** por *\n    .split('\\n\\n');\n}\n\nreturn $input.all();"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          4280,
+          580
+        ],
+        "id": "40af798c-dc90-472f-922c-d90cf64923c8",
+        "name": "split_output"
+      },
+      {
+        "parameters": {
+          "content": "### Imoveis para testar",
+          "height": 260,
+          "width": 940
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          2580,
+          -20
+        ],
+        "id": "cbe8a0ac-217a-4a5d-905b-e0a64f9a614e",
+        "name": "Sticky Note18"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "-- PostgreSQL Properties Gallery Table\n\n-- Remove MySQL specific settings\nSET statement_timeout = 0;\nSET lock_timeout = 0;\nSET client_encoding = 'UTF8';\nSET standard_conforming_strings = on;\n\n-- Create sequence for id\nCREATE SEQUENCE ws_properties_gallery_id_seq;\n\n-- Create table\nCREATE TABLE ws_properties_gallery (\n    realty_id integer,\n    id integer NOT NULL DEFAULT nextval('ws_properties_gallery_id_seq'),\n    image varchar(255),\n    PRIMARY KEY (id)\n);\n\n-- Insert data\nINSERT INTO ws_properties_gallery (realty_id, id, image) VALUES\n(2, 1, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/novo-horto-residencial-2-1-1611172307.jpg'),\n(2, 3, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/novo-horto-residencial-2-3-1611172307.jpg'),\n(2, 4, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/novo-horto-residencial-2-4-1611172307.jpg'),\n(2, 5, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/novo-horto-residencial-2-1-1611172345.jpg'),\n(2, 6, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/novo-horto-residencial-2-2-1611172345.jpg'),\n(2, 7, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/novo-horto-residencial-2-3-1611172346.jpg'),\n(2, 8, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/novo-horto-residencial-2-4-1611172346.jpg'),\n(2, 9, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/novo-horto-residencial-2-5-1611172346.jpg'),\n(3, 10, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/residencial-sao-francisco-3-1-1611173213.jpg'),\n(3, 11, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/residencial-sao-francisco-3-2-1611173213.jpg'),\n(3, 12, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/residencial-sao-francisco-3-3-1611173214.jpg'),\n(3, 13, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/residencial-sao-francisco-3-4-1611173214.jpg'),\n(3, 14, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/residencial-sao-francisco-3-5-1611173215.jpg'),\n(3, 15, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/residencial-sao-francisco-3-6-1611173215.jpg'),\n(3, 16, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/residencial-sao-francisco-3-7-1611173215.jpg'),\n(4, 17, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/residencial-porto-4-1-1611173355.jpg'),\n(4, 18, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/residencial-porto-4-2-1611173356.jpg'),\n(4, 19, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/residencial-porto-4-3-1611173356.jpg'),\n(4, 20, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/residencial-porto-4-4-1611173356.jpg'),\n(4, 21, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/residencial-porto-4-5-1611173356.jpg'),\n(5, 22, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/linda-casa-em-local-privilegiado-5-1-1611173731.jpg'),\n(5, 23, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/linda-casa-em-local-privilegiado-5-2-1611173731.jpg'),\n(5, 24, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/linda-casa-em-local-privilegiado-5-3-1611173731.jpg'),\n(5, 25, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/linda-casa-em-local-privilegiado-5-4-1611173731.jpg'),\n(5, 26, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/linda-casa-em-local-privilegiado-5-5-1611173732.jpg'),\n(7, 27, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/quartos-para-temporada-ilha-bela-7-1-1611174244.jpg'),\n(7, 28, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/quartos-para-temporada-ilha-bela-7-2-1611174244.jpg'),\n(11, 29, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/sala-comercial-para-escritorio-11-1-1611175838.jpg'),\n(11, 30, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/sala-comercial-para-escritorio-11-2-1611175839.jpg'),\n(11, 31, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/sala-comercial-para-escritorio-11-3-1611175839.jpg'),\n(11, 32, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/sala-comercial-para-escritorio-11-4-1611175839.jpg'),\n(11, 33, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/sala-comercial-para-escritorio-11-5-1611175840.jpg'),\n(11, 34, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/sala-comercial-para-escritorio-11-6-1611175840.jpg'),\n(12, 35, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/escritorio-completo-em-local-privilegiado-12-1-1611176189.jpg'),\n(12, 36, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/escritorio-completo-em-local-privilegiado-12-2-1611176189.jpg'),\n(13, 37, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/galpao-industrial-13-1-1611176333.jpg'),\n(13, 38, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/galpao-industrial-13-1-1611176350.jpg'),\n(13, 39, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/galpao-industrial-13-1-1611176363.jpg'),\n(14, 40, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/apartamento-na-praia-grande-14-1-1611177281.jpg'),\n(14, 41, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/apartamento-na-praia-grande-14-2-1611177281.jpg'),\n(14, 42, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/apartamento-na-praia-grande-14-3-1611177281.jpg'),\n(14, 43, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/apartamento-na-praia-grande-14-4-1611177281.jpg'),\n(14, 44, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/apartamento-na-praia-grande-14-5-1611177282.jpg'),\n(14, 45, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/apartamento-na-praia-grande-14-6-1611177282.jpg'),\n(15, 46, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/linda-chacara-com-pomar-e-bosque-15-1-1611177845.jpg'),\n(15, 47, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/linda-chacara-com-pomar-e-bosque-15-2-1611177845.jpg'),\n(16, 48, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/casa-16-1-1611248143.jpg'),\n(16, 49, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/casa-16-2-1611248143.jpg'),\n(16, 50, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/casa-16-3-1611248144.jpg'),\n(16, 51, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/casa-16-4-1611248144.jpg'),\n(16, 52, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/casa-16-5-1611248144.jpg'),\n(16, 53, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/casa-16-6-1611248144.jpg'),\n(16, 54, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/casa-16-7-1611248144.jpg'),\n(16, 55, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/casa-16-8-1611248144.jpg'),\n(16, 56, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/casa-16-9-1611248145.jpg'),\n(16, 57, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/casa-16-10-1611248145.jpg'),\n(16, 59, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/casa-16-12-1611248145.jpg'),\n(16, 60, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/casa-16-13-1611248145.jpg'),\n(17, 61, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/loft-em-condominio-completo-17-1-1611249139.jpg'),\n(17, 62, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/loft-em-condominio-completo-17-2-1611249140.jpg'),\n(18, 63, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/casa-compacta-e-completa-18-1-1611249275.jpg'),\n(18, 64, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/casa-compacta-e-completa-18-2-1611249276.jpg'),\n(18, 65, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/casa-compacta-e-completa-18-3-1611249276.jpg'),\n(18, 66, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/casa-compacta-e-completa-18-4-1611249276.jpg'),\n(19, 67, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/19-1-1611249432.jpg'),\n(19, 68, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/19-2-1611249432.jpg'),\n(19, 69, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/19-3-1611249432.jpg'),\n(19, 70, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/19-4-1611249432.jpg'),\n(19, 71, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/19-5-1611249433.jpg'),\n(20, 72, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/20-1-1611249924.jpg'),\n(20, 73, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/20-2-1611249925.jpg'),\n(20, 74, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/20-3-1611249925.jpg'),\n(20, 75, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/20-4-1611249925.jpg'),\n(20, 76, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/20-5-1611249925.jpg'),\n(21, 77, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/21-1-1611250497.jpg'),\n(21, 78, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/21-2-1611250497.jpg'),\n(21, 79, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/21-3-1611250497.jpg'),\n(21, 80, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/21-4-1611250497.jpg'),\n(21, 81, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/21-5-1611250497.jpg'),\n(23, 82, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/23-1-1611251218.jpg'),\n(23, 83, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/23-2-1611251219.jpg'),\n(23, 84, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/23-3-1611251219.jpg'),\n(23, 85, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/23-4-1611251219.jpg'),\n(24, 86, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/24-1-1611251443.jpg'),\n(24, 87, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/24-2-1611251444.jpg'),\n(24, 88, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/24-3-1611251444.jpg'),\n(24, 89, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/24-4-1611251444.jpg'),\n(24, 90, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/24-5-1611251444.jpg'),\n(25, 91, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/25-1-1611252030.jpg'),\n(25, 92, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/25-2-1611252030.jpg'),\n(25, 93, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/25-3-1611252030.jpg'),\n(25, 94, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/25-4-1611252030.jpg'),\n(26, 95, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/26-1-1611252568.jpg'),\n(26, 96, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/26-2-1611252569.jpg'),\n(26, 97, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/26-3-1611252569.jpg'),\n(27, 98, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/27-1-1611253110.jpg'),\n(27, 99, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/27-2-1611253110.jpg'),\n(27, 100, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/27-3-1611253110.jpg'),\n(27, 101, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/27-4-1611253110.jpg'),\n(27, 102, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/27-5-1611253111.jpg'),\n(27, 103, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/27-6-1611253111.jpg'),\n(27, 104, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/27-7-1611253111.jpg'),\n(28, 105, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/28-1-1611253385.jpg'),\n(28, 106, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/28-2-1611253385.jpg'),\n(28, 107, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/28-3-1611253385.jpg'),\n(28, 108, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/28-4-1611253385.jpg'),\n(29, 109, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/29-1-1611253899.jpg'),\n(29, 110, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/29-2-1611253899.jpg'),\n(29, 111, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/29-3-1611253899.jpg'),\n(29, 112, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/29-4-1611253900.jpg'),\n(30, 113, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/30-1-1611254184.jpg'),\n(30, 114, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/30-2-1611254184.jpg'),\n(30, 115, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/30-3-1611254184.jpg'),\n(30, 116, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/30-4-1611254185.jpg'),\n(30, 117, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/30-5-1611254185.jpg'),\n(30, 118, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/30-6-1611254185.jpg'),\n(31, 119, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2024/12/terreno-na-beira-da-lagoa-de-pium-31-1-1734908369.png');\n\n-- Set sequence to the current max id\nSELECT setval('ws_properties_gallery_id_seq', (SELECT MAX(id) FROM ws_properties_gallery));",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          3300,
+          60
+        ],
+        "id": "f5d426fa-25c3-4a79-80c9-f74e4a548a48",
+        "name": "exemplo_imobiliaria_imoveis_galeria",
+        "credentials": {
+          "postgres": {
+            "id": "p2EJKXJEmxZwupRD",
+            "name": "ImobSup"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "-- PostgreSQL dump\n\n-- Set timezone\nSET timezone = 'UTC';\nDROP TABLE IF EXISTS ws_properties;\n-- Create the properties table\nCREATE TABLE ws_properties (\n    realty_id SERIAL PRIMARY KEY,\n    realty_cover VARCHAR(255),\n    realty_title VARCHAR(255),\n    realty_name VARCHAR(255),\n    realty_ref VARCHAR(255),\n    realty_price DECIMAL(11,2),\n    realty_desc TEXT,\n    realty_finality INTEGER,\n    realty_type INTEGER,\n    realty_builtarea DECIMAL(11,2),\n    realty_totalarea DECIMAL(11,2),\n    realty_bedrooms DECIMAL(11,0),\n    realty_apartments DECIMAL(10,0),\n    realty_bathrooms DECIMAL(11,0),\n    realty_parkings DECIMAL(10,0),\n    realty_particulars TEXT,\n    realty_transaction INTEGER,\n    realty_state VARCHAR(10),\n    realty_city VARCHAR(255),\n    realty_district VARCHAR(255),\n    realty_date TIMESTAMP,\n    realty_observation INTEGER,\n    realty_contact INTEGER,\n    realty_status INTEGER NOT NULL DEFAULT 0,\n    realty_views DECIMAL(11,0) NOT NULL DEFAULT 0\n);\n\n-- Insert data\nINSERT INTO ws_properties (\n    realty_id, realty_cover, realty_title, realty_name, realty_ref, \n    realty_price, realty_desc, realty_finality, realty_type, \n    realty_builtarea, realty_totalarea, realty_bedrooms, \n    realty_apartments, realty_bathrooms, realty_parkings, \n    realty_particulars, realty_transaction, realty_state, \n    realty_city, realty_district, realty_date, \n    realty_observation, realty_contact, realty_status, realty_views\n) VALUES\n   (1, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/digital-marketing-agency-ntwrk-g39p1kdjvsy-unsplash.jpg', 'Linda propriedade para descansar no final de semana', 'linda-propriedade-para-descansar-no-final-de-semana', '0001', 700.00, '<p>Linda propriedade equipada com sala de jogos completa, quiosque, redes e um lindo pomar.</p>', 2, 5, 300.00, 1200.00, 8, 3, 4, 20, 'piscina, churrasqueira, quadra poliesportiva, sala de jogos, sala de tv', 3, 'SP', 'Araçoiaba Da Serra', 'Alcides Vieira', '2021-01-01 06:01:00', NULL, 2, 1, 3),\n(2, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/novo-horto-residencial.jpg', 'Novo Horto Residencial', 'novo-horto-residencial', '0002', 350000.00, '<p>Apartamento amplo em bairro nobre, próximo de hipermercados, shopping center e escolas, com infraestrutura completa.</p>', 2, 1, 80.00, 80.00, 2, 1, 2, 2, 'piscina, churrasqueira, área gourmet', 2, 'SP', 'Sorocaba', 'Campolim', '2021-01-01 06:02:00', 2, 3, 1, 11),\n(3, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/residencial-sao-francisco.jpg', 'Residencial São Francisco', 'residencial-sao-francisco', '0003', 750000.00, '<p>Ampla casa completa em condominio com infraestrutura completa, segurança 24 hrs para você e sua familiar viver com qualidade e tranquilidade.</p>', 2, 3, 240.00, 300.00, 3, 3, 4, 4, 'Segurança, Portaria, Academia, Piscina', 2, 'SP', 'Sorocaba', 'Campolim', '2021-01-01 06:03:00', 2, 4, 1, 6),\n(4, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/residencial-porto.jpg', 'Residencial Pagliado', 'residencial-porto', '0004', 310000.00, '<p>Conforto e tranquilidade para você e sua familia. Desfrute de um ambiente agradavel, com bosques e uma incrível área verde.</p>', 2, 1, 64.00, 64.00, 2, 1, 2, 1, 'área verde, segurança eletrônica, portaria 24hrs', 2, 'SP', 'Sorocaba', 'Jardim Plagiato ', '2021-01-01 06:04:00', 2, NULL, 1, 4),\n(5, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/linda-casa-em-local-privilegiado.jpg', 'Linda casa em local privilegiado', 'linda-casa-em-local-privilegiado', '0005', 330000.00, '<p>Linda casa, recem reformada, com espaço amplo e vizinhança tranquila.</p>', 2, 3, 180.00, 250.00, 3, 1, 2, 2, 'Casa reformada, perto de escola, perto de supermercados', 2, 'SP', 'Sorocaba', 'Trujillo', '2021-01-01 06:06:00', 1, NULL, 1, 2),\n(6, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/cobertura-em-condominio-completo.jpg', 'Cobertura em condomínio completo', 'cobertura-em-condominio-completo', '0006', 700000.00, '<p>Cobertura em local de destaque na cidade, perto de tudo que sua familia precisa para viver o melhor agora.</p>', 2, 1, 80.00, 80.00, 3, 1, 2, 2, 'portaria, piscina, academia, playground', 2, 'SP', 'Sorocaba', 'Vila Carvalho', '2021-01-01 06:05:00', 1, 8, 1, 3),\n(7, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/quartos-para-temporada-ilha-bela.jpg', 'Quartos para temporada Ilha Bela', 'quartos-para-temporada-ilha-bela', '0007', 400.00, '<p>Desfrute do que há de melhor a Ilha Bela, esteja perto dos melhores pontos da ilha mais espetacular da região.</p>', 2, 5, 16.00, 16.00, 0, 1, 1, 1, 'restaurante, café da manhã incluso, almoço incluso, sala de jogos', 3, 'RJ', 'Ilha Bela', 'Centro', '2021-01-01 06:07:00', 3, 8, 1, 0),\n(8, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/kitnet-para-estudantes.jpg', 'Kitnet para estudantes', 'kitnet-para-estudantes', '0008', 700.00, '<p>Kitnet com uma vaga na garagem e lavanderia esclusiva, próximo da faculdade.</p>', 2, 1, 30.00, 30.00, 1, 0, 1, 1, 'luz, agua, wifi, condominio incluso.', 1, 'SP', 'Campinas', 'Centro', '2021-01-01 06:08:00', NULL, 4, 1, 2),\n(9, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/ampla-sala-comercial-no-centro-da-cidade.jpg', 'Ampla Sala Comercial no centro da cidade', 'ampla-sala-comercial-no-centro-da-cidade', '0009', 2000.00, '<p>Ampla sala comercial, com copa e banheiro no centro da cidade, ideal para você montar o seu negócio em local estratégico, com um grande fluxo de pessoas</p>', 1, 7, 400.00, 400.00, 0, 0, 2, 0, 'Ar Condicionado, banheiro, copa', 1, 'SP', 'Campinas', 'Centro', '2021-01-01 06:09:00', 4, 2, 1, 0),\n(10, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/casa-na-reserva-de-ipu.jpg', 'Casa na reserva de Ipu', 'casa-na-reserva-de-ipu', '0010', 220000.00, '<p>Desfrute da tranquilidade de morar em um condominio, tranquilo, seguro, em contato direto com a natureza.</p>', 2, 3, 200.00, 1000.00, 3, 1, 2, 2, 'Piscina, Churrasqueira, PlayGroud', 2, 'SP', 'Jundiaí', 'Reserva Do Ipu', '2021-01-01 06:10:00', 1, 4, 1, 8),\n(11, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/sala-comercial-para-escritorio.jpg', 'Sala comercial para escritório', 'sala-comercial-para-escritorio', '0011', 1200.00, '<p>Sala comercial privativa, com controle de acesso, estacionamento e segurança especializada. </p>', 1, 6, 30.00, 30.00, 0, 0, 1, 0, 'segurança, recepção, localização privilegiada', 1, 'SP', 'Campinas', 'Centro', '2021-01-01 06:11:00', 1, 4, 1, 3),\n(12, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/escritorio-completo-em-local-privilegiado.jpg', 'Escritório completo em local privilegiado', 'escritorio-completo-em-local-privilegiado', '0012', 1200.00, '<p>Escritório com infraestrutura completa para você prosperar em seus negócios</p>', 1, 6, 30.00, 30.00, 0, 0, 1, 1, 'ar condicionado, recepção, controle de acesso, internet incluso', 1, 'SP', 'Sorocaba', 'Campolim', '2021-01-01 06:12:00', NULL, NULL, 1, 3),\n(13, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/galpao-industrial.jpg', 'Galpão industrial', 'galpao-industrial', '0013', 1200000.00, '<p>Galpão industrial, com estrutura de energia, sistema de vigilancia, gestão de residuos e muito mais.</p>', 1, 4, 10000.00, 160000.00, 0, 0, 12, 100, 'estacionamento próprio, sistema de vigilância, portaria', 2, 'SP', 'Sorocaba', 'Aparecidinha', '2021-01-01 06:13:00', 3, NULL, 1, 2),\n(14, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/apartamento-na-praia-grande.jpg', 'Apartamento na Praia Grande', 'apartamento-na-praia-grande', '0014', NULL, '<p>Apartamento completo para passar o final de semana com a sua familia e desfrutar de momentos incriveis.</p>', 2, 1, 60.00, 60.00, 2, 1, 2, 2, 'de frente para o mar, estacionamento coberto', 3, 'SP', 'Praia Grande', 'Orla', '2021-01-01 06:14:00', 6, NULL, 1, 1),\n(15, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/linda-chacara-com-pomar-e-bosque.jpg', 'Linda Chácara com pomar e bosque', 'linda-chacara-com-pomar-e-bosque', '0015', NULL, '<p>Linda chacára completa para reunir seus funcionarios e amigos com segurança, desfrutando de um lugar repleto de belezas naturais, com arvorismo e muito mais</p>', 1, 2, 300.00, 4000.00, 4, 4, 8, 20, 'piscina, quadra poliesportiva, pomar, bosque, lago, quiosque', 3, 'SP', 'Araçoiaba Da Serra', 'Alcides Vieira', '2021-01-01 06:15:00', NULL, NULL, 1, 2),\n(16, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/casa.jpg', 'Casa de alto padrão pronta para morar', 'casa', '0016', 770000.00, '<p>em um bairro tranquilo e seguro, com sistema de vigilancia remota.</p>', 2, 3, 350.00, 500.00, 6, 3, 4, 4, 'piscina, churrasqueira, área gourmet', 2, 'SP', 'São Paulo', 'Alphaville', '2021-01-01 06:16:00', NULL, NULL, 1, 2),\n(17, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/justinbieber.jpg', 'Loft em condomínio completo', 'loft-em-condominio-completo', '0017', 1200.00, '<p>Lofts integram conformo, minimalismo e modernidade com o essencial para você viver bem.</p>', 2, 1, 40.00, 40.00, 1, 0, 1, 1, 'Segurança, Portaria, Academia, Piscina', 1, 'SP', 'Campinas', 'Cambui', '2021-01-01 06:17:00', NULL, 2, 1, 0),\n(18, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/ralph-kayden-2d4laqalbda-unsplash.jpg', 'Casa compacta e completa', 'casa-compacta-e-completa', '0018', 250000.00, '<p>Casa estruturada ecologicamente para aproveitar o maximo dos recursos naturais, promovendo conforto e economia sem igual.</p>', 2, 3, 180.00, 250.00, 3, 1, 2, 2, 'piscina, churrasqueira, área gourmet', 2, 'SP', 'Sorocaba', 'Ipiranga', '2021-01-01 06:18:00', NULL, NULL, 1, 0),\n(19, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/evan-dvorkin-k7prswm54-i-unsplash.jpg', 'Casa de alto padrão ', 'casa-de-alto-padrao', '0019', 1600000.00, '<p>Casa de alto padrão completa, com muito espaço, conforme e luxo. </p>', 2, 3, 600.00, 2000.00, 4, 2, 4, 4, 'piscina, churrasqueira, área gourmet', 2, 'SP', 'São Paulo', 'Alphaville', '2021-01-01 06:19:00', NULL, 4, 1, 0),\n(20, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/fran-hogan-zhs-y6clwco-unsplash.jpg', 'Linda casa no Condomínio Vilaggio ', 'linda-casa-no-condominio-vilaggio', '0020', 2500.00, '<p>Linda casa no Condomínio Vilaggio, com estrutura completa pra você e sua família. </p>', 2, 3, 350.00, 500.00, 3, 3, 4, 2, 'Piscina, Churrasqueira, PlayGroud', 1, 'SP', 'Campinas', 'Cambui', '2021-01-01 06:19:00', 3, NULL, 1, 0),\n(21, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/jesse-roberts-561igityvsk-unsplash.jpg', 'Linda casa em condomínio de chacáras', 'linda-casa-em-condominio-de-chacaras', '0021', 2400000.00, '<p>Casa com arvorismo, perto de bosques, lagos, com muita tranquilidade, longe do barulho caótico da cidade</p>', 2, 2, 530.00, 5000.00, 2, 3, 4, 2, 'Segurança, Portaria, Academia, Piscina', 2, 'SP', 'Araçoiaba Da Serra', 'Jardim Plagiato ', '2021-01-01 06:21:00', NULL, 3, 1, 4),\n(22, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/terreno-amplo-pronto-para-construir.jpg', 'Terreno Amplo Pronto para construir', 'terreno-amplo-pronto-para-construir', '0022', 120000.00, '<p>pronto para construir, com escritura, luz e agua pronto para instalar.</p>', 2, 8, 0.00, 250.00, 0, 0, 0, 0, 'Luz, agua, asfalto', 2, 'SP', 'Sorocaba', 'Parque São Bento', '2021-01-01 06:22:00', NULL, 8, 1, 2),\n(23, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/brian-babb-xbwhrt87mq0-unsplash.jpg', 'Linda casa perto de tudo', 'linda-casa-perto-de-tudo', '0023', NULL, NULL, 2, 3, 250.00, 350.00, 2, 2, 3, 2, 'Segurança, Portaria,', 1, 'SP', 'Sorocaba', 'Campolim', '2021-01-01 06:23:00', NULL, 4, 1, 0),\n(24, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/florian-schmidinger-b-79noqf95i-unsplash.jpg', 'Casa de luxo para temporada', 'casa-de-luxo-para-temporada', '0024', 3000.00, '<p>Casa mobiliada com estrutura para reunir familiares e amigos, com conforto e tranquilidade.</p>', 1, 5, 500.00, 2500.00, 4, 2, 4, 8, 'Piscina, Churrasqueira, PlayGroud', 3, 'SP', 'Araçoiaba Da Serra', 'Jardim Plagiato ', '2021-01-01 06:24:00', NULL, NULL, 1, 0),\n(25, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/fran-hogan-llosqsgdoye-unsplash.jpg', 'Chácara com salão para locação', 'chacara', '0025', 2000.00, '<p>nChacára estruturada para eventos e reuniões para empresas e amigos.</p>', 1, 5, 550.00, 3000.00, 0, 0, 4, 10, 'piscina, salão de festa, estacionamento, churrasqueira', 1, 'RN', 'Natal', 'Lagoa Nova', '2022-11-13 06:25:00', 1, 1, 1, 6),\n(26, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/phil-hearing-iyfp2ixe9nm-unsplash.jpg', 'Lindo imóvel no campo', 'lindo-imovel-no-campo', '0026', 320000.00, '<p>r</p>', 2, 3, 200.00, 400.00, 2, 1, 2, 2, 'Segurança, Portaria, Academia, Piscina', 2, 'RN', 'Natal', 'Capim Macio', '2022-11-13 06:26:00', 1, 1, 1, 29),\n(27, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/mr-autthaporn-pradidpong-efv7e9r7dfg-unsplash.jpg', 'Casa completa na reserva de Ipu', 'casa-completa-na-reserva-de-ipu', '0027', NULL, NULL, 2, 3, 330.00, 400.00, 2, 1, 2, 1, 'Tranquilidade, Segurança', 2, 'RN', 'Natal', 'Centro', '2022-11-13 06:27:00', 1, 1, 1, 15),\n(28, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/gustavo-zambelli-nevzsxbihiu-unsplash.jpg', 'Aconchegante propriedade em bairro tranquilo', 'aconchegante-propriedade-em-bairro-tranquilo', '0028', NULL, '<p>rAconchegante propriedade em bairro tranquilo, com controle climatizador</p>', 2, 3, 120.00, 200.00, 2, 1, 2, 1, 'lareira', 2, 'RN', 'Natal', 'Candelária', '2022-11-13 06:28:00', 1, 1, 1, 13),\n(29, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/ryan-christodoulou-ohuzos5htbk-unsplash.jpg', 'Casa para locação', 'casa-para-locacao', '0029', 3200.00, '<p>n</p>', 2, 3, 180.00, 240.00, 2, 0, 2, 2, 'piscina, churrasqueira, área gourmet', 1, 'RN', 'Natal', 'Neópolis', '2021-01-01 06:29:00', NULL, 1, 1, 0),\n(30, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2021/01/avantecture-0vdrg5pr7ny-unsplash.jpg', 'Linda Casa de alto padrão', 'linda-casa-de-alto-padrao', '0030', 740000.00, NULL, 2, 3, 320.00, 500.00, 2, 2, 4, 2, 'piscina, churrasqueira, área gourmet', 2, 'RN', 'Natal', 'Neópolis', '2021-01-01 06:30:00', NULL, 1, 1, 2),\n(31, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2024/12/terreno-na-beira-da-lagoa-de-pium.jpg', 'Terreno na beira da lagoa de pium', 'terreno-na-beira-da-lagoa-de-pium', '0031', 1200000.00, '<p>Terreno maravilhoso na beira da logoa de pium</p>', 2, 8, 200.00, 250.00, 3, 3, 3, 3, 'galinheiro, pocilga', 2, 'RN', 'Natal', 'Neópolis', '2024-12-22 22:54:00', NULL, 1, 1, 12),\n(32, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2025/01/casa-duplex-em-condominio-fechado-na-petra-kelly-r-700-000-00.jpg', 'Casa Duplex em Condomínio Fechado na Petra kelly - R$700.000,00', 'casa-duplex-em-condominio-fechado-na-petra-kelly-r-700-000-00', '0032', NULL, NULL, NULL, 3, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-01-27 16:54:00', NULL, 1, 0, 0),\n(33, 'https://leads.escola.cc/imb/tim.php?src=uploads/properties/2025/01/casa-duplex-em-condominio-fechado-na-petra-kelly-r-700-000-00-33.jpg', 'Casa Duplex em Condomínio Fechado na Petra kelly - R$700.000,00', 'casa-duplex-em-condominio-fechado-na-petra-kelly-r-700-000-00-33', '0033', 700000.00, NULL, 2, 3, 170.00, 200.00, 3, 3, 1, 1, 'Aceita Financiamento Ar Area Serviço Armario Closet Armario Cozinha Churrasqueira Condominio Fechado Cozinha Despensa Energia solar Escritorio Espaço Gourmet Fechadura digital Jardim Inverno Lavabo Piscina Varanda gourmet', 2, 'RN', 'Natal', NULL, '2025-01-27 16:57:00', NULL, 1, 0, 0);\n\n-- Reset the sequence\nSELECT setval('ws_properties_realty_id_seq', (SELECT MAX(realty_id) FROM ws_properties));",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          2860,
+          60
+        ],
+        "id": "eb5a33ac-c014-48b9-88c5-99e0d0f2be95",
+        "name": "exemplo_imobiliaria_imoveis",
+        "credentials": {
+          "postgres": {
+            "id": "p2EJKXJEmxZwupRD",
+            "name": "ImobSup"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "e9315126-3bc4-482f-bcee-364b479588d5",
+                "name": "url_webhook_n8n",
+                "value": "https://n8n-w.robotizze.us",
+                "type": "string"
+              }
+            ]
+          },
+          "includeOtherFields": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          960,
+          2220
+        ],
+        "id": "94129b2e-167f-4906-b25f-83e574f060ca",
+        "name": "config5"
+      },
+      {
+        "parameters": {
+          "content": "# COMO USAR O AGENTE\n## ASSISTA TODOS OS VIDEOS ENSINANDO COMO CONSTRUIR ESTE AGENT NA COMUNIDADE DINASTIA\n## https://www.dinastia.uk/links-bio\n\n# INSTALAR EXTENSAO NO SUPABASE\n## PGNET\n\n# CONFIGURAR AS VARIAVEIS\n## CONFIG 1 AO 8\n\n# CONFIGURAR AS CREDENCIAIS\n## WEBHOOK\n## WHATSAPP\n## BANCO DE DADOS\n## MEMORIA\n## LLM\n## TRIGGER\n\n# ATIVAR O FLUXO\n\n# CONFIGURAR BANCO DE DADOS",
+          "height": 980,
+          "width": 720,
+          "color": 5
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -1280,
+          260
+        ],
+        "id": "7a3e2541-7d91-4e8d-98f2-8f8e60635719",
+        "name": "Sticky Note17"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $('config4').item.json.url_api_whatsapp }}/message/sendText/{{ $('config4').item.json.instance }}",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "=number",
+                "value": "={{ $json.numero }}"
+              },
+              {
+                "name": "=text",
+                "value": "={{ $('config1').item.json.data.followup1_mensagem }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          5280,
+          1180
+        ],
+        "id": "13be64f9-2ef3-4cc7-9d95-37c2498e7b7a",
+        "name": "WhatsApp Text5",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "c0Kak94gnrcvGcCb",
+            "name": "Fleto Evo"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $('config4').item.json.url_api_whatsapp }}/message/sendText/{{ $('config4').item.json.instance }}",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "=number",
+                "value": "={{ $json.numero }}"
+              },
+              {
+                "name": "=text",
+                "value": "={{ $('config1').item.json.data.followup3_mensagem }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          5280,
+          1580
+        ],
+        "id": "bc211cb0-c8ca-433e-9c38-2d5b19883ac8",
+        "name": "WhatsApp Text4",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "c0Kak94gnrcvGcCb",
+            "name": "Fleto Evo"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $('config4').item.json.url_api_whatsapp }}/message/sendText/{{ $('config4').item.json.instance }}",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "=number",
+                "value": "={{ $json.numero }}"
+              },
+              {
+                "name": "=text",
+                "value": "={{ $('config1').item.json.data.followup2_mensagem }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          5280,
+          1380
+        ],
+        "id": "488a5755-818b-4973-a0e8-fbba91c01b64",
+        "name": "WhatsApp Text3",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "c0Kak94gnrcvGcCb",
+            "name": "Fleto Evo"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "92c13e4d-58a2-459b-bde7-6da208f82df1",
+                "name": "url_api_whatsapp",
+                "value": "https://whatsapi.robotizze.us",
+                "type": "string"
+              },
+              {
+                "id": "afbf899f-f92e-4a70-9d50-9ca5aa3b63bc",
+                "name": "instance",
+                "value": "Odonto",
+                "type": "string"
+              },
+              {
+                "id": "94212a9d-7d7a-460a-8474-3551cb0b5de9",
+                "name": "evolutionApiKey",
+                "value": "68400F5356E6-4C39-9848-EEF47D4DA604",
+                "type": "string"
+              }
+            ]
+          },
+          "includeOtherFields": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          4080,
+          1520
+        ],
+        "id": "7f3b5024-c99a-42e5-859f-01e3f081bfe1",
+        "name": "config4"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "92c13e4d-58a2-459b-bde7-6da208f82df1",
+                "name": "url_api_whatsapp",
+                "value": "https://fletoapi.robotizze.us",
+                "type": "string"
+              },
+              {
+                "id": "afbf899f-f92e-4a70-9d50-9ca5aa3b63bc",
+                "name": "instance",
+                "value": "Pan comercial fletoads",
+                "type": "string"
+              }
+            ]
+          },
+          "includeOtherFields": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          2680,
+          1440
+        ],
+        "id": "147a975f-3fec-487b-a5fe-0869209f8eba",
+        "name": "config3"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "92c13e4d-58a2-459b-bde7-6da208f82df1",
+                "name": "url_api_whatsapp",
+                "value": "https://n8n-w.robotizze.us",
+                "type": "string"
+              },
+              {
+                "id": "afbf899f-f92e-4a70-9d50-9ca5aa3b63bc",
+                "name": "instance",
+                "value": "Odonto",
+                "type": "string"
+              }
+            ]
+          },
+          "includeOtherFields": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          540,
+          1440
+        ],
+        "id": "55d1950f-3a99-49c3-aa05-930b9247e479",
+        "name": "config2"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $('config2').item.json.url_api_whatsapp }}/message/sendText/{{ $('config2').item.json.instance }}",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "apikey",
+                "value": "={{ $('config2').item.json.evolutionApiKey }}"
+              }
+            ]
+          },
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "=number",
+                "value": "={{ $('loop').item.json.user_id }}"
+              },
+              {
+                "name": "=text",
+                "value": "={{ $json.output }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          2100,
+          1460
+        ],
+        "id": "871cf503-7951-4fab-a102-e39b9a587cbd",
+        "name": "WhatsApp Text1"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "5fecac76-56f3-417d-9332-f5560b460238",
+                "leftValue": "={{ $json.pause_ai }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          3400,
+          560
+        ],
+        "id": "868340d6-5e02-49e7-b4ab-93b9ab748a41",
+        "name": "is_ai_paused"
+      },
+      {
+        "parameters": {
+          "schema": {
+            "__rl": true,
+            "mode": "list",
+            "value": "public"
+          },
+          "table": {
+            "__rl": true,
+            "value": "chats",
+            "mode": "list",
+            "cachedResultName": "chats"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "session_id": "={{ $json.numero }}",
+              "message": "={\n  \"type\": \"human\",\n  \"content\": \"{{ $('variables').item.json.mensagem }}\",\n  \"additional_kwargs\": {},\n  \"response_metadata\": {} \n}"
+            },
+            "matchingColumns": [
+              "id"
+            ],
+            "schema": [
+              {
+                "id": "id",
+                "displayName": "id",
+                "required": false,
+                "defaultMatch": true,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "session_id",
+                "displayName": "session_id",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "message",
+                "displayName": "message",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "object",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "created_at",
+                "displayName": "created_at",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "dateTime",
+                "canBeUsedToMatch": true,
+                "removed": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          3660,
+          320
+        ],
+        "id": "a0551e1d-7ed4-4d8c-bf58-45c1347cdfe3",
+        "name": "save_chat",
+        "credentials": {
+          "postgres": {
+            "id": "chTkdd9YjkOFpFUM",
+            "name": "ImobAI"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $('config').item.json.url_webhook_n8n }}/webhook/imobai/v1/clickup",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "numero",
+                "value": "={{ $('variables').item.json.numero }}"
+              },
+              {
+                "name": "nome",
+                "value": "={{ $('Webhook').item.json.body.data.pushName }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          3400,
+          320
+        ],
+        "id": "881b0ce9-d307-44db-81aa-bcc9d00ef447",
+        "name": "HTTP Request",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XYDeNUnb3JmsypQm",
+            "name": "Robotizze"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "ea863f8a-ac0c-4f75-89f2-b45cb38ebcbc",
+                "leftValue": "={{ $json.isEmpty() }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.filter",
+        "typeVersion": 2.2,
+        "position": [
+          3240,
+          320
+        ],
+        "id": "62e89cb2-3caf-4ded-a614-505fcf3de3b0",
+        "name": "novo_cliente"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "DROP TABLE IF EXISTS public.chats;\n\nCREATE TABLE public.chats (\n  id serial NOT NULL,\n  session_id character varying(255) NOT NULL,\n  message jsonb NOT NULL,\n  created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,\n  CONSTRAINT chats_pkey PRIMARY KEY (id)\n) TABLESPACE pg_default;\n\n-- Create client function that will populate the webhook\ncreate or replace function chats_webhook_pgnet()\nreturns trigger\nlanguage plpgsql\nas $$\ndeclare\n  response jsonb;\n  payload jsonb;\nbegin\n  -- Construct the JSON payload manually\n  payload := jsonb_build_object(\n    'type', TG_OP,\n    'table', TG_TABLE_NAME,\n    'schema', TG_TABLE_SCHEMA,\n    'record', to_jsonb(NEW),\n    'old_record', case when TG_OP = 'UPDATE' then to_jsonb(OLD) else null end\n  );\n\n  -- Send it via pg_net\n  select * into response from net.http_post(\n    'https://n8n.dinastia.uk/webhook/imobai/v1/clickup/update?apiKey=9879AWDAWD09809809809AWDAWDADW'::text,\n    payload,\n    '{}'::jsonb,\n    '{\"Content-Type\": \"application/json\"}'::jsonb,\n    1000\n  );\n\n  return new;\nend;\n$$;\n\n-- Drop existing trigger if any\ndrop trigger if exists chats_webhook on chats;\n\n-- Create the trigger on chats table\ncreate trigger chats_webhook\nafter insert or update on chats\nfor each row\nexecute function chats_webhook_pgnet();",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          680,
+          60
+        ],
+        "id": "9ae5df45-8d88-4ec3-bfd7-78d313b635b8",
+        "name": "criar_chats",
+        "credentials": {
+          "postgres": {
+            "id": "p2EJKXJEmxZwupRD",
+            "name": "ImobSup"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## ETL - Imoveis em XML",
+          "height": 820,
+          "width": 1000
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -400,
+          260
+        ],
+        "id": "88d340c1-6a6e-422b-a13e-b600352dd6fa",
+        "name": "Sticky Note16"
+      },
+      {
+        "parameters": {
+          "fieldToSplitOut": "ListingDataFeed.Listings.Listing",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitOut",
+        "typeVersion": 1,
+        "position": [
+          380,
+          600
+        ],
+        "id": "166619c0-0e3e-4352-9608-d1b96466bfff",
+        "name": "Split Out"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.xml",
+        "typeVersion": 1,
+        "position": [
+          160,
+          600
+        ],
+        "id": "6e1a0c70-a13e-4741-a525-61ec3f243ea2",
+        "name": "XML"
+      },
+      {
+        "parameters": {
+          "operation": "select",
+          "schema": {
+            "__rl": true,
+            "mode": "list",
+            "value": "public"
+          },
+          "table": {
+            "__rl": true,
+            "value": "user",
+            "mode": "list",
+            "cachedResultName": "user"
+          },
+          "returnAll": true,
+          "where": {
+            "values": [
+              {
+                "column": "id",
+                "value": "1"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          4260,
+          1520
+        ],
+        "id": "c493721a-bbf7-45d0-b792-d5f9b97bcd00",
+        "name": "config1",
+        "credentials": {
+          "postgres": {
+            "id": "p2EJKXJEmxZwupRD",
+            "name": "ImobSup"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## POST /config",
+          "height": 640,
+          "width": 740,
+          "color": 5
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          2400,
+          2600
+        ],
+        "id": "b994da2c-e397-4928-babd-06b86f1a4323",
+        "name": "Sticky Note15"
+      },
+      {
+        "parameters": {
+          "content": "## GET /config",
+          "height": 640,
+          "width": 740,
+          "color": 5
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          1660,
+          2600
+        ],
+        "id": "32c81884-be23-4f6b-b777-961c57d8e2ef",
+        "name": "Sticky Note14"
+      },
+      {
+        "parameters": {
+          "content": "## POST /login",
+          "height": 640,
+          "width": 1040,
+          "color": 5
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          620,
+          2600
+        ],
+        "id": "12958451-e696-4168-afcd-b02faae1db73",
+        "name": "Sticky Note13"
+      },
+      {
+        "parameters": {
+          "content": "## Backend APIs",
+          "height": 820,
+          "width": 2520,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          620,
+          2520
+        ],
+        "id": "90598f41-54b4-4584-8eff-d50f8ea03b1f",
+        "name": "Sticky Note12"
+      },
+      {
+        "parameters": {
+          "content": "## Renderizar a página\nPor favor, atualize as URL dentro do HTML para a sua base do n8n. Agradecido!",
+          "height": 460,
+          "width": 1160
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          620,
+          2060
+        ],
+        "id": "f8145799-616b-4446-bb69-ab46f2b13393",
+        "name": "Sticky Note11"
+      },
+      {
+        "parameters": {
+          "path": "frontend",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          740,
+          2220
+        ],
+        "id": "ee141d0a-ff42-41c5-881e-e68e73700394",
+        "name": "Webhook1",
+        "webhookId": "ce523b9b-0e34-4159-bd6a-41eb98221a3f"
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "frontend/config",
+          "authentication": "basicAuth",
+          "responseMode": "responseNode",
+          "options": {
+            "allowedOrigins": "*"
+          }
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          2500,
+          2840
+        ],
+        "id": "c65379d0-ec99-4da1-b176-f14ce4893435",
+        "name": "post_config1",
+        "webhookId": "a4377f2f-9c0a-4487-a0e8-8b139a31183e",
+        "credentials": {
+          "httpBasicAuth": {
+            "id": "gSDFq92oYqFESXXD",
+            "name": "Imob Auth Front"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={ \n  \"success\": true\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          2840,
+          2840
+        ],
+        "id": "20d99fc0-6e75-4e35-aa2d-bd722f65e620",
+        "name": "config_payload1"
+      },
+      {
+        "parameters": {
+          "operation": "upsert",
+          "schema": {
+            "__rl": true,
+            "mode": "list",
+            "value": "public"
+          },
+          "table": {
+            "__rl": true,
+            "value": "user",
+            "mode": "list",
+            "cachedResultName": "user"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "id": 1,
+              "data": "={{ $json.body }}"
+            },
+            "matchingColumns": [
+              "id"
+            ],
+            "schema": [
+              {
+                "id": "id",
+                "displayName": "id",
+                "required": true,
+                "defaultMatch": true,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "data",
+                "displayName": "data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "object",
+                "canBeUsedToMatch": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          2660,
+          2840
+        ],
+        "id": "124f708c-42d3-44d5-94e4-34879c9bde53",
+        "name": "user1",
+        "credentials": {
+          "postgres": {
+            "id": "p2EJKXJEmxZwupRD",
+            "name": "ImobSup"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={ \n  \"prompt\": \"{{ $json.prompt }}\",\n  \"temperatura\": {{ $json.temperatura }}\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          2120,
+          2840
+        ],
+        "id": "6528dae2-d688-4a98-a7c5-44f203246db8",
+        "name": "config_payload"
+      },
+      {
+        "parameters": {
+          "operation": "select",
+          "schema": {
+            "__rl": true,
+            "mode": "list",
+            "value": "public"
+          },
+          "table": {
+            "__rl": true,
+            "value": "user",
+            "mode": "list",
+            "cachedResultName": "user"
+          },
+          "limit": 1,
+          "where": {
+            "values": [
+              {
+                "column": "id",
+                "value": "1"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          1940,
+          2840
+        ],
+        "id": "4d0655da-11e6-4ad5-ac86-89d49f9835e6",
+        "name": "user",
+        "credentials": {
+          "postgres": {
+            "id": "p2EJKXJEmxZwupRD",
+            "name": "ImobSup"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "path": "frontend/config",
+          "authentication": "basicAuth",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          1760,
+          2840
+        ],
+        "id": "ed548dcf-becb-4470-944e-e1cb60a31f63",
+        "name": "get_config",
+        "webhookId": "a4377f2f-9c0a-4487-a0e8-8b139a31183e",
+        "credentials": {
+          "httpBasicAuth": {
+            "id": "gSDFq92oYqFESXXD",
+            "name": "Imob Auth Front"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "{\n  \"success\": true\n}",
+          "options": {
+            "responseCode": 401
+          }
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          1400,
+          2960
+        ],
+        "id": "e0cd668b-ff1d-4659-9e16-97e7012f637f",
+        "name": "Respond to Webhook1"
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "{\n  \"success\": true\n}",
+          "options": {
+            "responseCode": 200
+          }
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          1400,
+          2740
+        ],
+        "id": "b09accb0-cb11-430f-8231-f937b8d4933c",
+        "name": "login_correto"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "491cda79-11e7-4ed5-adcd-0dcaaeaff1b7",
+                "leftValue": "={{ $json.body.user }}",
+                "rightValue": "={{ $json.user }}",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
+                }
+              },
+              {
+                "id": "57f815fa-af05-4fca-b3dd-2652e2635488",
+                "leftValue": "={{ $json.body.password }}",
+                "rightValue": "={{ $json.password }}",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1160,
+          2840
+        ],
+        "id": "0418f9bd-0a4d-40d8-90be-dce3a833a89a",
+        "name": "validado"
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "frontend/login",
+          "authentication": "basicAuth",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          720,
+          2840
+        ],
+        "id": "a0aefdcc-7043-4752-b5ed-a572a801b444",
+        "name": "validar_login",
+        "webhookId": "6b29c3e2-6322-44b8-b5a6-c46fc7b7af39",
+        "credentials": {
+          "httpBasicAuth": {
+            "id": "gSDFq92oYqFESXXD",
+            "name": "Imob Auth Front"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "respondWith": "text",
+          "responseBody": "={{ $json.html }}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          1400,
+          2220
+        ],
+        "id": "9449747d-c9bf-450e-8b23-5e80d9a68831",
+        "name": "Respond to Webhook"
+      },
+      {
+        "parameters": {
+          "html": "<!DOCTYPE html>\n<html lang=\"pt-BR\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>ImobAI</title>\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.13.3/cdn.min.js\" defer></script>\n    <link href=\"https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css\" rel=\"stylesheet\">\n</head>\n<body class=\"bg-gray-100 font-sans\">\n    <div x-data=\"{\n        isLoggedIn: false,\n        isLoading: false,\n        isSaving: false,\n        username: '',\n        password: '',\n        errorMessage: '',\n        notification: {\n            show: false,\n            message: '',\n            type: 'success' // success ou error\n        },\n        dashboard: {\n            activeTab: 'settings',\n            config: {\n                followup1_tempo: 0,\n                followup1_mensagem: '',\n                followup2_tempo: 0,\n                followup2_mensagem: '',\n                followup3_tempo: 0,\n                followup3_mensagem: ''\n            }\n        },\n        // Função para mostrar notificação\n        showNotification(message, type = 'success') {\n            this.notification.message = message;\n            this.notification.type = type;\n            this.notification.show = true;\n            \n            // Esconder a notificação automaticamente após 3 segundos\n            setTimeout(() => {\n                this.notification.show = false;\n            }, 3000);\n        },\n        // Função para gerar o token Basic\n        generateBasicToken(username, password) {\n            return btoa(username + ':' + password);\n        },\n        // Verifica se já existe token salvo\n        checkSavedToken() {\n            const savedToken = localStorage.getItem('authToken');\n            if (savedToken) {\n                this.isLoggedIn = true;\n                // Buscar configurações após verificar que está logado\n                this.fetchConfig();\n                return true;\n            }\n            return false;\n        },\n        // Função para buscar configurações da API\n        fetchConfig() {\n            const token = localStorage.getItem('authToken');\n            if (!token) return;\n            \n            fetch('{{ $json.url_webhook_n8n }}/webhook/frontend/config', {\n                method: 'GET',\n                headers: {\n                    'Authorization': 'Basic ' + token\n                }\n            })\n            .then(response => {\n                if (!response.ok) {\n                    throw new Error('Erro ao buscar configurações');\n                }\n                return response.json();\n            })\n            .then(data => {\n                console.log('Configurações recebidas:', data);\n                // Atualizar os campos de FollowUp\n                this.dashboard.config.followup1_tempo = data.followup1_tempo || 0;\n                this.dashboard.config.followup1_mensagem = data.followup1_mensagem || '';\n                this.dashboard.config.followup2_tempo = data.followup2_tempo || 0;\n                this.dashboard.config.followup2_mensagem = data.followup2_mensagem || '';\n                this.dashboard.config.followup3_tempo = data.followup3_tempo || 0;\n                this.dashboard.config.followup3_mensagem = data.followup3_mensagem || '';\n            })\n            .catch(error => {\n                console.error('Erro ao buscar configurações:', error);\n                this.showNotification('Erro ao carregar configurações. Por favor, tente novamente.', 'error');\n            });\n        },\n        // Função para salvar configurações\n        // Função para salvar configurações\nsaveConfig() {\n    const token = localStorage.getItem('authToken');\n    if (!token) return;\n    \n    // Mostrar estado de carregamento\n    this.isSaving = true;\n    \n    // Enviar configurações para a API\n    fetch('{{ $json.url_webhook_n8n }}/webhook/frontend/config', {\n        method: 'POST',\n        headers: {\n            'Content-Type': 'application/json',\n            'Authorization': 'Basic ' + token\n        },\n        body: JSON.stringify({\n            // Campos de follow-up\n            followup1_tempo: this.dashboard.config.followup1_tempo,\n            followup1_mensagem: this.dashboard.config.followup1_mensagem,\n            followup2_tempo: this.dashboard.config.followup2_tempo,\n            followup2_mensagem: this.dashboard.config.followup2_mensagem,\n            followup3_tempo: this.dashboard.config.followup3_tempo,\n            followup3_mensagem: this.dashboard.config.followup3_mensagem\n        })\n    })\n    .then(response => {\n        if (!response.ok) {\n            throw new Error('Erro ao salvar configurações');\n        }\n        return response.json();\n    })\n    .then(data => {\n        console.log('Configurações salvas:', data);\n        this.showNotification('Configurações salvas com sucesso!', 'success');\n        this.isSaving = false;\n    })\n    .catch(error => {\n        console.error('Erro ao salvar configurações:', error);\n        this.showNotification('Erro ao salvar configurações. Por favor, tente novamente.', 'error');\n        this.isSaving = false;\n    });\n},\n        login() {\n            this.isLoading = true;\n            this.errorMessage = '';\n            \n            // Gera o token Basic\n            const basicToken = this.generateBasicToken(this.username, this.password);\n            \n            // Requisição real para a API de login\n            fetch('{{ $json.url_webhook_n8n }}/webhook/frontend/login', {\n                method: 'POST',\n                headers: {\n                    'Content-Type': 'application/json',\n                    'Authorization': 'Basic ' + basicToken\n                },\n                body: JSON.stringify({\n                    user: this.username,\n                    password: this.password\n                })\n            })\n            .then(response => {\n                if (!response.ok) {\n                    throw new Error('Erro na autenticação');\n                }\n                return response.json();\n            })\n            .then(data => {\n                this.isLoading = false;\n                this.isLoggedIn = true;\n                \n                // Salva o token no localStorage\n                localStorage.setItem('authToken', basicToken);\n                localStorage.setItem('username', this.username);\n                \n                // Buscar configurações após login bem-sucedido\n                this.fetchConfig();\n            })\n            .catch(error => {\n                this.isLoading = false;\n                this.errorMessage = 'Usuário ou senha incorretos';\n                console.error('Erro:', error);\n            });\n        },\n        logout() {\n            this.isLoggedIn = false;\n            this.username = '';\n            this.password = '';\n            // Remove o token do localStorage ao fazer logout\n            localStorage.removeItem('authToken');\n            localStorage.removeItem('username');\n        }\n    }\" \n    x-init=\"checkSavedToken()\"\n    class=\"min-h-screen flex flex-col\">\n\n        <!-- Notificação -->\n        <div x-show=\"notification.show\" \n             x-transition:enter=\"transition ease-out duration-300\"\n             x-transition:enter-start=\"opacity-0 transform scale-90\"\n             x-transition:enter-end=\"opacity-100 transform scale-100\"\n             x-transition:leave=\"transition ease-in duration-300\"\n             x-transition:leave-start=\"opacity-100 transform scale-100\"\n             x-transition:leave-end=\"opacity-0 transform scale-90\"\n             class=\"fixed top-4 right-4 z-50 max-w-sm\"\n             :class=\"{ \n                'bg-green-500': notification.type === 'success',\n                'bg-red-500': notification.type === 'error'\n             }\">\n            <div class=\"flex items-center p-4 rounded-lg shadow-lg text-white\">\n                <div class=\"flex-shrink-0 mr-3\">\n                    <template x-if=\"notification.type === 'success'\">\n                        <svg class=\"h-6 w-6\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\">\n                            <path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M5 13l4 4L19 7\" />\n                        </svg>\n                    </template>\n                    <template x-if=\"notification.type === 'error'\">\n                        <svg class=\"h-6 w-6\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\">\n                            <path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M6 18L18 6M6 6l12 12\" />\n                        </svg>\n                    </template>\n                </div>\n                <div>\n                    <p class=\"font-medium\" x-text=\"notification.message\"></p>\n                </div>\n                <button @click=\"notification.show = false\" class=\"ml-auto\">\n                    <svg class=\"h-4 w-4\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\">\n                        <path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M6 18L18 6M6 6l12 12\" />\n                    </svg>\n                </button>\n            </div>\n        </div>\n\n        <!-- Tela de Login -->\n        <div x-show=\"!isLoggedIn\" class=\"min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8\">\n            <div class=\"max-w-md w-full space-y-8 bg-white p-10 rounded-lg shadow-md\">\n                <div>\n                    <h2 class=\"mt-6 text-center text-3xl font-extrabold text-gray-900\">\n                        Acesso ao ImobAI\n                    </h2>\n                    <p class=\"mt-2 text-center text-sm text-gray-600\">\n                        Entre com suas credenciais\n                    </p>\n                </div>\n                <form class=\"mt-8 space-y-6\" @submit.prevent=\"login\">\n                    <div x-show=\"errorMessage\" class=\"bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative\" role=\"alert\">\n                        <span x-text=\"errorMessage\"></span>\n                    </div>\n                    <div class=\"rounded-md shadow-sm -space-y-px\">\n                        <div>\n                            <label for=\"username\" class=\"sr-only\">Usuário</label>\n                            <input id=\"username\" name=\"username\" type=\"text\" required x-model=\"username\" \n                                class=\"appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm\" \n                                placeholder=\"Usuário\">\n                        </div>\n                        <div>\n                            <label for=\"password\" class=\"sr-only\">Senha</label>\n                            <input id=\"password\" name=\"password\" type=\"password\" required x-model=\"password\" \n                                class=\"appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm\" \n                                placeholder=\"Senha\">\n                        </div>\n                    </div>\n\n                    <div>\n                        <button type=\"submit\" \n                            class=\"group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500\"\n                            :disabled=\"isLoading\">\n                            <span x-show=\"isLoading\" class=\"absolute left-0 inset-y-0 flex items-center pl-3\">\n                                <svg class=\"animate-spin h-5 w-5 text-white\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\">\n                                    <circle class=\"opacity-25\" cx=\"12\" cy=\"12\" r=\"10\" stroke=\"currentColor\" stroke-width=\"4\"></circle>\n                                    <path class=\"opacity-75\" fill=\"currentColor\" d=\"M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z\"></path>\n                                </svg>\n                            </span>\n                            <span x-text=\"isLoading ? 'Processando...' : 'Entrar'\"></span>\n                        </button>\n                    </div>\n                    \n                    <div class=\"text-sm text-center text-gray-500\">\n                        <p>Use suas credenciais de login</p>\n                    </div>\n                </form>\n            </div>\n        </div>\n\n        <!-- Dashboard -->\n        <div x-show=\"isLoggedIn\" class=\"flex flex-col h-screen\">\n            <!-- Navbar -->\n            <nav class=\"bg-white shadow-sm\">\n                <div class=\"max-w-7xl mx-auto px-4 sm:px-6 lg:px-8\">\n                    <div class=\"flex justify-between h-16\">\n                        <div class=\"flex\">\n                            <div class=\"flex-shrink-0 flex items-center\">\n                                <span class=\"text-blue-600 text-xl font-bold\">ImobAI</span>\n                            </div>\n                        </div>\n                        <div class=\"flex items-center\">\n                            <div class=\"ml-3 relative\" x-data=\"{ open: false }\">\n                                <div>\n                                    <button @click=\"open = !open\" class=\"max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500\" id=\"user-menu\" aria-haspopup=\"true\">\n                                        <span class=\"sr-only\">Abrir menu de usuário</span>\n                                        <div class=\"h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center text-white\">\n                                            U\n                                        </div>\n                                    </button>\n                                </div>\n                                <div x-show=\"open\" \n                                    @click.away=\"open = false\" \n                                    class=\"origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5\" \n                                    role=\"menu\" \n                                    aria-orientation=\"vertical\" \n                                    aria-labelledby=\"user-menu\">\n                                    <a href=\"#\" @click.prevent=\"logout\" class=\"block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100\" role=\"menuitem\">Sair</a>\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n            </nav>\n\n            <!-- Conteúdo Principal -->\n            <div class=\"flex-grow flex\">\n                <!-- Sidebar -->\n                <div class=\"bg-gray-800 text-white w-64 p-4 hidden md:block\">\n                    <div class=\"space-y-3\">\n                        <div class=\"flex items-center p-2 rounded-md cursor-pointer bg-blue-600\">\n                            <span class=\"ml-3\">Configurações</span>\n                        </div>\n                    </div>\n                </div>\n\n                <!-- Conteúdo Principal -->\n                <div class=\"flex-1 overflow-auto bg-gray-100 p-6\">\n                    <!-- Configurações -->\n<div class=\"bg-white p-6 rounded-lg shadow\">\n    <h1 class=\"text-2xl font-semibold text-gray-900 mb-6\">Configurações</h1>\n    <p class=\"text-gray-600 mb-6\">Configure seus parâmetros de IA abaixo.</p>\n    <div class=\"mt-6 space-y-6\">\n        <div>\n            <h3 class=\"text-lg font-medium text-gray-900\">Parâmetros de IA</h3>\n            <div class=\"mt-4 grid grid-cols-1 gap-y-6 sm:grid-cols-6 gap-x-4\">\n                <!-- FollowUp 1 -->\n                <div class=\"sm:col-span-2\">\n                    <label for=\"followup1_tempo\" class=\"block text-sm font-medium text-gray-700\">FollowUp 1 tempo (minutos)</label>\n                    <div class=\"mt-1\">\n                        <input type=\"number\" id=\"followup1_tempo\" name=\"followup1_tempo\" \n                            x-model=\"dashboard.config.followup1_tempo\"\n                            class=\"shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md\">\n                    </div>\n                </div>\n                <div class=\"sm:col-span-4\">\n                    <label for=\"followup1_mensagem\" class=\"block text-sm font-medium text-gray-700\">FollowUp 1 mensagem</label>\n                    <div class=\"mt-1\">\n                        <textarea id=\"followup1_mensagem\" name=\"followup1_mensagem\" rows=\"2\" \n                            x-model=\"dashboard.config.followup1_mensagem\"\n                            class=\"shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md\"></textarea>\n                    </div>\n                </div>\n                \n                <div class=\"sm:col-span-6\">\n                    <hr class=\"my-2\">\n                </div>\n                \n                <!-- FollowUp 2 -->\n                <div class=\"sm:col-span-2\">\n                    <label for=\"followup2_tempo\" class=\"block text-sm font-medium text-gray-700\">FollowUp 2 tempo (minutos)</label>\n                    <div class=\"mt-1\">\n                        <input type=\"number\" id=\"followup2_tempo\" name=\"followup2_tempo\" \n                            x-model=\"dashboard.config.followup2_tempo\"\n                            class=\"shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md\">\n                    </div>\n                </div>\n                <div class=\"sm:col-span-4\">\n                    <label for=\"followup2_mensagem\" class=\"block text-sm font-medium text-gray-700\">FollowUp 2 mensagem</label>\n                    <div class=\"mt-1\">\n                        <textarea id=\"followup2_mensagem\" name=\"followup2_mensagem\" rows=\"2\" \n                            x-model=\"dashboard.config.followup2_mensagem\"\n                            class=\"shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md\"></textarea>\n                    </div>\n                </div>\n                \n                <div class=\"sm:col-span-6\">\n                    <hr class=\"my-2\">\n                </div>\n                \n                <!-- FollowUp 3 -->\n                <div class=\"sm:col-span-2\">\n                    <label for=\"followup3_tempo\" class=\"block text-sm font-medium text-gray-700\">FollowUp 3 tempo (minutos)</label>\n                    <div class=\"mt-1\">\n                        <input type=\"number\" id=\"followup3_tempo\" name=\"followup3_tempo\" \n                            x-model=\"dashboard.config.followup3_tempo\"\n                            class=\"shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md\">\n                    </div>\n                </div>\n                <div class=\"sm:col-span-4\">\n                    <label for=\"followup3_mensagem\" class=\"block text-sm font-medium text-gray-700\">FollowUp 3 mensagem</label>\n                    <div class=\"mt-1\">\n                        <textarea id=\"followup3_mensagem\" name=\"followup3_mensagem\" rows=\"2\" \n                            x-model=\"dashboard.config.followup3_mensagem\"\n                            class=\"shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md\"></textarea>\n                    </div>\n                </div>\n            </div>\n        </div>\n        \n        <div class=\"pt-5\">\n            <div class=\"flex justify-end\">\n                <button type=\"button\" class=\"bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500\">\n                    Cancelar\n                </button>\n                <button @click=\"saveConfig()\" \n                    class=\"ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500\"\n                    :disabled=\"isSaving\">\n                    <span x-show=\"isSaving\" class=\"mr-2\">\n                        <svg class=\"animate-spin h-4 w-4 text-white inline\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\">\n                            <circle class=\"opacity-25\" cx=\"12\" cy=\"12\" r=\"10\" stroke=\"currentColor\" stroke-width=\"4\"></circle>\n                            <path class=\"opacity-75\" fill=\"currentColor\" d=\"M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z\"></path>\n                        </svg>\n                    </span>\n                    <span x-text=\"isSaving ? 'Salvando...' : 'Salvar'\"></span>\n                </button>\n            </div>\n        </div>\n    </div>\n</div>\n                </div>\n            </div>\n        </div>\n    </div>\n</body>\n</html>"
+        },
+        "type": "n8n-nodes-base.html",
+        "typeVersion": 1.2,
+        "position": [
+          1180,
+          2220
+        ],
+        "id": "3110d5ee-a7a7-4073-8bdc-1935912e3b5e",
+        "name": "HTML"
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "minutes",
+                "minutesInterval": 1
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          3860,
+          1320
+        ],
+        "id": "bd2b0a4c-32fb-4ec1-a2ec-76e7686f4bf7",
+        "name": "trigger",
+        "disabled": true
+      },
+      {
+        "parameters": {
+          "content": "# Follow Up - Cadências de mensagens",
+          "height": 820,
+          "width": 2060,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          3740,
+          1080
+        ],
+        "id": "2679140b-a2ca-4e0f-9949-e15b55d436e9",
+        "name": "Sticky Note10"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "schema": {
+            "__rl": true,
+            "mode": "list",
+            "value": "public"
+          },
+          "table": {
+            "__rl": true,
+            "value": "clientes",
+            "mode": "list",
+            "cachedResultName": "clientes"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "follow_up": "={{ Number($('cadencia').item.json.follow_up)+1 }}",
+              "numero": "={{ $('cadencia').item.json.numero }}",
+              "ultima_msg_enviada": "={{ $now }}"
+            },
+            "matchingColumns": [
+              "numero"
+            ],
+            "schema": [
+              {
+                "id": "numero",
+                "displayName": "numero",
+                "required": true,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "nome",
+                "displayName": "nome",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "created_at",
+                "displayName": "created_at",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "dateTime",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "follow_up",
+                "displayName": "follow_up",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "follow_up_ativo",
+                "displayName": "follow_up_ativo",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "boolean",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "ultima_msg_enviada",
+                "displayName": "ultima_msg_enviada",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "dateTime",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          5600,
+          1580
+        ],
+        "id": "20edfbf0-e85e-48b6-8700-8a75af5d0a6b",
+        "name": "atualizar_cliente",
+        "credentials": {
+          "postgres": {
+            "id": "p2EJKXJEmxZwupRD",
+            "name": "ImobSup"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ \n  $json.follow_up == 0 && \n  $now > ($json.ultima_msg_enviada.toDateTime().plus($('config1').item.json.data.followup1_tempo, 'minute'))\n}}",
+                      "rightValue": "",
+                      "operator": {
+                        "type": "boolean",
+                        "operation": "true",
+                        "singleValue": true
+                      },
+                      "id": "7d63d352-210d-4fd6-8d51-eebd8cbe6d6a"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "1"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "c096d466-5ae3-4af0-ab67-79283532fbfb",
+                      "leftValue": "={{ \n  $json.follow_up == 1 && \n  $now > ($json.ultima_msg_enviada.toDateTime().plus($('config1').item.json.data.followup2_tempo, 'minute'))\n}}",
+                      "rightValue": "",
+                      "operator": {
+                        "type": "boolean",
+                        "operation": "true",
+                        "singleValue": true
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "2"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "7b1d2b7b-f57c-4b96-9ac9-0115acda3420",
+                      "leftValue": "={{ \n  $json.follow_up == 2 && \n  $now > ($json.ultima_msg_enviada.toDateTime().plus($('config1').item.json.data.followup3_tempo, 'minute'))\n}}",
+                      "rightValue": "",
+                      "operator": {
+                        "type": "boolean",
+                        "operation": "true",
+                        "singleValue": true
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "3"
+              }
+            ]
+          },
+          "options": {
+            "fallbackOutput": "extra"
+          }
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          5000,
+          1440
+        ],
+        "id": "27572275-72e9-4ddb-a983-3a32d10eb068",
+        "name": "cadencia"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          4780,
+          1260
+        ],
+        "id": "cded7d22-130a-49fd-9774-7249b309e3c6",
+        "name": "finalizado1"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          4640,
+          1520
+        ],
+        "id": "b88ca84f-64ba-48ab-93b5-4439e5f1dff0",
+        "name": "followup_loop1"
+      },
+      {
+        "parameters": {
+          "operation": "select",
+          "schema": {
+            "__rl": true,
+            "mode": "list",
+            "value": "public"
+          },
+          "table": {
+            "__rl": true,
+            "value": "clientes",
+            "mode": "list",
+            "cachedResultName": "clientes"
+          },
+          "returnAll": true,
+          "where": {
+            "values": [
+              {
+                "column": "follow_up_ativo",
+                "value": "true"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          4440,
+          1520
+        ],
+        "id": "c8cc74af-de4a-453e-a747-487c34ebbfac",
+        "name": "followups_query1",
+        "alwaysOutputData": false,
+        "credentials": {
+          "postgres": {
+            "id": "chTkdd9YjkOFpFUM",
+            "name": "ImobAI"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "cronExpression",
+                "expression": "*/20 8-18 * * *"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          3860,
+          1520
+        ],
+        "id": "f0eef8cf-87c6-45c5-8c7a-ede154f9a1bd",
+        "name": "trigger1"
+      },
+      {
+        "parameters": {
+          "operation": "select",
+          "schema": {
+            "__rl": true,
+            "mode": "list",
+            "value": "public"
+          },
+          "table": {
+            "__rl": true,
+            "value": "imoveis",
+            "mode": "list",
+            "cachedResultName": "imoveis"
+          },
+          "limit": 1,
+          "where": {
+            "values": [
+              {
+                "column": "id",
+                "value": "={{ $json.body.id_imovel }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          2860,
+          1440
+        ],
+        "id": "61787375-9d35-4374-a0d1-bd2880aff8c6",
+        "name": "imovel2",
+        "credentials": {
+          "postgres": {
+            "id": "p2EJKXJEmxZwupRD",
+            "name": "ImobSup"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "imobiai/enviar-imagens",
+          "authentication": "headerAuth",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          2500,
+          1440
+        ],
+        "id": "9f228728-b7b4-4c9f-be07-a2d0c7597859",
+        "name": "enviar_imagens1",
+        "webhookId": "fe3f5bb4-49d5-43ae-8064-3335fec71681",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XYDeNUnb3JmsypQm",
+            "name": "Robotizze"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "toolDescription": "Usar esta tool toda vez que for preciso encaminhar imagens de um imovel para o cliente. Use o ID do imóvel que foi listado pela tool \"buscar_imoveis\".",
+          "method": "POST",
+          "url": "={{ $('config').item.json.url_webhook_n8n }}/webhook/imobiai/enviar-imagens",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "parametersBody": {
+            "values": [
+              {
+                "name": "id_imovel"
+              },
+              {
+                "name": "numero",
+                "valueProvider": "fieldValue",
+                "value": "={{ $('variables').item.json.numero }}"
+              }
+            ]
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+        "typeVersion": 1.1,
+        "position": [
+          3820,
+          820
+        ],
+        "id": "8b1e2ad3-9ebe-4716-869d-3db8398deb0c",
+        "name": "enviar_imagens",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XYDeNUnb3JmsypQm",
+            "name": "Robotizze"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## Enviar imagens",
+          "height": 820,
+          "width": 1360
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          2380,
+          1080
+        ],
+        "id": "c9ec3d7b-3f17-4712-8857-85ee569de34d",
+        "name": "Sticky Note9"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          3440,
+          1320
+        ],
+        "id": "b7b4ce41-8b42-4ee0-880d-f862fab2cba9",
+        "name": "done"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          3220,
+          1440
+        ],
+        "id": "6000ad65-1732-409d-8eb8-026c01ba2522",
+        "name": "Loop Over Items"
+      },
+      {
+        "parameters": {
+          "fieldToSplitOut": "data.imagens",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitOut",
+        "typeVersion": 1,
+        "position": [
+          3020,
+          1440
+        ],
+        "id": "6db02356-6593-41b0-916e-2fa6d7557aee",
+        "name": "imagens"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "={{ $('variables').item.json.mensagem }}",
+          "options": {
+            "systemMessage": "={{ $if($json.numero, '# Cliente ja cadastrado: nome: ' + $json.nome + ' <user_id>' + $json.numero + '</user_id>', '# Cliente nao cadastrado.') }}\n\n# Função\nVocê é uma corretora de imóveis chamada ImobiAI, sua função é pesquisar imóveis para o cliente usando a tool \"buscar_imoveis\".\n\n# Como criar as SQL para usar a tool \"buscar_imoveis\".\n- Ao afunilar uma busca, use os mesmos parametros utilizados na busca anterior.\n- Sempre exibir o ID do imóvel na hora de listar ou apresentar informações. O ID tem que sempre estar presente no formato \"Imóvel ID: <ID>\" Ex. Imóvel ID: 38\n\n# Quando enviar_imagens para o cliente.\n- Use a tool \"enviar_imagens\" quando o cliente solicitar as imagens de um imóvel ou quando você fornecer informações de um único imóvel.\n- Não use a tool para vários imóveis ao mesmo tempo.\n\n<buscar_imoveis>\nUtilize a funçnao abaixo para criar a SQL a ser usada na ferramenta buscar_imoveis\nCREATE OR REPLACE FUNCTION search_properties(\n    p_tipo VARCHAR DEFAULT NULL,\n    p_transacao VARCHAR DEFAULT NULL,\n    p_min_preco DECIMAL DEFAULT NULL,\n    p_max_preco DECIMAL DEFAULT NULL,\n    p_min_quartos INTEGER DEFAULT NULL,\n    p_max_quartos INTEGER DEFAULT NULL,\n    p_min_banheiros INTEGER DEFAULT NULL,\n    p_max_banheiros INTEGER DEFAULT NULL,\n    p_min_vagas INTEGER DEFAULT NULL,\n    p_max_vagas INTEGER DEFAULT NULL,\n    p_min_area_construida DECIMAL DEFAULT NULL,\n    p_max_area_construida DECIMAL DEFAULT NULL,\n    p_min_area_total DECIMAL DEFAULT NULL,\n    p_max_area_total DECIMAL DEFAULT NULL,\n    p_uf VARCHAR DEFAULT NULL,\n    p_cidade VARCHAR DEFAULT NULL,\n    p_bairro VARCHAR DEFAULT NULL,\n    p_caracteristicas TEXT[] DEFAULT NULL,\n    p_user_id VARCHAR DEFAULT NULL\n)\nRETURNS TABLE (\n    id BIGINT,\n    referencia VARCHAR,\n    titulo VARCHAR,\n    transacao VARCHAR,\n    tipo VARCHAR,\n    preco DOUBLE PRECISION,\n    descricao TEXT,\n    cidade VARCHAR,\n    uf VARCHAR,\n    vagas INTEGER,\n    bairro VARCHAR,\n    quartos INTEGER,\n    banheiros INTEGER,\n    area_total DECIMAL,\n    area_construida DECIMAL,\n    caracteristicas VARCHAR,\n    created_at TIMESTAMP WITH TIME ZONE\n) AS $$\nBEGIN\n    -- Salvar a busca se houver um user_id\n    IF p_user_id IS NOT NULL THEN\n        INSERT INTO saved_searches (\n            user_id,\n            tipo,\n            transacao,\n            min_preco,\n            max_preco,\n            min_quartos,\n            max_quartos,\n            min_banheiros,\n            max_banheiros,\n            min_vagas,\n            max_vagas,\n            min_area_construida,\n            max_area_construida,\n            min_area_total,\n            max_area_total,\n            uf,\n            cidade,\n            bairro,\n            caracteristicas\n        ) VALUES (\n            p_user_id,\n            p_tipo,\n            p_transacao,\n            p_min_preco,\n            p_max_preco,\n            p_min_quartos,\n            p_max_quartos,\n            p_min_banheiros,\n            p_max_banheiros,\n            p_min_vagas,\n            p_max_vagas,\n            p_min_area_construida,\n            p_max_area_construida,\n            p_min_area_total,\n            p_max_area_total,\n            p_uf,\n            p_cidade,\n            p_bairro,\n            p_caracteristicas\n        );\n    END IF;\n\n    -- Retorna os resultados da busca\n    RETURN QUERY\n    SELECT \n        i.id,\n        i.referencia,\n        i.titulo,\n        i.transacao,\n        i.tipo,\n        i.preco,\n        i.descricao,\n        i.cidade,\n        i.uf,\n        (i.data->>'vagas')::INTEGER as vagas,\n        (i.data->>'bairro')::VARCHAR as bairro,\n        (i.data->>'quartos')::INTEGER as quartos,\n        (i.data->>'banheiros')::INTEGER as banheiros,\n        (i.data->>'area_total')::DECIMAL as area_total,\n        (i.data->>'area_construida')::DECIMAL as area_construida,\n        (i.data->>'caracteristicas')::VARCHAR as caracteristicas,\n        i.created_at\n    FROM \n        imoveis i\n    WHERE \n        (p_tipo IS NULL OR unaccent(i.tipo) ILIKE unaccent(p_tipo))\n        AND (p_transacao IS NULL OR unaccent(i.transacao) ILIKE unaccent(p_transacao))\n        AND (p_min_preco IS NULL OR i.preco >= p_min_preco)\n        AND (p_max_preco IS NULL OR i.preco <= p_max_preco)\n        AND (p_min_quartos IS NULL OR (i.data->>'quartos')::INTEGER >= p_min_quartos)\n        AND (p_max_quartos IS NULL OR (i.data->>'quartos')::INTEGER <= p_max_quartos)\n        AND (p_min_banheiros IS NULL OR (i.data->>'banheiros')::INTEGER >= p_min_banheiros)\n        AND (p_max_banheiros IS NULL OR (i.data->>'banheiros')::INTEGER <= p_max_banheiros)\n        AND (p_min_vagas IS NULL OR (i.data->>'vagas')::INTEGER >= p_min_vagas)\n        AND (p_max_vagas IS NULL OR (i.data->>'vagas')::INTEGER <= p_max_vagas)\n        AND (p_min_area_construida IS NULL OR (i.data->>'area_construida')::DECIMAL >= p_min_area_construida)\n        AND (p_max_area_construida IS NULL OR (i.data->>'area_construida')::DECIMAL <= p_max_area_construida)\n        AND (p_min_area_total IS NULL OR (i.data->>'area_total')::DECIMAL >= p_min_area_total)\n        AND (p_max_area_total IS NULL OR (i.data->>'area_total')::DECIMAL <= p_max_area_total)\n        AND (p_uf IS NULL OR unaccent(i.uf) ILIKE unaccent(p_uf))\n        AND (p_cidade IS NULL OR unaccent(i.cidade) ILIKE unaccent(p_cidade))\n        AND (p_bairro IS NULL OR unaccent(i.data->>'bairro') ILIKE unaccent(p_bairro))\n        AND (p_caracteristicas IS NULL OR (\n            p_caracteristicas IS NOT NULL AND \n            array_length(p_caracteristicas, 1) > 0 AND \n            EXISTS (\n                SELECT 1\n                FROM unnest(p_caracteristicas) AS feature\n                WHERE unaccent(i.data->>'caracteristicas') ILIKE '%' || unaccent(feature) || '%'\n            )\n        ))\n    ORDER BY i.created_at DESC;\nEND;\n$$ LANGUAGE plpgsql;\n\n# Opcoes de transacao:\n- alugar\n- comprar\n- temporada\n\n# Opcoes de tipo:\n- apartamento\n- area\n- casa\n- galpao\n- pousada\n- predio\n- sala\n- terreno\n\nUtilize estes exemlos e queries abaixo:\n\nBusca básica sem filtros (retorna todos os imóveis):\n\nSELECT * FROM search_properties();\n\nBusca por tipo e transação específicos:\n\nSELECT * FROM search_properties(\n    p_tipo => 'apartamento',\n    p_transacao => 'comprar',\n    p_user_id => '<user_id>'\n);\n\nBusca por faixa de preço:\n\nSELECT * FROM search_properties(\n    p_min_preco => 200000,\n    p_max_preco => 500000,\n    p_user_id => '<user_id>'\n);\n\nBusca por características específicas:\n\nSELECT * FROM search_properties(\n    p_caracteristicas => ARRAY['piscina', 'churrasqueira'],\n    p_user_id => '<user_id>'\n);\n\nBusca combinada com vários filtros:\n\nSELECT * FROM search_properties(\n    p_tipo => 'casa',\n    p_cidade => 'Sorocaba',\n    p_min_quartos => 2,\n    p_min_vagas => 1,\n    p_min_area_total => 70,\n    p_caracteristicas => ARRAY['piscina'],\n    p_user_id => '<user_id>'\n);\n\nBusca por localização específica:\n\nSELECT * FROM search_properties(\n    p_uf => 'SP',\n    p_cidade => 'Sorocaba',\n    p_bairro => 'Campolim',\n    p_user_id => '<user_id>'\n);\n\nBusca por tamanho do imóvel:\n\nSELECT * FROM search_properties(\n    p_min_area_construida => 60,\n    p_max_area_construida => 100,\n    p_min_quartos => 2,\n    p_min_banheiros => 2,\n    p_user_id => '<user_id>'\n);\n\n</buscar_imoveis>"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.7,
+        "position": [
+          3640,
+          580
+        ],
+        "id": "c5aac84a-305b-459c-aa14-69e220f404c9",
+        "name": "agente"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=<IMOVEL>\n{{ JSON.stringify($('imovel1').item.json) }}\n</IMOVEL>\n\n<BUSCA>\n{{ JSON.stringify($('busca').item.json) }}\n</BUSCA>",
+          "options": {
+            "systemMessage": "# Função\nVocê é uma corretora de imóveis chamada ImobiAI, sua função é informar ao cliente sobre o novo <IMOVEL> que acabou de ser\ncadastrado em nosso sistema e que foi identicicado pela <BUSCA> que o cliente fez.\n\nCrie uma mensagem informando ao cliente sobre este <IMOVEL>, falando de que ele possui todas as características encontradas na <BUSCA> e pergunte se o cliente tem interesse de saber mais informacões sobre o <IMOVEL>.\n\nQuando mencionar a busca, informe a data (em created_at), para que o cliente lembre que ele fez esta busca."
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.7,
+        "position": [
+          1740,
+          1460
+        ],
+        "id": "39d58a10-82e1-4cb9-9e86-2fa42876ae36",
+        "name": "AI Agent1"
+      },
+      {
+        "parameters": {
+          "sessionIdType": "customKey",
+          "sessionKey": "={{ $('loop').item.json.user_id }}",
+          "tableName": "chats",
+          "contextWindowLength": 15
+        },
+        "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+        "typeVersion": 1.3,
+        "position": [
+          1920,
+          1680
+        ],
+        "id": "feb1e7a4-4150-4745-b320-7273954fad3c",
+        "name": "Postgres Chat Memory1",
+        "credentials": {
+          "postgres": {
+            "id": "chTkdd9YjkOFpFUM",
+            "name": "ImobAI"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "model": "gpt-4.1",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.1,
+        "position": [
+          1700,
+          1680
+        ],
+        "id": "7cbf27f0-cb43-4ed3-989b-5bfd2a45ad47",
+        "name": "OpenAI Chat Model1",
+        "credentials": {
+          "openAiApi": {
+            "id": "u7CSeoLtDHjjuz4h",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "select",
+          "schema": {
+            "__rl": true,
+            "mode": "list",
+            "value": "public"
+          },
+          "table": {
+            "__rl": true,
+            "value": "imoveis",
+            "mode": "list",
+            "cachedResultName": "imoveis"
+          },
+          "limit": 1,
+          "where": {
+            "values": [
+              {
+                "column": "id",
+                "value": "={{ $('notificar_novo_imovel1').item.json.body.imovelId }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          1540,
+          1460
+        ],
+        "id": "e7bbdee1-b720-4e38-974e-510cefda3852",
+        "name": "imovel1",
+        "credentials": {
+          "postgres": {
+            "id": "p2EJKXJEmxZwupRD",
+            "name": "ImobSup"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "select",
+          "schema": {
+            "__rl": true,
+            "mode": "list",
+            "value": "public"
+          },
+          "table": {
+            "__rl": true,
+            "value": "saved_searches",
+            "mode": "list",
+            "cachedResultName": "saved_searches"
+          },
+          "limit": 1,
+          "where": {
+            "values": [
+              {
+                "column": "id",
+                "value": "={{ $json.search_id }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          1380,
+          1460
+        ],
+        "id": "5327fac9-fff3-43d8-a10a-e21a99c8e634",
+        "name": "busca",
+        "credentials": {
+          "postgres": {
+            "id": "p2EJKXJEmxZwupRD",
+            "name": "ImobSup"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          1160,
+          1440
+        ],
+        "id": "cef6d5f8-83e4-489c-953c-725274570516",
+        "name": "loop"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT * FROM match_new_property_with_saved_searches({{ $json.body.imovelId }});",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          940,
+          1440
+        ],
+        "id": "83b8788f-8522-4c3c-a088-d0745b2c9934",
+        "name": "buscas",
+        "credentials": {
+          "postgres": {
+            "id": "p2EJKXJEmxZwupRD",
+            "name": "ImobSup"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "imobiai/novo-imovel",
+          "authentication": "headerAuth",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          360,
+          1440
+        ],
+        "id": "50bff604-a851-4d84-978a-c29e2556c37f",
+        "name": "notificar_novo_imovel1",
+        "webhookId": "3b87c40e-ac3c-4512-b597-506ccc393547",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XYDeNUnb3JmsypQm",
+            "name": "Robotizze"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "5290530d-248b-4d12-aab6-7d07290f4eaf",
+                "leftValue": "={{ $json.body.imovelId }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "exists",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.filter",
+        "typeVersion": 2.2,
+        "position": [
+          740,
+          1440
+        ],
+        "id": "4948eed8-0791-4042-ad00-2873b604558a",
+        "name": "validacao"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $('config6').item.json.url_webhook_n8n }}/webhook/imobiai/novo-imovel",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "imovelId",
+                "value": "={{ $json.id }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          2060,
+          640
+        ],
+        "id": "87312251-7f3f-41ae-b0c2-2e50db960fe0",
+        "name": "notificar_novo_imovel",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "XYDeNUnb3JmsypQm",
+            "name": "Robotizze"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## Follow-up - Notificar clientes sobre um novo imóvel.",
+          "height": 820,
+          "width": 2140,
+          "color": 5
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          240,
+          1080
+        ],
+        "id": "602d883f-66f2-4c5f-876a-8e140220c9fa",
+        "name": "Sticky Note8"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "5585e2cf-ef28-474f-a454-f49947676c0e",
+                "leftValue": "={{ $json }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "object",
+                  "operation": "empty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1660,
+          620
+        ],
+        "id": "f1d294b9-83e5-4d63-9ddf-16f728d1cf48",
+        "name": "novo"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          320,
+          -220
+        ],
+        "id": "7db80086-8ce8-4e44-a3fb-52778becdace",
+        "name": "When clicking ‘Test workflow’"
+      },
+      {
+        "parameters": {
+          "mode": "raw",
+          "jsonOutput": "={{ $json }}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1380,
+          620
+        ],
+        "id": "49239e1e-82d5-4bdb-9af2-088d8119726d",
+        "name": "imovel"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          1180,
+          640
+        ],
+        "id": "b7c4e419-c66e-45b0-9806-4f805147726f",
+        "name": "imovel_looping"
+      },
+      {
+        "parameters": {
+          "operation": "select",
+          "schema": {
+            "__rl": true,
+            "mode": "list",
+            "value": "public"
+          },
+          "table": {
+            "__rl": true,
+            "value": "imoveis",
+            "mode": "list",
+            "cachedResultName": "imoveis"
+          },
+          "limit": 1,
+          "where": {
+            "values": [
+              {
+                "column": "referencia",
+                "value": "={{ $json.referencia }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          1520,
+          620
+        ],
+        "id": "98b81e52-56de-41e4-9975-0295d3b073d6",
+        "name": "Postgres",
+        "alwaysOutputData": true,
+        "credentials": {
+          "postgres": {
+            "id": "p2EJKXJEmxZwupRD",
+            "name": "ImobSup"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "17b6fa1c-f4ea-4c75-9c9e-1a43900dbc58",
+                "leftValue": "={{ $('Webhook').item.json.body.apikey }}",
+                "rightValue": "={{ $json.evolutionApiKey }}",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
+                }
+              },
+              {
+                "id": "70c82c3b-7619-4b50-899f-17931323d19d",
+                "leftValue": "={{ $('Webhook').item.json.body.event }}",
+                "rightValue": "messages.upsert",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "512d5a65-bc8b-4939-851e-8ec6ea4f5cd4",
+        "name": "auth",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          2880,
+          580
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "6e382281-d894-4366-a20c-7134f28987d3",
+                "name": "url_webhook_n8n",
+                "value": "https://n8n-w.robotizze.us",
+                "type": "string"
+              },
+              {
+                "id": "249b7260-0527-45c9-9397-a79788a7165a",
+                "name": "=url_api_whatsapp",
+                "value": "https://fletoapi.robotizze.us",
+                "type": "string"
+              },
+              {
+                "id": "8893fe1c-b2b0-4303-8086-9e6a076812f2",
+                "name": "instance",
+                "value": "={{ $json.body.instance }}",
+                "type": "string"
+              },
+              {
+                "id": "50ac7a75-bfc7-4075-9245-ee2c94739474",
+                "name": "evolutionApiKey",
+                "value": "292693248E84-4D6B-B043-02A6058A87A8",
+                "type": "string"
+              }
+            ]
+          },
+          "includeOtherFields": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          2560,
+          580
+        ],
+        "id": "c3e2334c-4128-41d7-b2f5-41f38f2d0e35",
+        "name": "config"
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "/api/v1/chat",
+          "options": {}
+        },
+        "id": "eda9dc11-67ec-4734-ad87-bb188b9c4457",
+        "name": "Webhook",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          2400,
+          580
+        ],
+        "webhookId": "a5a9c036-7f3a-46bb-9ba9-e740452b7f81"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT * FROM match_new_property_with_saved_searches(16);",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          2020,
+          60
+        ],
+        "id": "d18c6412-6e38-4c38-8499-dcfba1d8517e",
+        "name": "testar",
+        "alwaysOutputData": true,
+        "credentials": {
+          "postgres": {
+            "id": "p2EJKXJEmxZwupRD",
+            "name": "ImobSup"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "### Testar",
+          "height": 260,
+          "width": 420
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          1760,
+          -20
+        ],
+        "id": "8b9dfc5f-7a48-43bf-ab9f-5cddf2c4cf57",
+        "name": "Sticky Note7"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "INSERT INTO saved_searches (\n    user_id, tipo, cidade, caracteristicas\n) VALUES (\n    '5518981927977@whatsapp.s', 'apartamento', 'Manaus', ARRAY['piscina']\n);\n",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          1720,
+          -220
+        ],
+        "id": "b0912af0-c21a-4612-b0ce-8a4d015f7af0",
+        "name": "mock_saved_search_data",
+        "credentials": {
+          "postgres": {
+            "id": "p2EJKXJEmxZwupRD",
+            "name": "ImobSup"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "### Mock saved_search data",
+          "height": 260,
+          "width": 680,
+          "color": 3
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          1420,
+          -300
+        ],
+        "id": "2e1f3b6e-d1ca-4e0a-b5ce-69a59a924879",
+        "name": "Sticky Note6"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "DROP FUNCTION IF EXISTS match_new_property_with_saved_searches;\nCREATE OR REPLACE FUNCTION match_new_property_with_saved_searches(p_imovel_id BIGINT)\nRETURNS TABLE (user_id VARCHAR, search_id BIGINT) AS $$\nBEGIN\n    RETURN QUERY\n    WITH imovel AS (\n        SELECT \n            i.id,\n            i.tipo,\n            i.transacao,\n            i.preco,\n            i.cidade,\n            i.uf,\n            (i.data->>'vagas')::INTEGER as vagas,\n            (i.data->>'bairro')::VARCHAR as bairro,\n            (i.data->>'quartos')::INTEGER as quartos,\n            (i.data->>'banheiros')::INTEGER as banheiros,\n            (i.data->>'area_total')::DECIMAL as area_total,\n            (i.data->>'area_construida')::DECIMAL as area_construida,\n            (i.data->>'caracteristicas')::VARCHAR as caracteristicas\n        FROM imoveis i\n        WHERE i.id = p_imovel_id\n    ),\n    matched_searches AS (\n        SELECT DISTINCT ON (s.user_id) s.user_id as ms_user_id, s.id as ms_search_id\n        FROM saved_searches s, imovel i\n        WHERE \n            (s.tipo IS NULL OR i.tipo = s.tipo)\n            AND (s.transacao IS NULL OR i.transacao = s.transacao)\n            AND (s.min_preco IS NULL OR i.preco >= s.min_preco)\n            AND (s.max_preco IS NULL OR i.preco <= s.max_preco)\n            AND (s.min_quartos IS NULL OR i.quartos >= s.min_quartos)\n            AND (s.max_quartos IS NULL OR i.quartos <= s.max_quartos)\n            AND (s.min_banheiros IS NULL OR i.banheiros >= s.min_banheiros)\n            AND (s.max_banheiros IS NULL OR i.banheiros <= s.max_banheiros)\n            AND (s.min_vagas IS NULL OR i.vagas >= s.min_vagas)\n            AND (s.max_vagas IS NULL OR i.vagas <= s.max_vagas)\n            AND (s.min_area_construida IS NULL OR i.area_construida >= s.min_area_construida)\n            AND (s.max_area_construida IS NULL OR i.area_construida <= s.max_area_construida)\n            AND (s.min_area_total IS NULL OR i.area_total >= s.min_area_total)\n            AND (s.max_area_total IS NULL OR i.area_total <= s.max_area_total)\n            AND (s.uf IS NULL OR i.uf ILIKE s.uf)\n            AND (s.cidade IS NULL OR i.cidade ILIKE s.cidade)\n            AND (s.bairro IS NULL OR i.bairro ILIKE s.bairro)\n            AND (s.caracteristicas IS NULL OR (\n                s.caracteristicas IS NOT NULL AND \n                array_length(s.caracteristicas, 1) > 0 AND \n                EXISTS (\n                    SELECT 1\n                    FROM unnest(s.caracteristicas) AS feature\n                    WHERE i.caracteristicas ILIKE '%' || feature || '%'\n                )\n            ))\n        ORDER BY s.user_id, s.id DESC\n    )\n    SELECT ms_user_id, ms_search_id FROM matched_searches;\nEND;\n$$ LANGUAGE plpgsql;",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          1220,
+          -220
+        ],
+        "id": "a9ac15f8-85db-434c-bb26-599a428dadf0",
+        "name": "criar_match_new_property",
+        "credentials": {
+          "postgres": {
+            "id": "p2EJKXJEmxZwupRD",
+            "name": "ImobSup"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "### Criar match_new_property",
+          "height": 260,
+          "width": 480,
+          "color": 3
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          920,
+          -300
+        ],
+        "id": "420ab218-f7ab-41c7-88bf-d870acef3ab2",
+        "name": "Sticky Note5"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "-- Tabela para armazenar os critérios de busca\nDROP TABLE IF EXISTS public.saved_searches;\nCREATE TABLE public.saved_searches (\n    id BIGINT GENERATED BY DEFAULT AS IDENTITY NOT NULL,\n    user_id VARCHAR NOT NULL,\n    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),\n    -- Critérios de busca\n    tipo VARCHAR,\n    transacao VARCHAR,\n    min_preco DECIMAL,\n    max_preco DECIMAL,\n    min_quartos INTEGER,\n    max_quartos INTEGER,\n    min_banheiros INTEGER,\n    max_banheiros INTEGER,\n    min_vagas INTEGER,\n    max_vagas INTEGER,\n    min_area_construida DECIMAL,\n    max_area_construida DECIMAL,\n    min_area_total DECIMAL,\n    max_area_total DECIMAL,\n    uf VARCHAR,\n    cidade VARCHAR,\n    bairro VARCHAR,\n    caracteristicas TEXT[],\n    CONSTRAINT saved_searches_pkey PRIMARY KEY (id)\n);\n\n-- Índices para melhorar a performance das consultas\nCREATE INDEX idx_saved_searches_user_id ON saved_searches(user_id);\nCREATE INDEX idx_saved_searches_tipo ON saved_searches(tipo) WHERE tipo IS NOT NULL;\nCREATE INDEX idx_saved_searches_cidade ON saved_searches(cidade) WHERE cidade IS NOT NULL;\nCREATE INDEX idx_saved_searches_uf ON saved_searches(uf) WHERE uf IS NOT NULL;",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          680,
+          -220
+        ],
+        "id": "4cf3aac2-28ae-4fce-b774-8328a47d9415",
+        "name": "criar_saved_searches",
+        "credentials": {
+          "postgres": {
+            "id": "p2EJKXJEmxZwupRD",
+            "name": "ImobSup"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "### Criar saved_searches",
+          "height": 260,
+          "width": 300,
+          "color": 3
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          600,
+          -300
+        ],
+        "id": "31d0b593-de13-492a-914d-12ea806b35d2",
+        "name": "Sticky Note4"
+      },
+      {
+        "parameters": {
+          "sessionIdType": "customKey",
+          "sessionKey": "={{ $('variables').item.json.numero }}_chat",
+          "tableName": "chats",
+          "contextWindowLength": 15
+        },
+        "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+        "typeVersion": 1.3,
+        "position": [
+          3680,
+          820
+        ],
+        "id": "9dc0d74a-4f94-4de7-aa62-dc443e5d5e45",
+        "name": "Postgres Chat Memory",
+        "credentials": {
+          "postgres": {
+            "id": "p2EJKXJEmxZwupRD",
+            "name": "ImobSup"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "select",
+          "schema": {
+            "__rl": true,
+            "mode": "list",
+            "value": "public"
+          },
+          "table": {
+            "__rl": true,
+            "value": "clientes",
+            "mode": "list",
+            "cachedResultName": "clientes"
+          },
+          "limit": 1,
+          "where": {
+            "values": [
+              {
+                "column": "numero",
+                "value": "={{ $('variables').item.json.numero }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          3100,
+          560
+        ],
+        "id": "b6f3026e-7d2e-4fb6-bfdd-a154a652a5e7",
+        "name": "cliente",
+        "alwaysOutputData": true,
+        "credentials": {
+          "postgres": {
+            "id": "p2EJKXJEmxZwupRD",
+            "name": "ImobSup"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "### Criar tabelas\nALTERAR A URL dentro do criar_chats",
+          "height": 260,
+          "width": 680
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          600,
+          -20
+        ],
+        "id": "4157aed0-0531-4d8b-ac27-e1014379eee0",
+        "name": "Sticky Note2"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1380,
+          420
+        ],
+        "id": "09ae92a0-f617-4189-b30a-71e4f10d1c48",
+        "name": "No Operation, do nothing"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "INSERT INTO public.imoveis (\n    referencia,\n    titulo,\n    transacao,\n    tipo,\n    preco,\n    descricao,\n    cidade,\n    uf,\n    data\n) VALUES (\n    '{{ $('imovel').item.json.referencia }}',\n    '{{ $('imovel').item.json.titulo }}',\n    '{{ $('imovel').item.json.transacao }}',\n    '{{ $('imovel').item.json.tipo }}',\n    '{{ $('imovel').item.json.preco }}',\n    '{{ $('imovel').item.json.descricao }}',\n    '{{ $('imovel').item.json.cidade }}',\n    '{{ $('imovel').item.json.uf }}',\n    '{{ JSON.stringify($('imovel').item.json.data) }}'\n) RETURNING id;\n",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          1880,
+          640
+        ],
+        "id": "c1795f0e-ed63-4774-87df-39734f84248e",
+        "name": "carregar_imoveis_bd",
+        "credentials": {
+          "postgres": {
+            "id": "p2EJKXJEmxZwupRD",
+            "name": "ImobSup"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT \n    p.realty_ref AS referencia,\n    p.realty_title AS titulo,\n    CASE \n        WHEN p.realty_transaction = 1 THEN 'alugar'\n        WHEN p.realty_transaction = 2 THEN 'comprar'\n        WHEN p.realty_transaction = 3 THEN 'temporada'\n        ELSE 'Desconhecido' \n    END AS transacao,\n    CASE \n        WHEN p.realty_type = 1 THEN 'apartamento'\n        WHEN p.realty_type = 2 THEN 'area'\n        WHEN p.realty_type = 3 THEN 'casa'\n        WHEN p.realty_type = 4 THEN 'galpao'\n        WHEN p.realty_type = 5 THEN 'pousada'\n        WHEN p.realty_type = 6 THEN 'predio'\n        WHEN p.realty_type = 7 THEN 'sala'\n        WHEN p.realty_type = 8 THEN 'terreno'\n        ELSE 'Desconhecido' \n    END AS tipo,\n    p.realty_price AS preco,\n    p.realty_desc AS descricao,\n    p.realty_city AS cidade,\n    p.realty_state AS uf,\n    jsonb_build_object(\n        'area_construida', p.realty_builtarea,\n        'area_total', p.realty_totalarea,\n        'quartos', p.realty_bedrooms,\n        'banheiros', p.realty_bathrooms,\n        'vagas', p.realty_parkings,\n        'caracteristicas', p.realty_particulars,\n        'bairro', p.realty_district,\n        'observacao', p.realty_observation,\n        'imagens', COALESCE(\n            (\n                SELECT jsonb_agg(g.image)\n                FROM public.ws_properties_gallery g\n                WHERE g.realty_id = p.realty_id\n            ),\n            '[]'::jsonb\n        )\n    ) AS data\nFROM public.ws_properties p;",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          980,
+          640
+        ],
+        "id": "1d0fcd45-304b-4664-9201-fc3e99c0a1f3",
+        "name": "listar_imoveis_cliente",
+        "credentials": {
+          "postgres": {
+            "id": "p2EJKXJEmxZwupRD",
+            "name": "ImobSup"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## ETL - BD do cliente",
+          "height": 820,
+          "width": 1720
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          600,
+          260
+        ],
+        "id": "7439d43c-5580-4283-a4aa-368da49bd591",
+        "name": "Sticky Note1"
+      },
+      {
+        "parameters": {
+          "descriptionType": "manual",
+          "toolDescription": "Use essa tool para buscar imoveis de acordo com o pedido do cliente.",
+          "operation": "executeQuery",
+          "query": "{{ $fromAI('sql', 'sql para buscar os imoveis') }}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgresTool",
+        "typeVersion": 2.5,
+        "position": [
+          3980,
+          820
+        ],
+        "id": "5f1a3b05-1b60-4d5a-9ab7-18f10cfcdd7e",
+        "name": "buscar_imoveis",
+        "credentials": {
+          "postgres": {
+            "id": "p2EJKXJEmxZwupRD",
+            "name": "ImobSup"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "CREATE EXTENSION IF NOT EXISTS unaccent;\n\nDROP FUNCTION IF EXISTS search_properties(\n    VARCHAR, VARCHAR, DECIMAL, DECIMAL, \n    INTEGER, INTEGER, INTEGER, INTEGER, \n    INTEGER, INTEGER, DECIMAL, DECIMAL, \n    DECIMAL, DECIMAL, VARCHAR, VARCHAR, \n    VARCHAR, TEXT[], VARCHAR\n);\n\nCREATE OR REPLACE FUNCTION search_properties(\n    p_tipo VARCHAR DEFAULT NULL,\n    p_transacao VARCHAR DEFAULT NULL,\n    p_min_preco DECIMAL DEFAULT NULL,\n    p_max_preco DECIMAL DEFAULT NULL,\n    p_min_quartos INTEGER DEFAULT NULL,\n    p_max_quartos INTEGER DEFAULT NULL,\n    p_min_banheiros INTEGER DEFAULT NULL,\n    p_max_banheiros INTEGER DEFAULT NULL,\n    p_min_vagas INTEGER DEFAULT NULL,\n    p_max_vagas INTEGER DEFAULT NULL,\n    p_min_area_construida DECIMAL DEFAULT NULL,\n    p_max_area_construida DECIMAL DEFAULT NULL,\n    p_min_area_total DECIMAL DEFAULT NULL,\n    p_max_area_total DECIMAL DEFAULT NULL,\n    p_uf VARCHAR DEFAULT NULL,\n    p_cidade VARCHAR DEFAULT NULL,\n    p_bairro VARCHAR DEFAULT NULL,\n    p_caracteristicas TEXT[] DEFAULT NULL,\n    p_user_id VARCHAR DEFAULT NULL\n)\nRETURNS TABLE (\n    id BIGINT,\n    referencia VARCHAR,\n    titulo VARCHAR,\n    transacao VARCHAR,\n    tipo VARCHAR,\n    preco DOUBLE PRECISION,\n    descricao TEXT,\n    cidade VARCHAR,\n    uf VARCHAR,\n    vagas INTEGER,\n    bairro VARCHAR,\n    quartos INTEGER,\n    banheiros INTEGER,\n    area_total DECIMAL,\n    area_construida DECIMAL,\n    caracteristicas VARCHAR,\n    created_at TIMESTAMP WITH TIME ZONE\n) AS $$\nBEGIN\n    -- Salvar a busca se houver um user_id\n    IF p_user_id IS NOT NULL THEN\n        INSERT INTO saved_searches (\n            user_id,\n            tipo,\n            transacao,\n            min_preco,\n            max_preco,\n            min_quartos,\n            max_quartos,\n            min_banheiros,\n            max_banheiros,\n            min_vagas,\n            max_vagas,\n            min_area_construida,\n            max_area_construida,\n            min_area_total,\n            max_area_total,\n            uf,\n            cidade,\n            bairro,\n            caracteristicas\n        ) VALUES (\n            p_user_id,\n            p_tipo,\n            p_transacao,\n            p_min_preco,\n            p_max_preco,\n            p_min_quartos,\n            p_max_quartos,\n            p_min_banheiros,\n            p_max_banheiros,\n            p_min_vagas,\n            p_max_vagas,\n            p_min_area_construida,\n            p_max_area_construida,\n            p_min_area_total,\n            p_max_area_total,\n            p_uf,\n            p_cidade,\n            p_bairro,\n            p_caracteristicas\n        );\n    END IF;\n\n    -- Retorna os resultados da busca\n    RETURN QUERY\n    SELECT \n        i.id,\n        i.referencia,\n        i.titulo,\n        i.transacao,\n        i.tipo,\n        i.preco,\n        i.descricao,\n        i.cidade,\n        i.uf,\n        (i.data->>'vagas')::INTEGER as vagas,\n        (i.data->>'bairro')::VARCHAR as bairro,\n        (i.data->>'quartos')::INTEGER as quartos,\n        (i.data->>'banheiros')::INTEGER as banheiros,\n        (i.data->>'area_total')::DECIMAL as area_total,\n        (i.data->>'area_construida')::DECIMAL as area_construida,\n        (i.data->>'caracteristicas')::VARCHAR as caracteristicas,\n        i.created_at\n    FROM \n        imoveis i\n    WHERE \n        (p_tipo IS NULL OR unaccent(i.tipo) ILIKE unaccent(p_tipo))\n        AND (p_transacao IS NULL OR unaccent(i.transacao) ILIKE unaccent(p_transacao))\n        AND (p_min_preco IS NULL OR i.preco >= p_min_preco)\n        AND (p_max_preco IS NULL OR i.preco <= p_max_preco)\n        AND (p_min_quartos IS NULL OR (i.data->>'quartos')::INTEGER >= p_min_quartos)\n        AND (p_max_quartos IS NULL OR (i.data->>'quartos')::INTEGER <= p_max_quartos)\n        AND (p_min_banheiros IS NULL OR (i.data->>'banheiros')::INTEGER >= p_min_banheiros)\n        AND (p_max_banheiros IS NULL OR (i.data->>'banheiros')::INTEGER <= p_max_banheiros)\n        AND (p_min_vagas IS NULL OR (i.data->>'vagas')::INTEGER >= p_min_vagas)\n        AND (p_max_vagas IS NULL OR (i.data->>'vagas')::INTEGER <= p_max_vagas)\n        AND (p_min_area_construida IS NULL OR (i.data->>'area_construida')::DECIMAL >= p_min_area_construida)\n        AND (p_max_area_construida IS NULL OR (i.data->>'area_construida')::DECIMAL <= p_max_area_construida)\n        AND (p_min_area_total IS NULL OR (i.data->>'area_total')::DECIMAL >= p_min_area_total)\n        AND (p_max_area_total IS NULL OR (i.data->>'area_total')::DECIMAL <= p_max_area_total)\n        AND (p_uf IS NULL OR unaccent(i.uf) ILIKE unaccent(p_uf))\n        AND (p_cidade IS NULL OR unaccent(i.cidade) ILIKE unaccent(p_cidade))\n        AND (p_bairro IS NULL OR unaccent(i.data->>'bairro') ILIKE unaccent(p_bairro))\n        AND (p_caracteristicas IS NULL OR (\n            p_caracteristicas IS NOT NULL AND \n            array_length(p_caracteristicas, 1) > 0 AND \n            EXISTS (\n                SELECT 1\n                FROM unnest(p_caracteristicas) AS feature\n                WHERE unaccent(i.data->>'caracteristicas') ILIKE '%' || unaccent(feature) || '%'\n            )\n        ))\n    ORDER BY i.created_at DESC;\nEND;\n$$ LANGUAGE plpgsql;",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          1560,
+          60
+        ],
+        "id": "7ebaa5b1-eca9-4176-8856-1244891252dc",
+        "name": "criar_search_properties",
+        "credentials": {
+          "postgres": {
+            "id": "p2EJKXJEmxZwupRD",
+            "name": "ImobSup"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "Criar função search_properties",
+          "height": 260,
+          "width": 440
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          1300,
+          -20
+        ],
+        "id": "8a0de403-977f-4954-b692-e9d0022350f4",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {
+          "model": "gpt-4.1",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.1,
+        "position": [
+          3540,
+          800
+        ],
+        "id": "980b4042-5987-4373-9682-6bc3c7f3e319",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "u7CSeoLtDHjjuz4h",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "6e382281-d894-4366-a20c-7134f28987d3",
+                "name": "url_webhook_n8n",
+                "value": "https://n8n-w.robotizze.us",
+                "type": "string"
+              }
+            ]
+          },
+          "includeOtherFields": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          780,
+          640
+        ],
+        "id": "d2fa8f8e-c504-451c-a529-04c4bf3707f3",
+        "name": "config6"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ $('config').item.json.url_api_whatsapp }}/message/sendText/{{ $('config').item.json.instance }}",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "number",
+                "value": "={{ $('variables').item.json.numero }}"
+              },
+              {
+                "name": "text",
+                "value": "={{ $json.output }}"
+              },
+              {
+                "name": "delay",
+                "value": "={{ Number(0) }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          4800,
+          680
+        ],
+        "id": "c9337f4e-0be6-42f4-8f17-08571694e5b3",
+        "name": "WhatsApp Text",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "c0Kak94gnrcvGcCb",
+            "name": "Fleto Evo"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "e8f6d984-d7f5-4ce9-8019-4dfdc86b2ab7",
+                "name": "data",
+                "value": "=<?xml version=\"1.0\" encoding=\"UTF-8\"?> <ListingDataFeed xmlns=\"http://www.vivareal.com/schemas/1.0/VRSync\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.vivareal.com/schemas/1.0/VRSync  http://xml.vivareal.com/vrsync.xsd\">   <Header>     <Provider>Castel Digital</Provider>     <Email>integracao@casteldigital.com.br</Email>     <Telephone>(47) 3264-9225</Telephone>     <PublishDate>2025-03-20T13:36:11</PublishDate>     <Logo>www.singulareimoveis.com.br/assets/email/logo.gif</Logo>   </Header>   <Listings>     <Listing>       <ListingID>44</ListingID>       <Title>Pousada na Armação Penha -SC á 500 metros do mar</Title>       <TransactionType>For Sale</TransactionType>       <PublicationType>STANDARD</PublicationType>       <ListDate>2024-04-24T15:32:32</ListDate>       <LastUpdateDate>2024-04-24T15:48:55</LastUpdateDate>       <DetailViewUrl>https://www.singulareimoveis.com.br/imovel/pousada-penha-praia-da-armacao-6-garagens-venda-ref-44/</DetailViewUrl>       <Media>         <Item medium=\"image\" caption=\"\" primary=\"true\">http://nocf.ig4.casteldigital.com.br/singulareimoveis/ig/il/imoveis/44/829fab62-86ef-418d-80c2-0250f1dd42df-1713984510857.jpg</Item>         <Item medium=\"image\" caption=\"\">http://nocf.ig4.casteldigital.com.br/singulareimoveis/ig/il/imoveis/44/ee93491c-53cb-4ad3-a7f4-8de1dfbf9b58-17139845108578.jpg</Item>         <Item medium=\"image\" caption=\"\">http://nocf.ig4.casteldigital.com.br/singulareimoveis/ig/il/imoveis/44/331da84d-e05a-4bd9-8b72-eb8b7cc4f929-17139845108564.jpg</Item>         <Item medium=\"image\" caption=\"\">http://nocf.ig4.casteldigital.com.br/singulareimoveis/ig/il/imoveis/44/ef6f8cdc-7ac6-4b9a-aa64-2a9cee345052-17139845108582.jpg</Item>         <Item medium=\"image\" caption=\"\">http://nocf.ig4.casteldigital.com.br/singulareimoveis/ig/il/imoveis/44/3609fde9-b235-4b56-af53-a23c2507776c-17139845108575.jpg</Item>         <Item medium=\"image\" caption=\"\">http://nocf.ig4.casteldigital.com.br/singulareimoveis/ig/il/imoveis/44/f8e7c119-5928-4d06-90a1-32de9602cf95-17139845108586.jpg</Item>       </Media>       <Details>         <PropertyType>Commercial / Residential Income</PropertyType>         <Tipologia>Pousada</Tipologia>         <Description><![CDATA[Ótima Pousada Bem Localizada . ponto de referencia :Mercado, Farmacia, Padaria, Escola, Creche, Parquinho infantil, posto de saude. à 300 metros do Parque Beto Carreiro Word. A Pousada é de Alvenariaa e de container, infra estrutura: piso ceramico, caixa de agua 5000 litro, Abertura em blindex, tem laje. <br /> <br /> • &nbsp;Ótima Pousada Bem Localizada .<br><br>  • &nbsp;ponto de referencia :Mercado, Farmacia, Padaria, Escola, Creche, Parquinho infantil, posto de saude.<br><br>  • &nbsp;à 300 metros do Parque Beto Carreiro Word.<br><br>  • &nbsp;A Pousada é de Alvenariaa e de container,<br><br> <strong>infra estrutura:</strong><br>  • &nbsp;piso ceramico, caixa de agua 5000 litro, Abertura em blindex, tem laje.<br>  <br /><strong>Características:</strong><br>  • &nbsp;Banheiro Social<br><br> ]]></Description>         <ListPrice currency=\"BRL\">4800000</ListPrice>         <LotArea unit=\"square metres\">350</LotArea>         <Bedrooms>0</Bedrooms>         <Bathrooms>0</Bathrooms>         <Suites>0</Suites>         <Garage type=\"Parking Space\">6</Garage>         <Features>           <Feature>Parking Garage</Feature>         </Features>       </Details>       <Location displayAddress=\"Street\">         <Country abbreviation=\"BR\">Brasil</Country>         <State abbreviation=\"SC\">Santa Catarina</State>         <City>Penha</City>         <Neighborhood>Praia da Armação</Neighborhood>         <Address>Rua Ararangua</Address>         <StreetNumber>32</StreetNumber>         <PostalCode>88385-000</PostalCode>       </Location>       <ContactInfo>         <Name>Singulare Imóveis</Name>         <Email>contato@singulareimoveis.com.br</Email>         <Telephone>(47) 3264-9225</Telephone>         <Website>www.singulareimoveis.com.br</Website>         <Logo>www.singulareimoveis.com.br/assets/email/logo.gif</Logo>       </ContactInfo>     </Listing>     <Listing>       <ListingID>76</ListingID>       <Title>Casa Geminada</Title>       <TransactionType>For Sale</TransactionType>       <PublicationType>STANDARD</PublicationType>       <ListDate>2024-05-10T10:26:07</ListDate>       <LastUpdateDate>2024-05-11T09:20:23</LastUpdateDate>       <DetailViewUrl>https://www.singulareimoveis.com.br/imovel/casa-penha-centro-1-quarto-1-garagem-venda-ref-76/</DetailViewUrl>       <Media>         <Item medium=\"image\" caption=\"\" primary=\"true\">http://nocf.ig4.casteldigital.com.br/singulareimoveis/ig/il/imoveis/76/c0ce59fe-fba2-47f1-ab64-928207b6c793-17154299425506.jpg</Item>         <Item medium=\"image\" caption=\"\">http://nocf.ig4.casteldigital.com.br/singulareimoveis/ig/il/imoveis/76/7a6fbc06-610f-4dfb-a799-b9bb8d96ae1f-17154299425497.jpg</Item>       </Media>       <Details>         <PropertyType>Residential / Home</PropertyType>         <Tipologia>Casa</Tipologia>         <Description><![CDATA[Entre em contato para maiores informações.]]></Description>         <ListPrice currency=\"BRL\">0</ListPrice>         <LotArea unit=\"square metres\">80</LotArea>         <Bedrooms>1</Bedrooms>         <Bathrooms>1</Bathrooms>         <Suites>0</Suites>         <Garage type=\"Parking Space\">1</Garage>         <Features>           <Feature>Parking Garage</Feature>         </Features>       </Details>       <Location displayAddress=\"Street\">         <Country abbreviation=\"BR\">Brasil</Country>         <State abbreviation=\"SC\">Santa Catarina</State>         <City>Penha</City>         <Neighborhood>Centro</Neighborhood>       </Location>       <ContactInfo>         <Name>Singulare Imóveis</Name>         <Email>contato@singulareimoveis.com.br</Email>         <Telephone>(47) 3264-9225</Telephone>         <Website>www.singulareimoveis.com.br</Website>         <Logo>www.singulareimoveis.com.br/assets/email/logo.gif</Logo>       </ContactInfo>     </Listing>     <Listing>       <ListingID>95</ListingID>       <Title>Sobrado Itacolomi BAlneario Piçarras SC</Title>       <TransactionType>For Sale</TransactionType>       <PublicationType>STANDARD</PublicationType>       <ListDate>2024-05-22T13:52:25</ListDate>       <LastUpdateDate>2024-05-22T13:55:45</LastUpdateDate>       <DetailViewUrl>https://www.singulareimoveis.com.br/imovel/sobrado-balneario-picarras-itacolomi-4-quartos-2-garagens-venda-ref-95/</DetailViewUrl>       <Media>         <Item medium=\"image\" caption=\"\" primary=\"true\">http://nocf.ig4.casteldigital.com.br/singulareimoveis/ig/il/imoveis/95/103e84b2-ef76-47fd-b5e1-9dfa2d037042-17163968759884.jpg</Item>         <Item medium=\"image\" caption=\"\">http://nocf.ig4.casteldigital.com.br/singulareimoveis/ig/il/imoveis/95/021df575-8a9f-4813-a083-71893a3df529-17163968759877.jpg</Item>         <Item medium=\"image\" caption=\"\">http://nocf.ig4.casteldigital.com.br/singulareimoveis/ig/il/imoveis/95/1655d97c-8ec3-426b-9520-8605b860e8a0-17163968759886.jpg</Item>         <Item medium=\"image\" caption=\"\">http://nocf.ig4.casteldigital.com.br/singulareimoveis/ig/il/imoveis/95/e84df3e6-9961-4ca5-8a98-a641d45d3f40-17163968759896.jpg</Item>         <Item medium=\"image\" caption=\"\">http://nocf.ig4.casteldigital.com.br/singulareimoveis/ig/il/imoveis/95/bd6841b5-2f46-4bb0-aa77-0eed2037e95b-1716396875989.jpg</Item>         <Item medium=\"image\" caption=\"\">http://nocf.ig4.casteldigital.com.br/singulareimoveis/ig/il/imoveis/95/f0428e49-4c29-4b34-b0af-f1d2367dc69f-17163968759898.jpg</Item>         <Item medium=\"image\" caption=\"\">http://nocf.ig4.casteldigital.com.br/singulareimoveis/ig/il/imoveis/95/c30a15f5-e852-4d39-b2a1-ebd29f71099b-17163968759893.jpg</Item>         <Item medium=\"image\" caption=\"\">http://nocf.ig4.casteldigital.com.br/singulareimoveis/ig/il/imoveis/95/96ba51af-0da1-4b7f-a5cb-14243264374e-17163968759882.jpg</Item>         <Item medium=\"image\" caption=\"\">http://nocf.ig4.casteldigital.com.br/singulareimoveis/ig/il/imoveis/95/8bb1ea24-2593-470d-9407-f99cf9a5a3b4-17163968759875.jpg</Item>         <Item medium=\"image\" caption=\"\">http://nocf.ig4.casteldigital.com.br/singulareimoveis/ig/il/imoveis/95/f1558ff9-55ed-4e80-a963-730e0266de11-17163968759901.jpg</Item>         <Item medium=\"image\" caption=\"\">http://nocf.ig4.casteldigital.com.br/singulareimoveis/ig/il/imoveis/95/92f4c1a7-3b1d-427b-a072-33766d4a5a4a-1716396875988.jpg</Item>         <Item medium=\"image\" caption=\"\">http://nocf.ig4.casteldigital.com.br/singulareimoveis/ig/il/imoveis/95/66f2cb94-8c6e-4fd0-9ddf-cab179bdfb13-17163968759879.jpg</Item>         <Item medium=\"image\" caption=\"\">http://nocf.ig4.casteldigital.com.br/singulareimoveis/ig/il/imoveis/95/ae1b0310-9b5d-4fec-9a92-c0a54e8692cd-17163968759887.jpg</Item>         <Item medium=\"image\" caption=\"\">http://nocf.ig4.casteldigital.com.br/singulareimoveis/ig/il/imoveis/95/0d235792-ebf3-40ad-8a83-183e12d6fdc2-17163968759873.jpg</Item>       </Media>       <Details>         <PropertyType>Residential / Sobrado</PropertyType>         <Tipologia>Sobrado</Tipologia>         <Description><![CDATA[Sobrado alto padrão 500 metros da avenida Com toda infraestrutura (hipermercado, escola,creches,farmacia,padaria...) Rua calçada   132 mt2 Sala Cozinha 4 dormitorios 2 banheiro 2 vaga de garagem Piscina SPA Área de festa e lavanderia Fica tudo q e móveis planejados Ar cond.<br /> <br /> • &nbsp;Sobrado alto padrão<br> • &nbsp;500 metros da avenida<br> • &nbsp;Com toda infraestrutura (hipermercado, escola,creches,farmacia,padaria...)<br> • &nbsp;Rua calçada<br><br>  • &nbsp;132 mt2<br><br>  • &nbsp;Sala<br> • &nbsp;Cozinha<br> • &nbsp;4 dormitorios<br> • &nbsp;2 banheiro<br> • &nbsp;2 vaga de garagem<br> • &nbsp;Piscina SPA<br> • &nbsp;Área de festa e lavanderia<br> • &nbsp;Fica tudo q e móveis planejados<br> • &nbsp;Ar cond.<br>  <br /><strong>Características:</strong><br>  • &nbsp;Ar Condicionado<br> • &nbsp;Área de Serviço<br> • &nbsp;Banheiro Social<br> • &nbsp;Churrasqueira<br> • &nbsp;Cozinha<br> • &nbsp;Piscina<br> • &nbsp;Sala<br><br> ]]></Description>         <ListPrice currency=\"BRL\">845000</ListPrice>         <LotArea unit=\"square metres\">132</LotArea>         <Bedrooms>4</Bedrooms>         <Bathrooms>2</Bathrooms>         <Suites>0</Suites>         <Garage type=\"Parking Space\">2</Garage>         <Features>           <Feature>Cooling</Feature>           <Feature>Maid's Quarters</Feature>           <Feature>BBQ</Feature>           <Feature>Kitchen</Feature>           <Feature>Parking Garage</Feature>         </Features>       </Details>       <Location displayAddress=\"Street\">         <Country abbreviation=\"BR\">Brasil</Country>         <State abbreviation=\"SC\">Santa Catarina</State>         <City>Balneário Piçarras</City>         <Neighborhood>Itacolomi</Neighborhood>         <Address>Rua Das Figueiras</Address>         <StreetNumber>715</StreetNumber>       </Location>       <ContactInfo>         <Name>Singulare Imóveis</Name>         <Email>contato@singulareimoveis.com.br</Email>         <Telephone>(47) 3264-9225</Telephone>         <Website>www.singulareimoveis.com.br</Website>         <Logo>www.singulareimoveis.com.br/assets/email/logo.gif</Logo>       </ContactInfo>     </Listing>   </Listings> </ListingDataFeed>",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          -40,
+          600
+        ],
+        "id": "2c8fb78f-2e0a-486b-b27d-bdfd4500a0f6",
+        "name": "config7"
+      },
+      {
+        "parameters": {
+          "content": "## Agente imobiliário",
+          "height": 820,
+          "width": 1820,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          2320,
+          260
+        ],
+        "id": "e45e4dc5-ae1d-4426-984b-0c81f09f76d9",
+        "name": "Sticky Note3"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "c1bcd8a2-8818-4b95-a1cc-e7eb3d8aa48d",
+                "name": "mensagem",
+                "value": "={{ $json?.body?.data?.message?.conversation || $json?.body?.data?.message?.extendedTextMessage?.text || $json?.body?.data?.message?.ephemeralMessage?.message?.extendedTextMessage?.text }}",
+                "type": "string"
+              },
+              {
+                "id": "a2d7d0bb-f307-46cd-9a7e-6784493f0444",
+                "name": "numero",
+                "value": "={{ $json.body.data?.key?.remoteJid ?? $json.body.numero }}",
+                "type": "string"
+              },
+              {
+                "id": "d910cf27-2143-4aad-9838-72f671cca83a",
+                "name": "pushName",
+                "value": "={{ $('Webhook').item?.json?.body?.data?.pushName ?? \"Novo lead\" }}",
+                "type": "string"
+              }
+            ]
+          },
+          "includeOtherFields": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          2720,
+          580
+        ],
+        "id": "33d00509-cff4-4934-93b7-e9a4ec8d365b",
+        "name": "variables"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "e9315126-3bc4-482f-bcee-364b479588d5",
+                "name": "user",
+                "value": "imobai",
+                "type": "string"
+              },
+              {
+                "id": "e1a5d289-660d-431d-87f4-6bb0c3ef72ae",
+                "name": "password",
+                "value": "imobai",
+                "type": "string"
+              }
+            ]
+          },
+          "includeOtherFields": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          940,
+          2840
+        ],
+        "id": "fc423a20-4fec-4c43-ba10-efb83fb3acb3",
+        "name": "config8"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "DROP TABLE IF EXISTS public.imoveis;\n\ncreate table public.imoveis (\n  id bigint generated by default as identity not null,\n  referencia character varying not null,\n  titulo character varying null,\n  transacao character varying null,\n  tipo character varying null,\n  preco double precision null,\n  descricao text null,\n  cidade character varying null,\n  uf character varying null,\n  data jsonb null,\n  created_at timestamp with time zone not null default now(),\n  constraint imoveis_pkey primary key (id),\n  constraint imoveis_referencia_key unique (referencia)\n) TABLESPACE pg_default;\n\nDROP TABLE IF EXISTS public.clientes;\n\ncreate table public.clientes (\n  numero character varying not null,\n  nome character varying null,\n  created_at timestamp with time zone not null default now(),\n  follow_up bigint null default '0'::bigint,\n  follow_up_ativo boolean null default true,\n  ultima_msg_enviada timestamp without time zone null,\n  crm_id character varying null,\n  pause_ai boolean null default false,\n  constraint clientes_pkey primary key (numero)\n) TABLESPACE pg_default;\n\nDROP TABLE IF EXISTS public.user;\n\ncreate table public.user (\n  id bigint generated by default as identity not null,\n  data jsonb null,\n  constraint user_pkey primary key (id)\n) TABLESPACE pg_default;\n\n-- Criar a função que será chamada pelo trigger\nCREATE OR REPLACE FUNCTION update_cliente_ultima_msg()\nRETURNS TRIGGER AS $$\nBEGIN\n  -- Atualizar a coluna ultima_msg_enviada e follow_up na tabela clientes\n  UPDATE public.clientes\n  SET ultima_msg_enviada = NOW(),\n      follow_up = 0\n  WHERE numero = NEW.session_id;\n  \n  RETURN NEW;\nEND;\n$$ LANGUAGE plpgsql;\n\n-- Criar o trigger que chamará a função após cada inserção\nCREATE TRIGGER after_chat_insert\nAFTER INSERT ON public.chats\nFOR EACH ROW\nEXECUTE FUNCTION update_cliente_ultima_msg();",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.5,
+        "position": [
+          1100,
+          60
+        ],
+        "id": "1d99cd86-7757-4c94-822d-485ff90a35f6",
+        "name": "criar_tabelas",
+        "credentials": {
+          "postgres": {
+            "id": "p2EJKXJEmxZwupRD",
+            "name": "ImobSup"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Node8": {
+        "main": [
+          [
+            {
+              "node": "exemplo_imobiliaria_imoveis_galeria",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Node7": {
+        "main": [
+          [
+            {
+              "node": "exemplo_imobiliaria_imoveis",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Node6": {
+        "main": [
+          [
+            {
+              "node": "testar",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Node5": {
+        "main": [
+          [
+            {
+              "node": "criar_search_properties",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Node4": {
+        "main": [
+          [
+            {
+              "node": "criar_tabelas",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Node3": {
+        "main": [
+          [
+            {
+              "node": "criar_chats",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Node2": {
+        "main": [
+          [
+            {
+              "node": "mock_saved_search_data",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Node1": {
+        "main": [
+          [
+            {
+              "node": "criar_match_new_property",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "WhatsApp Image": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "msgs1": {
+        "main": [
+          [
+            {
+              "node": "single_msg",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "single_msg": {
+        "main": [
+          [
+            {
+              "node": "Node",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "WhatsApp Text",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "split_output": {
+        "main": [
+          [
+            {
+              "node": "msgs1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "exemplo_imobiliaria_imoveis": {
+        "main": [
+          [
+            {
+              "node": "Node8",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "config5": {
+        "main": [
+          [
+            {
+              "node": "HTML",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "WhatsApp Text5": {
+        "main": [
+          [
+            {
+              "node": "atualizar_cliente",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "WhatsApp Text4": {
+        "main": [
+          [
+            {
+              "node": "atualizar_cliente",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "WhatsApp Text3": {
+        "main": [
+          [
+            {
+              "node": "atualizar_cliente",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "config4": {
+        "main": [
+          [
+            {
+              "node": "config1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "config3": {
+        "main": [
+          [
+            {
+              "node": "imovel2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "config2": {
+        "main": [
+          [
+            {
+              "node": "validacao",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "WhatsApp Text1": {
+        "main": [
+          [
+            {
+              "node": "loop",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "is_ai_paused": {
+        "main": [
+          [
+            {
+              "node": "save_chat",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "agente",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "novo_cliente": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "criar_chats": {
+        "main": [
+          [
+            {
+              "node": "Node4",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "XML": {
+        "main": [
+          [
+            {
+              "node": "Split Out",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "config1": {
+        "main": [
+          [
+            {
+              "node": "followups_query1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Webhook1": {
+        "main": [
+          [
+            {
+              "node": "config5",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "post_config1": {
+        "main": [
+          [
+            {
+              "node": "user1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "user1": {
+        "main": [
+          [
+            {
+              "node": "config_payload1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "user": {
+        "main": [
+          [
+            {
+              "node": "config_payload",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "get_config": {
+        "main": [
+          [
+            {
+              "node": "user",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "validado": {
+        "main": [
+          [
+            {
+              "node": "login_correto",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Respond to Webhook1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "validar_login": {
+        "main": [
+          [
+            {
+              "node": "config8",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTML": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "atualizar_cliente": {
+        "main": [
+          [
+            {
+              "node": "followup_loop1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "cadencia": {
+        "main": [
+          [
+            {
+              "node": "WhatsApp Text5",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "WhatsApp Text3",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "WhatsApp Text4",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "followup_loop1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "followup_loop1": {
+        "main": [
+          [
+            {
+              "node": "finalizado1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "cadencia",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "followups_query1": {
+        "main": [
+          [
+            {
+              "node": "followup_loop1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "trigger1": {
+        "main": [
+          [
+            {
+              "node": "config4",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "imovel2": {
+        "main": [
+          [
+            {
+              "node": "imagens",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "enviar_imagens1": {
+        "main": [
+          [
+            {
+              "node": "config3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "enviar_imagens": {
+        "ai_tool": [
+          [
+            {
+              "node": "agente",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items": {
+        "main": [
+          [
+            {
+              "node": "done",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "WhatsApp Image",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "imagens": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "agente": {
+        "main": [
+          [
+            {
+              "node": "split_output",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AI Agent1": {
+        "main": [
+          [
+            {
+              "node": "WhatsApp Text1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Postgres Chat Memory1": {
+        "ai_memory": [
+          [
+            {
+              "node": "AI Agent1",
+              "type": "ai_memory",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model1": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent1",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "imovel1": {
+        "main": [
+          [
+            {
+              "node": "AI Agent1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "busca": {
+        "main": [
+          [
+            {
+              "node": "imovel1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "loop": {
+        "main": [
+          [],
+          [
+            {
+              "node": "busca",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "buscas": {
+        "main": [
+          [
+            {
+              "node": "loop",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "notificar_novo_imovel1": {
+        "main": [
+          [
+            {
+              "node": "config2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "validacao": {
+        "main": [
+          [
+            {
+              "node": "buscas",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "notificar_novo_imovel": {
+        "main": [
+          [
+            {
+              "node": "imovel_looping",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "novo": {
+        "main": [
+          [
+            {
+              "node": "carregar_imoveis_bd",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "imovel_looping",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "When clicking ‘Test workflow’": {
+        "main": [
+          [
+            {
+              "node": "criar_saved_searches",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "imovel": {
+        "main": [
+          [
+            {
+              "node": "Postgres",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "imovel_looping": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "imovel",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Postgres": {
+        "main": [
+          [
+            {
+              "node": "novo",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "auth": {
+        "main": [
+          [
+            {
+              "node": "cliente",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "config": {
+        "main": [
+          [
+            {
+              "node": "variables",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "config",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "testar": {
+        "main": [
+          [
+            {
+              "node": "Node7",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "mock_saved_search_data": {
+        "main": [
+          [
+            {
+              "node": "Node3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "criar_match_new_property": {
+        "main": [
+          [
+            {
+              "node": "Node2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "criar_saved_searches": {
+        "main": [
+          [
+            {
+              "node": "Node1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Postgres Chat Memory": {
+        "ai_memory": [
+          [
+            {
+              "node": "agente",
+              "type": "ai_memory",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "cliente": {
+        "main": [
+          [
+            {
+              "node": "novo_cliente",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "is_ai_paused",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "carregar_imoveis_bd": {
+        "main": [
+          [
+            {
+              "node": "notificar_novo_imovel",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "listar_imoveis_cliente": {
+        "main": [
+          [
+            {
+              "node": "imovel_looping",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "buscar_imoveis": {
+        "ai_tool": [
+          [
+            {
+              "node": "agente",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "criar_search_properties": {
+        "main": [
+          [
+            {
+              "node": "Node6",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "agente",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "config6": {
+        "main": [
+          [
+            {
+              "node": "listar_imoveis_cliente",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "WhatsApp Text": {
+        "main": [
+          [
+            {
+              "node": "single_msg",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "config7": {
+        "main": [
+          [
+            {
+              "node": "XML",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "variables": {
+        "main": [
+          [
+            {
+              "node": "auth",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "config8": {
+        "main": [
+          [
+            {
+              "node": "validado",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "criar_tabelas": {
+        "main": [
+          [
+            {
+              "node": "Node5",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": {
+      "node:trigger1": {
+        "recurrenceRules": []
+      }
+    },
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {
+      "Webhook": [
+        {
+          "json": {
+            "headers": {
+              "host": "n8n-w.robotizze.us",
+              "user-agent": "axios/1.7.9",
+              "content-length": "961",
+              "accept-encoding": "gzip, compress, deflate, br",
+              "content-type": "application/json",
+              "x-forwarded-for": "34.31.64.107",
+              "x-forwarded-host": "n8n-w.robotizze.us",
+              "x-forwarded-port": "443",
+              "x-forwarded-proto": "https",
+              "x-forwarded-server": "a1ce4aa45dff",
+              "x-real-ip": "34.31.64.107"
+            },
+            "params": {},
+            "query": {},
+            "body": {
+              "event": "messages.upsert",
+              "instance": "Pan comercial fletoads",
+              "data": {
+                "key": {
+                  "remoteJid": "559292697056@s.whatsapp.net",
+                  "fromMe": false,
+                  "id": "3AEF332AE499A9391DAD"
+                },
+                "pushName": "César Limyah",
+                "status": "DELIVERY_ACK",
+                "message": {
+                  "conversation": "Olá",
+                  "messageContextInfo": {
+                    "deviceListMetadata": {
+                      "senderKeyHash": "lbAhsOuQYinn0g==",
+                      "senderTimestamp": "1746972263",
+                      "recipientKeyHash": "EXIykEBLB45oSA==",
+                      "recipientTimestamp": "1746724577"
+                    },
+                    "deviceListMetadataVersion": 2,
+                    "messageSecret": "W8H88P+cgXc7Mkgr5AaNSIqhlXrW27+a9rVSwnaGU0E="
+                  }
+                },
+                "messageType": "conversation",
+                "messageTimestamp": 1747167030,
+                "instanceId": "ddb33be8-ef6e-404b-b1f6-2b201a9feabf",
+                "source": "ios",
+                "chatwootMessageId": 86413,
+                "chatwootInboxId": 2,
+                "chatwootConversationId": 133
+              },
+              "destination": "https://n8n-w.robotizze.us/webhook/api/v1/chat",
+              "date_time": "2025-05-13T17:10:31.801Z",
+              "sender": "559292210808@s.whatsapp.net",
+              "server_url": "https://fletoapi.robotizze.us",
+              "apikey": "292693248E84-4D6B-B043-02A6058A87A8"
+            },
+            "webhookUrl": "https://n8n-w.robotizze.us/webhook/api/v1/chat",
+            "executionMode": "production"
+          }
+        }
+      ],
+      "enviar_imagens1": [
+        {
+          "json": {
+            "headers": {
+              "host": "n8n-w.robotizze.us",
+              "user-agent": "axios/1.8.2",
+              "content-length": "57",
+              "accept": "application/json, text/plain, */*",
+              "accept-encoding": "gzip, compress, deflate, br",
+              "authorization": "robotizze",
+              "content-type": "application/json",
+              "x-forwarded-for": "34.31.64.107",
+              "x-forwarded-host": "n8n-w.robotizze.us",
+              "x-forwarded-port": "443",
+              "x-forwarded-proto": "https",
+              "x-forwarded-server": "a1ce4aa45dff",
+              "x-real-ip": "34.31.64.107"
+            },
+            "params": {},
+            "query": {},
+            "body": {
+              "numero": "5518981927977@s.whatsapp.net",
+              "id_imovel": "2"
+            },
+            "webhookUrl": "https://n8n-w.robotizze.us/webhook/imobiai/enviar-imagens",
+            "executionMode": "production"
+          }
+        }
+      ]
+    },
+    "versionId": "534d2b21-8c50-4240-aa98-cc86f55ff479",
+    "triggerCount": 8,
+    "tags": [
+      {
+        "createdAt": "2025-05-13T17:39:36.827Z",
+        "updatedAt": "2025-05-13T17:39:36.827Z",
+        "id": "GqByyY9zFQXMEMeg",
+        "name": "ImobiAI-v3.8"
+      }
+    ]
+  }
+}
