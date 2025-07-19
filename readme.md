@@ -129,8 +129,14 @@ Comprehensive template with 12 pre-configured nodes for advanced SEO analysis:
 
 ### 5. Automated Mailing List Analysis
 Template that analyzes your mailing list subscribers, identifies businesses, and scrapes their websites to uncover valuable insights for personalized outreach.
-- Identifies business leads from your mailing list
+- Identifies business leads from your mailing list.
 - Scrapes websites for business details and services offered.
 - Organizes findings in a Google Spreadsheet.
 - [Learn More](./mailing-list-analysis/readme.md) | [Demo](https://youtu.be/D67kp5QYRck?si=mYqxEOsdmJKRsLxi)
 
+### 6. SEO Data Analyst Agent
+Template that lets you ask natural language questions about your website’s SEO performance, automatically generates BigQuery queries, and analyzes your content with AI agents.  
+- Query your website’s performance data from BigQuery using natural language.
+- Crawl and analyze articles for titles, meta descriptions, and n-gram insights.
+- Update and optimize content interactively with actionable data.
+- [Learn More](./seo-data-analyst/readme.md)
