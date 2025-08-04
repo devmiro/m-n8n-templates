@@ -140,3 +140,11 @@ Template that lets you ask natural language questions about your website’s SEO
 - Crawl and analyze articles for titles, meta descriptions, and n-gram insights.
 - Update and optimize content interactively with actionable data.
 - [Learn More](./seo-data-analyst/readme.md)
+
+### 7. Report Generator  
+Template that transforms any JSON data into a clean, styled HTML report—ready to download and share.  
+- Convert structured JSON into readable, professional HTML reports.
+- Automatically formats sections, lists, and headings for clarity.
+- Instantly generates a downloadable HTML file with modern styling.
+- [Learn More](./report-generator/readme.md) | [Demo](https://youtu.be/OF8ykvRjdQE?si=TX3d_JXu6mWL-OyA)
+
