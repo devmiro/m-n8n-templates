@@ -148,3 +148,16 @@ Template that transforms any JSON data into a clean, styled HTML report—ready 
 - Instantly generates a downloadable HTML file with modern styling.
 - [Learn More](./report-generator/readme.md) | [Demo](https://youtu.be/OF8ykvRjdQE?si=TX3d_JXu6mWL-OyA)
 
+### 8. AI SEO Analyzer for Google's AI Overviews
+An AI agent that analyzes Google's AI Overviews to generate a data-driven blueprint for creating content that ranks.
+- Analyzes AI Overviews to identify the key topics, entities, and sources Google trusts.
+- Generates a strategic content blueprint with a recommended structure and headings.
+- Helps you write new content perfectly optimized to become a source in AI answers.
+- [Learn More](./ai-overview-analyzer/readme.md)
+
+### 9. AI SEO Agent for Google's AI Overviews
+An AI agent that analyzes Google's AI Overviews to provide actionable content recommendations, helping your pages get featured as a reference.
+- Analyzes Google's AI Overviews and your page's content to find gaps.
+- Generates copy-paste recommendations for titles, meta descriptions, and body content.
+- Helps increase the chance of your content being used as a source in AI-generated answers.
+- [Learn More](./ai-overview-optimizer/readme.md) | [Demo](https://youtu.be/sMznan79ox8?si=ODZBPA42mbz3z8sz)
