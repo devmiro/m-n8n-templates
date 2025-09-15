@@ -5,7 +5,11 @@ This automation automatically generates interactive SEO performance reports and 
 
 ### 📊 [View Example Report](./n8n-keyword-rank-tracking-example-report.html)
 
-![n8n automation for keyword report generation](./automated-keyword-tracking-and-analysis-report.png)
+## Automation Template with Google Search Console API Integration 
+![n8n automation for keyword report generation gsc](./n8n-keyword-rank-tracking-report-automation-gsc.png)
+
+## Automation Template with BigQuery integreation
+![n8n automation for keyword report generation bigquery](./n8n-keyword-rank-tracking-report-automation-bigquery.png)
 
 ## Report Structure
 
@@ -35,7 +39,7 @@ Each category has its dedicated tab. The tables include detailed properties such
 - CTR
 - Ranking page URL
 
-**Note:** You may notice more keywords than initially targeted. This is because the automation uses regex patterns to filter Google Search Console data, enabling you to discover related keywords similar to your target terms.
+**Note:** You may notice more keywords than initially targeted. This is because the automation that works with the Google Search Console API uses regex patterns to filter Google Search Console data, enabling you to discover related keywords similar to your target terms.
 
 ### Performance of Tracked Keywords
 This section provides detailed ranking information for your selected keywords. Each accordion entry includes:
